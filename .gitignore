@@ -119,12 +119,8 @@ venv.bak/
 pyvenv.cfg
 pip-selfcheck.json
 
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+### Visual Studio Code ###
+.vscode/
 
 ### Windows ###
 # Windows thumbnail cache files
