@@ -10,6 +10,9 @@ class Competition(models.Model):
     max_team_members = models.IntegerField(default=1)
     is_registration_open = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Stage(models.Model):
     '''
@@ -18,6 +21,9 @@ class Stage(models.Model):
     '''
     competition = models.ForeignKey(to=Competition, related_name='stages', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return '%s - %s' % (self.competition.name, self.name)
 
     class Meta:
         order_with_respect_to = 'competition'
@@ -28,7 +34,10 @@ class TaskCategory(models.Model):
     The category label for this task, e.g. payment, proposal upload, etc.
     Used to help staff filter relevant tasks.
     '''
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = 'task categories'
@@ -39,7 +48,10 @@ class TaskWidget(models.Model):
     The type of widget (component) to be shown to the user for completing this task,
     e.g. text_input, file_upload.
     '''
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Task(models.Model):
@@ -53,6 +65,9 @@ class Task(models.Model):
     widget_parameters = models.TextField()
     requires_validation = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.name
+
 
 class Team(models.Model):
     '''
@@ -65,12 +80,15 @@ class Team(models.Model):
       creation fails if the team's competition does not have a stage yet.
     '''
     competition = models.ForeignKey(to=Competition, related_name='teams', on_delete=models.PROTECT)
-    name = models.CharField(max_length=50)
-    secret_code = models.CharField(max_length=20)  # To be used for joining this team
+    name = models.CharField(max_length=50, unique=True)
+    secret_code = models.CharField(max_length=20, unique=True)  # To be used for joining this team
     members = models.ManyToManyField(to=User, related_name='teams', through='TeamMember')
     active_stage = models.ForeignKey(to=Stage, related_name='active_teams', on_delete=models.PROTECT)
     is_participating = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
 
     # TODO: implement secret_code and active_stage defaults
     # TODO: check whether competition's is_registration_open is True when registering
@@ -87,7 +105,11 @@ class TeamMember(models.Model):
     user = models.ForeignKey(to=User, related_name='team_members', on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return '%s - %s' % (self.team.name, self.user.username)
+
     class Meta:
+        unique_together = (('team', 'user'),)  # Each team-user pair must be unique
         get_latest_by = 'created_at'
 
 
@@ -112,6 +134,9 @@ class TaskResponse(models.Model):
     response = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '%s - %s' % (self.task.name, self.team.name)
 
     # TODO: implement status change state machine
 
