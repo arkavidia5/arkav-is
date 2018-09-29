@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
 from arkav_is_api.competition.models import File
-from arkav_is_api.constants import S3_BUCKET_BASE_URL, UPLOAD_DIR, S3_BUCKET_NAME
+from arkav_is_api.settings import S3_BUCKET_BASE_URL, UPLOAD_DIR, S3_BUCKET_NAME
 from arkav_is_api.competition.serializer import FileSerializer
 
 # Create your views here.

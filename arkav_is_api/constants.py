@@ -1,3 +1,0 @@
-S3_BUCKET_NAME = ""
-S3_BUCKET_BASE_URL = ""
-UPLOAD_DIR = "temp"
