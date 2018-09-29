@@ -1,14 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
+from string import ascii_uppercase, ascii_lowercase, digits, ascii_letters
+
+
+def generate_random_str(length=30):
+    return get_random_string(length, allowed_chars=ascii_letters)
 
 
 def generate_team_secret_code():
-    '''
+    """
     Generate a new random secret code for identifying a team (for team member registrations).
     Format: 6 characters, uppercase alphabet and numbers.
-    '''
-    return get_random_string(length=6, allowed_chars='QWERTYUIOPASDFGHJKLZXCVBNM0123456789')
+    """
+    return get_random_string(length=6, allowed_chars=ascii_uppercase+digits)
 
 
 class Competition(models.Model):
@@ -21,10 +26,10 @@ class Competition(models.Model):
 
 
 class Stage(models.Model):
-    '''
+    """
     A competition contains one or more stages, e.g. registration, qualification and final stages.
     The ordering of stages is specified manually as an integer, with respect to competition.
-    '''
+    """
     competition = models.ForeignKey(to=Competition, related_name='stages', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     order = models.IntegerField(default=0)
@@ -37,10 +42,10 @@ class Stage(models.Model):
 
 
 class TaskCategory(models.Model):
-    '''
+    """
     The category label for this task, e.g. payment, proposal upload, etc.
     Used to help staff filter relevant tasks.
-    '''
+    """
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -51,10 +56,10 @@ class TaskCategory(models.Model):
 
 
 class TaskWidget(models.Model):
-    '''
+    """
     The type of widget (component) to be shown to the user for completing this task,
     e.g. text_input, file_upload.
-    '''
+    """
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -62,9 +67,9 @@ class TaskWidget(models.Model):
 
 
 class Task(models.Model):
-    '''
+    """
     A stage contains one or more tasks, e.g. payment, upload proposal, etc.
-    '''
+    """
     stage = models.ForeignKey(to=Stage, related_name='tasks', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     category = models.ForeignKey(to=TaskCategory, related_name='tasks', on_delete=models.PROTECT)
@@ -77,7 +82,7 @@ class Task(models.Model):
 
 
 class Team(models.Model):
-    '''
+    """
     A competition can have participating teams.
     - A team can only see stages up to the active_stage;
       stages which comes after the active_stage are not visible.
@@ -85,7 +90,7 @@ class Team(models.Model):
       and only if is_participating is True; all other stages are locked.
     - active_stage defaults to the first stage in the team's competition;
       creation fails if the team's competition does not have a stage yet.
-    '''
+    """
     competition = models.ForeignKey(to=Competition, related_name='teams', on_delete=models.PROTECT)
     name = models.CharField(max_length=50, unique=True)
     secret_code = models.CharField(max_length=20, default=generate_team_secret_code, unique=True)
@@ -134,9 +139,9 @@ class Team(models.Model):
 
 
 class TeamMember(models.Model):
-    '''
+    """
     Many-to-many through/pivot table between Team and User.
-    '''
+    """
     team = models.ForeignKey(to=Team, related_name='team_members', on_delete=models.PROTECT)
     user = models.ForeignKey(to=User, related_name='team_members', on_delete=models.PROTECT)
     is_approved = models.BooleanField(default=False)
@@ -151,12 +156,12 @@ class TeamMember(models.Model):
 
 
 class TaskResponse(models.Model):
-    '''
+    """
     A response to a task, e.g. proof of payment image, uploaded proposal.
     A TaskResponse will be created when a response is submitted for a task.
     Each team can only have at most 1 task response per task;
     resubmissions will update the existing TaskResponse and reset its state to awaiting_validation.
-    '''
+    """
     AWAITING_VALIDATION = 'awaiting_validation'
     COMPLETED = 'completed'
     REJECTED = 'rejected'
@@ -189,3 +194,8 @@ class TaskResponse(models.Model):
     class Meta:
         unique_together = (('task', 'team'),)  # Each team can only have at most 1 task response per task
         get_latest_by = 'created_at'
+
+
+class File(models.Model):
+    slug = models.CharField(default=generate_random_str, max_length=30)
+    filename = models.CharField(max_length=30)
