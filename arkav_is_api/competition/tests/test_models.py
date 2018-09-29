@@ -91,9 +91,9 @@ class CompetitionModelsTests(TestCase):
         self.assertEqual(new_ctfteam.active_stage.name, 'CTF Contest')
 
     def test_edit_team(self):
-        '''
+        """
         Ensure manual defaults for active_stage does not mess up team instance editing.
-        '''
+        """
         self.ctf_team2.name = 'edited ctf2'
         self.ctf_team2.save()
         self.assertEqual(self.ctf_team2.active_stage, self.ctf_stage_registration)

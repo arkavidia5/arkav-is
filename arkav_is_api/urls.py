@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from arkav_is_api.competition.views import FileView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('file/', FileView.as_view()),
+    path('file/<str:slug>/', FileView.as_view()),
 ]
