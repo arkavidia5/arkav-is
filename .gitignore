@@ -121,6 +121,7 @@ pip-selfcheck.json
 
 ### Visual Studio Code ###
 .vscode/
+*.code-workspace
 
 ### Windows ###
 # Windows thumbnail cache files
