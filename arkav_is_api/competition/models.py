@@ -1,9 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
 
 
-# TODO: auth and permissions
-# TODO: tests
+def generate_team_secret_code():
+    '''
+    Generate a new random secret code for identifying a team (for team member registrations).
+    Format: 6 characters, uppercase alphabet and numbers.
+    '''
+    return get_random_string(length=6, allowed_chars='QWERTYUIOPASDFGHJKLZXCVBNM0123456789')
+
 
 class Competition(models.Model):
     name = models.CharField(max_length=50)
@@ -17,16 +23,17 @@ class Competition(models.Model):
 class Stage(models.Model):
     '''
     A competition contains one or more stages, e.g. registration, qualification and final stages.
-    The ordering of stages is specified with respect to competition.
+    The ordering of stages is specified manually as an integer, with respect to competition.
     '''
     competition = models.ForeignKey(to=Competition, related_name='stages', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+    order = models.IntegerField(default=0)
 
     def __str__(self):
         return '%s - %s' % (self.competition.name, self.name)
 
     class Meta:
-        order_with_respect_to = 'competition'
+        ordering = ['competition', 'order']
 
 
 class TaskCategory(models.Model):
@@ -81,7 +88,7 @@ class Team(models.Model):
     '''
     competition = models.ForeignKey(to=Competition, related_name='teams', on_delete=models.PROTECT)
     name = models.CharField(max_length=50, unique=True)
-    secret_code = models.CharField(max_length=20, unique=True)  # To be used for joining this team
+    secret_code = models.CharField(max_length=20, default=generate_team_secret_code, unique=True)
     members = models.ManyToManyField(to=User, related_name='teams', through='TeamMember')
     active_stage = models.ForeignKey(to=Stage, related_name='active_teams', on_delete=models.PROTECT)
     is_participating = models.BooleanField(default=True)
@@ -90,8 +97,37 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
-    # TODO: implement secret_code and active_stage defaults
-    # TODO: check whether competition's is_registration_open is True when registering
+    @property
+    def approved_members(self):
+        return User.objects.filter(team_members__team=self, team_members__is_approved=True)
+
+    @property
+    def pending_members(self):
+        return User.objects.filter(team_members__team=self, team_members__is_approved=False)
+
+    @property
+    def has_completed_active_stage(self):
+        active_stage_task_count = self.active_stage.tasks.count()
+        active_stage_completed_task_count = self.task_responses.filter(
+            task__stage=self.active_stage, status=TaskResponse.COMPLETED).count()
+        return active_stage_task_count == active_stage_completed_task_count
+
+    def generate_secret_code(self):
+        return generate_team_secret_code()
+
+    def save(self, *args, **kwargs):
+        # Use the first stage of the competition as the default for active_stage.
+        # Will fail if no competition is set or the competition does not have a stage yet.
+        if self.pk is None and not hasattr(self, 'active_stage'):
+            try:
+                competition_first_stage = self.competition.stages.first()
+            except AttributeError as e:
+                raise ValueError('Team must have a competition set.') from e
+            if competition_first_stage is None:
+                raise ValueError('Team must have a competition with at least 1 stage.')
+            self.active_stage = competition_first_stage
+
+        super(Team, self).save(*args, **kwargs)
 
     class Meta:
         get_latest_by = 'created_at'
@@ -103,6 +139,7 @@ class TeamMember(models.Model):
     '''
     team = models.ForeignKey(to=Team, related_name='team_members', on_delete=models.PROTECT)
     user = models.ForeignKey(to=User, related_name='team_members', on_delete=models.PROTECT)
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -138,7 +175,16 @@ class TaskResponse(models.Model):
     def __str__(self):
         return '%s - %s' % (self.task.name, self.team.name)
 
-    # TODO: implement status change state machine
+    def save(self, *args, **kwargs):
+        # If this response's task's requires_validation is True,
+        # use awaiting_validation as the default state, else use completed.
+        if self.pk is None and (self.status is None or self.status == ''):
+            if self.task.requires_validation:
+                self.status = self.AWAITING_VALIDATION
+            else:
+                self.status = self.COMPLETED
+
+        super(TaskResponse, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (('task', 'team'),)  # Each team can only have at most 1 task response per task

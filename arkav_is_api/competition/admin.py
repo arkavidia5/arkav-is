@@ -11,7 +11,7 @@ from .models import (
 
 class StageInline(admin.TabularInline):
     model = Stage
-    fields = ['name']
+    fields = ['name', 'order']
     extra = 1
     show_change_link = True
 
@@ -33,7 +33,7 @@ class TaskInline(admin.TabularInline):
 
 @admin.register(Stage)
 class StageAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'competition']
+    list_display = ['id', 'name', 'competition', 'order']
     list_display_links = ['id', 'name']
     list_filter = ['competition']
     search_fields = ['name']
@@ -44,7 +44,7 @@ class StageAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'stage', 'category', 'widget', 'requires_validation']
     list_display_links = ['id', 'name']
-    list_filter = ['stage__competition', 'category', 'widget']
+    list_filter = ['category', 'widget', 'stage__competition', 'stage']
     search_fields = ['name']
 
 
@@ -67,7 +67,7 @@ class TaskResponseInline(admin.TabularInline):
 
 class TeamMemberInline(admin.TabularInline):
     model = TeamMember
-    fields = ['user', 'created_at']
+    fields = ['user', 'is_approved', 'created_at']
     readonly_fields = ['created_at']
     autocomplete_fields = ['user']
     extra = 1
@@ -75,8 +75,13 @@ class TeamMemberInline(admin.TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'competition', 'active_stage', 'is_participating', 'created_at']
+    list_display = ['id', 'name', 'competition', 'active_stage', 'has_completed_active_stage', 'is_participating', 'created_at']
     list_display_links = ['id', 'name']
-    list_filter = ['competition', 'is_participating']
+    list_filter = ['is_participating', 'competition', 'active_stage']
     search_fields = ['name']
     inlines = [TeamMemberInline, TaskResponseInline]
+
+    # Tell Django that this method returns a boolean value
+    def has_completed_active_stage(self, instance):
+        return instance.has_completed_active_stage
+    has_completed_active_stage.boolean = True
