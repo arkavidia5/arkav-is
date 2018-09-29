@@ -119,3 +119,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# File Upload Constants
+
+S3_BUCKET_NAME = ""
+S3_BUCKET_BASE_URL = ""
+UPLOAD_DIR = "temp"
