@@ -48,12 +48,13 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user__username', read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    name = serializers.CharField(source='user.get_full_name', read_only=True)
 
     class Meta:
         model = TeamMember
-        fields = ('username', 'is_approved', 'created_at')
-        read_only_fields = ('username', 'created_at')
+        fields = ('username', 'name', 'is_approved', 'created_at')
+        read_only_fields = ('username', 'name', 'created_at')
 
 
 class TaskResponseSerializer(serializers.ModelSerializer):
@@ -67,7 +68,7 @@ class TaskResponseSerializer(serializers.ModelSerializer):
 
 class TeamDetailsSerializer(TeamSerializer):
     competition = CompetitionSerializer(read_only=True)
-    members = TeamMemberSerializer(many=True, read_only=True)
+    team_members = TeamMemberSerializer(many=True, read_only=True)
     active_stage_id = serializers.PrimaryKeyRelatedField(source='active_stage', read_only=True)
     stages = StageSerializer(source='visible_stages', many=True, read_only=True)
     task_responses = TaskResponseSerializer(many=True, read_only=True)
@@ -76,11 +77,11 @@ class TeamDetailsSerializer(TeamSerializer):
         model = Team
         fields = (
             'id', 'competition', 'name', 'secret_code', 'is_participating', 'joined_at', 'created_at',
-            'members', 'active_stage_id', 'stages', 'task_responses'
+            'team_members', 'active_stage_id', 'stages', 'task_responses'
         )
         read_only_fields = (
             'id', 'competition', 'secret_code', 'is_participating', 'joined_at', 'created_at',
-            'members', 'active_stage_id', 'stages', 'task_responses'
+            'team_members', 'active_stage_id', 'stages', 'task_responses'
         )
 
 
