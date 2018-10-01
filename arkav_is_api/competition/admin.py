@@ -50,7 +50,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(TaskResponse)
 class TaskResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'team', 'task', 'status', 'created_at']
+    list_display = ['id', 'team', 'task', 'status', 'last_submitted_at']
     list_display_links = ['id']
     list_filter = ['status', 'task__category']
     search_fields = ['team', 'task']
@@ -59,8 +59,8 @@ class TaskResponseAdmin(admin.ModelAdmin):
 
 class TaskResponseInline(admin.TabularInline):
     model = TaskResponse
-    fields = ['team', 'task', 'status', 'response', 'created_at']
-    readonly_fields = ['created_at']
+    fields = ['team', 'task', 'status', 'response', 'last_submitted_at']
+    readonly_fields = ['last_submitted_at']
     autocomplete_fields = ['team', 'task']
     extra = 1
 
@@ -75,7 +75,8 @@ class TeamMemberInline(admin.TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'competition', 'active_stage', 'has_completed_active_stage', 'is_participating', 'created_at']
+    list_display = ['id', 'name', 'competition', 'active_stage', 'has_completed_active_stage',
+                    'is_participating', 'created_at']
     list_display_links = ['id', 'name']
     list_filter = ['is_participating', 'competition', 'active_stage']
     search_fields = ['name']
