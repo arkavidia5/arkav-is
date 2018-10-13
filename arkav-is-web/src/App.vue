@@ -10,7 +10,7 @@ export default {
   name: 'App',
   data () {
     return {
-      title: 'Vuetify.jsl'
+      title: 'Arkavidia 5'
     }
   }
 }
@@ -23,7 +23,7 @@ export default {
   position: relative;
 }
 
-.application a::after{
+.application a::before{
   content: '';
   border-bottom: 6px solid;
   border-bottom-color: var(--v-primary-base, #1976d2);
@@ -34,7 +34,7 @@ export default {
   width: 100%;
 }
 
-.application a:hover::after{
+.application a:hover::before{
   opacity: 0.4;
   transition: 0.2s;
 }
