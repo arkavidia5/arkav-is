@@ -1,5 +1,5 @@
 <template>
-  <navbar class="navbar">
+  <nav class="navbar">
     <div class="logo">Arkavidia</div>
     <ul>
       <li><a href="#" class="body-link hover-only">Lomba</a></li>
@@ -7,7 +7,7 @@
       <li><a href="#" class="body-link hover-only">Tim</a></li>
       <li><a href="#" class="body-link hover-only">username</a></li>
     </ul>
-  </navbar>
+  </nav>
 </template>
 
 <script>
