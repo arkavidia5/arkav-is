@@ -9,7 +9,7 @@
               <v-text-field v-model="username" label="Username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
               <div class="my-3">
-                <a href="#">Lupa password?</a>
+                <a href="#" class="body-link">Lupa password?</a>
               </div>
               <v-btn depressed large block color="primary">Login</v-btn>
             </v-form>
@@ -28,7 +28,3 @@
     })
   }
 </script>
-
-<style>
-  
-</style>
