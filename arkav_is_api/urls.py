@@ -14,12 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from rest_framework.authtoken import views
 
 from arkav_is_api.competition.views import FileView
 
 urlpatterns = [
+    # Django admin site
     path('admin/', admin.site.urls),
+
+    # Django Rest Framework's auth pages for authenticating browsable APIs using cookies
+    path('api/session-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # API routes
+    path('api/login/', views.obtain_auth_token),
+    path('api/competitions/', include('arkav_is_api.competition.urls')),
+
+    # File upload routes
     path('file/', FileView.as_view()),
     path('file/<str:slug>/', FileView.as_view()),
 ]

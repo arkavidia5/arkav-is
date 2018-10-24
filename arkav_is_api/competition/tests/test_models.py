@@ -207,10 +207,12 @@ class CompetitionModelsTests(TestCase):
     def test_team_has_completed_active_stage(self):
         self.assertFalse(self.ctf_team1.has_completed_active_stage)
         self.assertFalse(self.ctf_team2.has_completed_active_stage)
+        self.assertEqual(self.ctf_team1.visible_stages.count(), 1)
+        self.assertEqual(self.ctf_team2.visible_stages.count(), 1)
 
         task_response_1 = TaskResponse.objects.create(team=self.ctf_team1, task=self.ctf_upload_ktm_task)
         task_response_2 = TaskResponse.objects.create(team=self.ctf_team1, task=self.ctf_upload_proof_of_payment)
-        task_response_3 = TaskResponse.objects.create(team=self.ctf_team1, task=self.ctf_enter_shirt_sizes)
+        TaskResponse.objects.create(team=self.ctf_team1, task=self.ctf_enter_shirt_sizes)
         self.assertFalse(self.ctf_team1.has_completed_active_stage)
 
         task_response_1.status = TaskResponse.COMPLETED
@@ -229,10 +231,14 @@ class CompetitionModelsTests(TestCase):
         self.ctf_team1.active_stage = self.ctf_empty_stage
         self.ctf_team1.save()
         self.assertTrue(self.ctf_team1.has_completed_active_stage)
+        self.assertEqual(self.ctf_team1.visible_stages.count(), 3)
+        self.assertEqual(self.ctf_team2.visible_stages.count(), 1)
 
         self.ctf_team1.active_stage = self.ctf_stage_contest
         self.ctf_team1.save()
         self.assertFalse(self.ctf_team1.has_completed_active_stage)
+        self.assertEqual(self.ctf_team1.visible_stages.count(), 2)
+        self.assertEqual(self.ctf_team2.visible_stages.count(), 1)
 
         task_response_4 = TaskResponse.objects.create(team=self.ctf_team1, task=self.ctf_upload_writeup)
         task_response_4.status = TaskResponse.COMPLETED

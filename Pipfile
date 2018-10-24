@@ -8,9 +8,10 @@ name = "pypi"
 pylint = "*"
 "flake8" = "*"
 "autopep8" = "*"
+pylint-django = "*"
 
 [packages]
-django = "*"
+django = ">=2.1.2"
 django-rest-framework = "*"
 "boto3" = "*"
 
