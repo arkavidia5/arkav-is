@@ -3,7 +3,14 @@ import qs from 'qs'
 
 const apiConfig = {
   baseURL: '/api',
-  withCredentials: true,
+
+  // Prevent sending cookies with cross-domain requests
+  withCredentials: false,
+
+  // Django sends the XSRF token in a cookie named csrftoken
+  // https://docs.djangoproject.com/en/2.1/ref/csrf/#ajax
+  xsrfCookieName: 'csrftoken',
+
   paramsSerializer: (params) => qs.stringify(params)
 }
 
