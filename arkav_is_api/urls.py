@@ -15,15 +15,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.authtoken import views
 
 from arkav_is_api.competition.views import FileView
 
 urlpatterns = [
+    # Django admin site
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    # Django Rest Framework's auth pages for authenticating browsable APIs using cookies
+    path('api/session-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # API routes
+    path('api/login/', views.obtain_auth_token),
+    path('api/competitions/', include('arkav_is_api.competition.urls')),
+
+    # File upload routes
     path('file/', FileView.as_view()),
     path('file/<str:slug>/', FileView.as_view()),
-
-    path('competitions/', include('arkav_is_api.competition.urls')),
 ]
