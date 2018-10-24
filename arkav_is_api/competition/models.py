@@ -1,7 +1,8 @@
+from string import ascii_uppercase, digits, ascii_letters
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-from string import ascii_uppercase, ascii_lowercase, digits, ascii_letters
+from django.utils import timezone
 
 
 def generate_random_str(length=30):
@@ -13,7 +14,7 @@ def generate_team_secret_code():
     Generate a new random secret code for identifying a team (for team member registrations).
     Format: 6 characters, uppercase alphabet and numbers.
     """
-    return get_random_string(length=6, allowed_chars=ascii_uppercase+digits)
+    return get_random_string(length=6, allowed_chars=ascii_uppercase + digits)
 
 
 class Competition(models.Model):
@@ -117,6 +118,14 @@ class Team(models.Model):
             task__stage=self.active_stage, status=TaskResponse.COMPLETED).count()
         return active_stage_task_count == active_stage_completed_task_count
 
+    @property
+    def visible_stages(self):
+        '''
+        A team can only see stages up to the active_stage;
+        stages which comes after the active_stage should not be visible.
+        '''
+        return self.competition.stages.filter(order__lte=self.active_stage.order)
+
     def generate_secret_code(self):
         return generate_team_secret_code()
 
@@ -126,8 +135,8 @@ class Team(models.Model):
         if self.pk is None and not hasattr(self, 'active_stage'):
             try:
                 competition_first_stage = self.competition.stages.first()
-            except AttributeError as e:
-                raise ValueError('Team must have a competition set.') from e
+            except AttributeError as err:
+                raise ValueError('Team must have a competition set.') from err
             if competition_first_stage is None:
                 raise ValueError('Team must have a competition with at least 1 stage.')
             self.active_stage = competition_first_stage
@@ -175,7 +184,7 @@ class TaskResponse(models.Model):
     team = models.ForeignKey(to=Team, related_name='task_responses', on_delete=models.PROTECT)
     response = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
-    created_at = models.DateTimeField(auto_now_add=True)
+    last_submitted_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return '%s - %s' % (self.task.name, self.team.name)
