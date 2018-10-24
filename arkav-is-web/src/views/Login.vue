@@ -8,10 +8,23 @@
             <v-form class="mt-3">
               <v-text-field v-model="username" label="Username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+              <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
+                {{ error }}
+              </v-alert>
               <div class="my-3">
                 <a href="#" class="body-link">Lupa password?</a>
               </div>
-              <v-btn depressed large block color="primary">Login</v-btn>
+              <v-btn
+                depressed
+                large
+                block
+                color="primary"
+                :loading="loading"
+                :disabled="loading"
+                @click="login"
+              >
+                Login
+              </v-btn>
             </v-form>
           </v-card-text>
         </v-card>
@@ -21,10 +34,30 @@
 </template>
 
 <script>
+  import { mapState, mapActions } from 'vuex'
+
   export default {
     data: () => ({
       username: '',
       password: '',
-    })
+    }),
+    computed: {
+      ...mapState({
+        errors: state => state.auth.errors,
+        loading: state => state.auth.loading
+      })
+    },
+    methods: {
+      ...mapActions({
+        loginAction: 'auth/login'
+      }),
+
+      async login() {
+        await this.loginAction({
+          username: this.username,
+          password: this.password
+        })
+      }
+    },
   }
 </script>

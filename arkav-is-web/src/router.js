@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { requireLogin, requireGuest } from './guards.js'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import TeamPage from './views/TeamPage.vue'
@@ -13,6 +14,7 @@ export default new Router({
     {
       path: '/',
       component: Home,
+      beforeEnter: requireLogin,
       children: [
         {
           path: 'teams',
@@ -24,7 +26,8 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      beforeEnter: requireGuest
     },
   ]
 })
