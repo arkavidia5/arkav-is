@@ -10,7 +10,7 @@ pylint = "*"
 "autopep8" = "*"
 
 [packages]
-django = "*"
+django = ">=2.1.2"
 django-rest-framework = "*"
 "boto3" = "*"
 
