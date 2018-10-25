@@ -14,6 +14,9 @@ pylint-django = "*"
 django = ">=2.1.2"
 django-rest-framework = "*"
 "boto3" = "*"
+pymysql = "*"
+django-environ = "*"
+dj-database-url = "*"
 
 [requires]
 python_version = "3"
