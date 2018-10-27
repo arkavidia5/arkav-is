@@ -17,6 +17,13 @@ export default {
 </script>
 
 <style>
+  .application--wrap {
+    background-color: #FFFFF2;
+    background-image: url('./assets/bg_pattern.png');
+    background-size: 80%;
+    background-position: top left;
+    background-repeat: repeat;
+  }
   .application a.body-link {
     color: inherit;
     text-decoration: none;
@@ -47,5 +54,20 @@ export default {
     transition: 0.2;
     border-bottom: 6px solid;
     border-bottom-color: var(--v-primary-base, #1976d2);
+  }
+  .futura-bt {
+    font-family: 'Futura Md BT Bold'
+  }
+  .futura-bt.bold {
+    font-family: 'Futura Md BT Bold';
+  }
+  .futura-lt.bold {
+    font-family: 'FuturaLT'
+  }
+  .futura-lt.bold {
+    font-family: 'FuturaLT-Bold'
+  }
+  .text-right {
+    text-align: right;
   }
 </style>

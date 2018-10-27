@@ -27,7 +27,7 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login,
-      beforeEnter: requireGuest
+      // beforeEnter: requireGuest
     },
   ]
 })

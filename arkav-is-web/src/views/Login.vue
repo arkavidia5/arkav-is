@@ -4,7 +4,15 @@
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-3 pa-3">
           <v-card-text>
-            <h1>Arkavidia 5</h1>
+            <v-flex d-flex align-center justify-center>
+              <v-flex text-xs-right>
+                <img src="https://static.arkavidia.id/5/images/logo.svg" height=50 >
+              </v-flex>
+              <h1 class="ml-3">
+                ARKAVIDIA 5.0
+              </h1>
+            </v-flex>
+            
             <v-form class="mt-3" @submit.prevent="login">
               <v-text-field v-model="username" label="Username" autocomplete="username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
