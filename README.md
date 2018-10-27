@@ -13,10 +13,31 @@ Prerequisites: Python 3.6, Pipenv
 5. For the first run, `python manage.py createsuperuser` to create a superuser for testing
 6. To run, `python manage.py runserver`
 
-#### Notes
+#### Notes for API
+
 - The admin interface can be accessed at `/admin`
+- To run tests, `python manage.py test`
 - After editing any model or pulling changes which include changes to migrations, you need to run migrations again (`python manage.py migrate`)
 - After adding/removing packages (editing Pipfile) or pulling changes which include changes to the Pipfile, you need to run `pipenv update`
+
+### Web
+
+Prerequisites: Node.js 8+
+
+1. `cd` to the `arkav-is-web` directory
+2. For the first run, `npm install` to download dependencies
+3. To run using the dev server, `npm run serve`
+
+#### Notes for web
+
+- When running in development, you may need to adjust the API base URL in `src/api.js`
+- The dev server supports hot-reload
+- You can use Vue.js devtools Chrome extension to help with debugging
+- To build the production bundle, run `npm run build`
+- To run tests, `npm run test`
+- To lint and fix code style problems, run `npm run lint`
+- The linter will also automatically fix code style problems when committing
+- After adding/removing packages (editing `package.json`) or pulling changes which include changes to the `package.json` file, you need to run `npm install` again
 
 ## How to contribute
 
