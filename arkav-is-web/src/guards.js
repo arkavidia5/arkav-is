@@ -1,5 +1,17 @@
 import store from './store.js'
-import { getCurrentSession } from './api.js'
+import api from './api.js'
+
+/**
+ * Get current session without having to pass through the 401 error handler
+ */
+async function getCurrentSession() {
+  try {
+    let response = await api.get('/auth/', { ignoreUnauthorizedError: true })
+    return response.data
+  } catch (err) {
+    return null
+  }
+}
 
 export async function requireLogin(to, from, next) {
   // Will redirect here if not logged in

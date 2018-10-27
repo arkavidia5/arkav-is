@@ -5,7 +5,8 @@ export default {
   state: {
     errors: [],
     loading: false,
-    user: null
+    user: null,
+    loginRedirect: null,
   },
   getters: {
     isLoggedIn (state) {
@@ -13,26 +14,34 @@ export default {
     }
   },
   mutations: {
-    addError (state, message) {
+    addError(state, message) {
       state.errors.push(message + '')
     },
-    clearError (state) {
+    clearError(state) {
       state.errors = []
     },
-    setLoading (state, isLoading) {
+    setLoading(state, isLoading) {
       state.loading = isLoading
     },
-    setUser (state, { user }) {
+    setUser(state, user) {
       state.user = user
-    }
+    },
+    setLoginRedirect(state, redirectTo) {
+      state.loginRedirect = redirectTo
+    },
   },
   actions: {
-    async login ({ commit }, { username, password }) {
+    async login({ commit }, { username, password, router }) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let user = await api.post('/login', { username, password })
-        commit('setUser', user);
+        let response = await api.post('/auth/login/', { username, password }, { ignoreUnauthorizedError: true })
+        commit('setUser', response.data)
+
+        // Redirect after login
+        let redirectTo = this.loginRedirect
+        if (!redirectTo) redirectTo = { name: 'teams' }
+        router.push(redirectTo)
       } catch (err) {
         commit('addError', err)
       } finally {
@@ -40,12 +49,14 @@ export default {
       }
     },
 
-    async logout({ commit }) {
+    async logout({ commit }, { router }) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        await api.post('/logout')
-        commit('setUser', null);
+        await api.post('/auth/logout/', null, { ignoreUnauthorizedError: true })
+        commit('setUser', null)
+        // Redirect to login after logout
+        router.push({ name: 'login' })
       } catch (err) {
         commit('addError', err)
       } finally {

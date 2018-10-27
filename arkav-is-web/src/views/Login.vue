@@ -5,9 +5,9 @@
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <h1>Arkavidia 5</h1>
-            <v-form class="mt-3">
-              <v-text-field v-model="username" label="Username" required></v-text-field>
-              <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
+            <v-form class="mt-3" @submit.prevent="login">
+              <v-text-field v-model="username" label="Username" autocomplete="username" required></v-text-field>
+              <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
               </v-alert>
@@ -19,9 +19,9 @@
                 large
                 block
                 color="primary"
+                type="submit"
                 :loading="loading"
                 :disabled="loading"
-                @click="login"
               >
                 Login
               </v-btn>
@@ -52,10 +52,11 @@
         loginAction: 'auth/login'
       }),
 
-      async login() {
-        await this.loginAction({
+      login() {
+        this.loginAction({
           username: this.username,
-          password: this.password
+          password: this.password,
+          router: this.$router
         })
       }
     },

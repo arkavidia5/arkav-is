@@ -2,17 +2,43 @@
   <nav class="navbar">
     <div class="logo">Arkavidia</div>
     <ul>
-      <li><a href="#" class="body-link hover-only">Lomba</a></li>
-      <li><a href="#" class="body-link hover-only">Seminar</a></li>
-      <li><a href="#" class="body-link hover-only">Tim</a></li>
-      <li><a href="#" class="body-link hover-only">username</a></li>
+      <li><router-link to="/competitions" class="body-link hover-only">Lomba</router-link></li>
+      <li><router-link to="/seminar" class="body-link hover-only">Seminar</router-link></li>
+      <li>
+        <v-menu offset-y>
+          <a slot="activator" href="#" class="body-link hover-only">
+            {{ user.username }}<v-icon style="float: right">arrow_drop_down</v-icon>
+          </a>
+          <v-list>
+            <v-list-tile @click="logout">
+              <v-list-tile-title>Logout</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </li>
     </ul>
   </nav>
 </template>
 
 <script>
+  import { mapState, mapActions } from 'vuex'
+
   export default {
-    data: () => ({})
+    data: () => ({
+
+    }),
+    computed: mapState({
+      user: state => state.auth.user,
+    }),
+    methods: {
+      ...mapActions({
+        logoutAction: 'auth/logout'
+      }),
+
+      logout() {
+        this.logoutAction({ router: this.$router })
+      }
+    }
   }
 </script>
 
@@ -44,7 +70,7 @@
     margin-right: 0;
   }
 
-  .navbar > ul > li > a {
+  .navbar > ul > li a {
     font-weight: bold;
     font-size: 16px;
     color: #555;
