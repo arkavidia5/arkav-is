@@ -25,10 +25,11 @@ class LoginRequestSerializer(serializers.Serializer):
 
 class RegistrationRequestSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
+    first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField()
 
     def validate_username(self, value):
-        return User.username_validator(value)
+        User.username_validator(value)
+        return value
