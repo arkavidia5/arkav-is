@@ -49,14 +49,14 @@ export default {
       }
     },
 
-    async logout({ commit }, { router }) {
+    async logout({ commit }) {
       try {
         commit('setLoading', true)
         commit('clearError')
         await api.post('/auth/logout/', null, { ignoreUnauthorizedError: true })
         commit('setUser', null)
-        // Redirect to login after logout
-        router.push({ name: 'login' })
+        // Reset Vuex state by reloading page
+        location.reload(true)
       } catch (err) {
         commit('addError', err)
       } finally {

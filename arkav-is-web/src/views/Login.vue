@@ -12,7 +12,7 @@
                 {{ error }}
               </v-alert>
               <div class="my-3">
-                <a href="#" class="body-link">Lupa password?</a>
+                <router-link to="/forgot-password" class="body-link">Lupa password?</router-link>
               </div>
               <v-btn
                 depressed

@@ -20,7 +20,7 @@ const apiClient = axios.create(apiConfig)
 apiClient.interceptors.response.use(
   (response) => response,
   (err) => {
-    // Handle 401 Unauthorized errors as if logging out (force reload app),
+    // Handle 401 Unauthorized errors by resetting Vuex state (force reload app),
     // only if ignoreUnauthorizedError is not set or set to False in Axios request config
     if (err.response && !err.response.config.ignoreUnauthorizedError && err.response.status === 401) {
       location.reload(true)

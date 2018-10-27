@@ -30,15 +30,9 @@
     computed: mapState({
       user: state => state.auth.user,
     }),
-    methods: {
-      ...mapActions({
-        logoutAction: 'auth/logout'
-      }),
-
-      logout() {
-        this.logoutAction({ router: this.$router })
-      }
-    }
+    methods: mapActions({
+      logout: 'auth/logout'
+    }),
   }
 </script>
 
