@@ -17,12 +17,15 @@ export default {
 </script>
 
 <style>
-  .application--wrap {
-    background-color: #FFFFF2;
-    background-image: url('./assets/bg_pattern.png');
-    background-size: 80%;
-    background-position: top left;
+  .application {
+    background-color: #FFFFF2 !important;
+    background-image: url('./assets/bg_pattern.png') !important;
+    background-size: 50% !important;
+    background-position: center;
     background-repeat: repeat;
+  }
+  .container {
+    margin-top: 50px;
   }
   .application a.body-link {
     color: inherit;

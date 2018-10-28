@@ -1,7 +1,7 @@
 <template>
   <v-app>
+    <Navbar />
     <v-container>
-      <Navbar />
       <router-view />
     </v-container>
   </v-app>
@@ -21,3 +21,4 @@
     }
   }
 </script>
+

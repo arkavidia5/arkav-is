@@ -71,4 +71,5 @@
     text-transform: uppercase;
     font-size: 20px;
   }
+
 </style>
