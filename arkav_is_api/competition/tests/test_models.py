@@ -24,13 +24,20 @@ class CompetitionModelsTests(TestCase):
         self.user2 = User.objects.create_user(username='user2')
         self.user3 = User.objects.create_user(username='user3')
         self.user4 = User.objects.create_user(username='user4')
+        self.user5 = User.objects.create_user(username='user5')
+        self.user6 = User.objects.create_user(username='user6')
+        self.user7 = User.objects.create_user(username='user7')
+        self.user8 = User.objects.create_user(username='user8')
+        self.user9 = User.objects.create_user(username='user9')
+        self.user10 = User.objects.create_user(username='user10')
+        
 
-        self.ctf_team1 = Team.objects.create(name='ctf1', competition=self.competition_ctf)
+        self.ctf_team1 = Team.objects.create(name='ctf1', competition=self.competition_ctf, team_leader=self.user1)
         TeamMember.objects.create(team=self.ctf_team1, user=self.user2, is_approved=True)
         TeamMember.objects.create(team=self.ctf_team1, user=self.user3, is_approved=False)
         TeamMember.objects.create(team=self.ctf_team1, user=self.user1, is_approved=False)
 
-        self.ctf_team2 = Team.objects.create(name='ctf2', competition=self.competition_ctf)
+        self.ctf_team2 = Team.objects.create(name='ctf2', competition=self.competition_ctf, team_leader=self.user2)
         TeamMember.objects.create(team=self.ctf_team2, user=self.user1, is_approved=True)
         TeamMember.objects.create(team=self.ctf_team2, user=self.user2, is_approved=True)
         TeamMember.objects.create(team=self.ctf_team2, user=self.user4, is_approved=True)
@@ -70,7 +77,7 @@ class CompetitionModelsTests(TestCase):
         )
 
     def test_team_defaults(self):
-        new_cpteam = Team.objects.create(name='New CP Team', competition=self.competition_cp)
+        new_cpteam = Team.objects.create(name='New CP Team', competition=self.competition_cp, team_leader=self.user3)
         self.assertEqual(len(new_cpteam.secret_code), 6)
         self.assertEqual(new_cpteam.members.count(), 0)
         self.assertEqual(new_cpteam.approved_members.count(), 0)
@@ -82,7 +89,8 @@ class CompetitionModelsTests(TestCase):
             name='New CTF Team',
             competition=self.competition_ctf,
             secret_code='overridencode',
-            active_stage=self.ctf_stage_contest
+            active_stage=self.ctf_stage_contest,
+            team_leader=self.user4
         )
         self.assertEqual(new_ctfteam.secret_code, 'overridencode')
         self.assertEqual(new_ctfteam.members.count(), 0)
@@ -103,34 +111,42 @@ class CompetitionModelsTests(TestCase):
 
     def test_create_team_without_competition(self):
         try:
-            Team.objects.create(name='fail')
+            Team.objects.create(name='fail', team_leader=self.user8)
             self.fail(msg='Team creation should fail if not given a competition.')
         except ValueError:
             pass
 
     def test_create_team_with_stageless_competition(self):
         try:
-            Team.objects.create(name='fail', competition=self.competition_without_stages)
+            Team.objects.create(name='fail', competition=self.competition_without_stages, team_leader=self.user5)
             self.fail(msg='Team creation should fail if given a competition without any stage.')
         except ValueError:
             pass
 
+
     def test_enforce_team_name_uniqueness(self):
         try:
-            Team.objects.create(name='notunique', competition=self.competition_cp)
-            Team.objects.create(name='notunique', competition=self.competition_ctf)
+            Team.objects.create(name='notunique', competition=self.competition_cp, team_leader=self.user6)
+            Team.objects.create(name='notunique', competition=self.competition_ctf, team_leader=self.user7)
             self.fail(msg='Team name uniqueness must be enforced, even across competitions.')
         except IntegrityError:
             pass
 
     def test_enforce_team_secret_code_uniqueness(self):
         try:
-            Team.objects.create(name='codenotunique', competition=self.competition_cp, secret_code='samesame')
-            Team.objects.create(name='codenotunique', competition=self.competition_ctf, secret_code='samesame')
+            Team.objects.create(name='codenotunique', competition=self.competition_cp, secret_code='samesame', team_leader=self.user9)
+            Team.objects.create(name='codenotunique', competition=self.competition_ctf, secret_code='samesame', team_leader=self.user10)
             self.fail(msg='Team secret code uniqueness must be enforced, even across competitions.')
         except IntegrityError:
             pass
-
+    def test_enforce_user_can_only_lead_one_team(self):
+        try:
+            self.teamleader = User.objects.create(username='teamleader')
+            Team.objects.create(name='teamintest', competition=self.competition_cp, team_leader=self.teamleader)
+            Team.objects.create(name='teamintest2', competition=self.competition_ctf, team_leader=self.teamleader)
+            self.fail('User cannot lead more than one team')
+        except IntegrityError:
+            pass
     def test_team_get_approved_members(self):
         self.assertEqual(self.ctf_team1.approved_members.count(), 1)
         self.assertIn(self.user2, self.ctf_team1.approved_members)

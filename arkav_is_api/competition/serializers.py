@@ -77,7 +77,7 @@ class TeamDetailsSerializer(TeamSerializer):
         model = Team
         fields = (
             'id', 'competition', 'name', 'secret_code', 'is_participating', 'joined_at', 'created_at',
-            'team_members', 'active_stage_id', 'stages', 'task_responses'
+            'team_members', 'active_stage_id', 'stages', 'task_responses', 'team_leader'
         )
         read_only_fields = (
             'id', 'competition', 'secret_code', 'is_participating', 'joined_at', 'created_at',
