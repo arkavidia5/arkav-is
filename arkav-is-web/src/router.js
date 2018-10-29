@@ -4,6 +4,7 @@ import { requireLogin, requireGuest } from './guards.js'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import TeamPage from './views/TeamPage.vue'
+import CompetitionPage from './views/CompetitionPage.vue'
 
 Vue.use(Router)
 
@@ -20,6 +21,11 @@ export default new Router({
           path: 'teams',
           name: 'teams',
           component: TeamPage,
+        },
+        {
+          path: 'competitions',
+          name: 'competitions',
+          component: CompetitionPage,
         },
       ]
     },
