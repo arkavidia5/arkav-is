@@ -70,20 +70,17 @@ def logout_view(request):
 @api_view(['POST'])
 @permission_classes((IsNotAuthenticated, ))
 def registration_view(request):
+    print(request.data)
     request_serializer = RegistrationRequestSerializer(data=request.data)
     request_serializer.is_valid(raise_exception=True)
-
     with transaction.atomic():
         user = User.objects.create_user(
             username=request_serializer.validated_data['username'],
             email=request_serializer.validated_data['email'],
             password=request_serializer.validated_data['password'],
         )
-        user.first_name = request_serializer.validated_data['first_name'],
-        user.last_name = request_serializer.validated_data['last_name'],
-
-        print(request_serializer.validated_data)
-        raise RuntimeError
+        user.first_name = request_serializer.validated_data['first_name']
+        user.last_name = request_serializer.validated_data['last_name']
         user.save()
 
     # Login the user after registration
