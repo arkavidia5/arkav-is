@@ -9,7 +9,7 @@
       <v-container grid-list-md>
         <v-layout row wrap>
           <v-flex v-for="i in competitions.length" :key="`4${i}`" xs3>
-            <v-card v-if="competitions">
+            <v-card>
               <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"></v-img>
               <v-card-title primary-title>
                 <div>
@@ -17,7 +17,8 @@
                 </div>
               </v-card-title>
               <v-card-actions>
-                <v-btn flat color="orange">Register</v-btn>
+                <v-btn v-if="competitions[i-1].is_registration_open" flat color="orange">Register</v-btn>
+                <v-btn v-if="!competitions[i-1].is_registration_open" flat color="orange" disabled>Coming Soon</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -33,7 +34,7 @@
       <v-container grid-list-md>
         <v-layout row wrap>
           <v-flex v-for="i in teams.length" :key="`4${i}`" xs3>
-            <v-card v-if="teams">
+            <v-card>
               <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"></v-img>
               <v-card-text>
                 <div class="caption font-weight-bold primary--text">{{teams[i-1].competition.name}}</div>

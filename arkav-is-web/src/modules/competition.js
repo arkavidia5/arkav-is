@@ -5,8 +5,8 @@ export default {
   state: {
     errors: [],
     loading: false,
-    competitions: null,
-    teams: null,
+    competitions: [],
+    teams: [],
   },
   mutations: {
     addError(state, message) {
