@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
+import Vue from 'vue';
+import Vuetify from 'vuetify';
+import 'vuetify/dist/vuetify.min.css';
 
 Vue.use(Vuetify, {
   customProperties: true,
@@ -10,4 +10,4 @@ Vue.use(Vuetify, {
     secondary: '#FFFFF2',
     accent: '#F69320'
   },
-})
+});

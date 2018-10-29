@@ -33,14 +33,16 @@
         </router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn flat >Home</v-btn>
+    <router-link to="/">
+      <v-btn flat >Home</v-btn>
+    </router-link>
     <v-menu flat offset-y>
       <v-btn flat slot="activator">
-        {{name}}
+        {{user.username}}
         <v-icon>arrow_drop_down</v-icon>
       </v-btn>
       <v-list>
-        <v-list-tile>
+        <v-list-tile @click="logout">
           <v-list-tile-title>Logout</v-list-tile-title>
         </v-list-tile>
       </v-list>
@@ -71,5 +73,8 @@
     text-transform: uppercase;
     font-size: 20px;
   }
-
+  .router-link-active {
+    color: #04464F;
+    padding-bottom: 4px;
+  }
 </style>

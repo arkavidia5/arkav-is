@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4>
+      <v-flex xs12 sm10 md4>
               <v-flex d-flex align-center justify-center mb-4>
             <v-flex text-xs-right>
               <img src="https://static.arkavidia.id/5/images/logo.svg" height=50 >
@@ -18,9 +18,12 @@
             
             
             <v-form class="mt-3" @submit.prevent="login">
-              <v-text-field label="Nama Lengkap"></v-text-field>
+              <v-layout row>
+                <v-text-field label="Nama Depan" class="mr-1"></v-text-field> 
+                
+                <v-text-field label="Nama Belakang" class="ml-1"></v-text-field>
+              </v-layout>
               <v-text-field v-model="username" label="Username" autocomplete="username" required></v-text-field>
-              <v-text-field v-model="school" label="Universitas/Sekolah"></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
