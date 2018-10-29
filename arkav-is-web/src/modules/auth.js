@@ -40,7 +40,7 @@ export default {
 
         // Redirect after login
         let redirectTo = this.loginRedirect
-        if (!redirectTo) redirectTo = { name: 'teams' }
+        if (!redirectTo) redirectTo = { name: 'dashboard' }
         router.push(redirectTo)
       } catch (err) {
         commit('addError', err)
@@ -56,7 +56,7 @@ export default {
         commit ('setUser', response.data)
         //Redirect if Register successful
         let redirectTo = this.loginRedirect;
-        if (!redirectTo) redirectTo = {name: 'teams'}
+        if (!redirectTo) redirectTo = {name: 'dashboard'}
         router.push(redirectTo)
       } catch (err) {
         commit('addError', err)
