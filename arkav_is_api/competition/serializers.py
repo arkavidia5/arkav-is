@@ -43,8 +43,8 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ('id', 'competition', 'name', 'is_participating', 'is_approved_team_member', 'joined_at')
-        read_only_fields = ('id', 'competition', 'is_participating', 'is_approved_team_member', 'joined_at')
+        fields = ('id', 'competition', 'name', 'is_participating', 'is_approved_team_member', 'joined_at', 'team_leader')
+        read_only_fields = ('id', 'competition', 'is_participating', 'is_approved_team_member', 'joined_at', 'team_leader')
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -77,7 +77,7 @@ class TeamDetailsSerializer(TeamSerializer):
         model = Team
         fields = (
             'id', 'competition', 'name', 'secret_code', 'is_participating', 'joined_at', 'created_at',
-            'team_members', 'active_stage_id', 'stages', 'task_responses'
+            'team_members', 'active_stage_id', 'stages', 'task_responses', 'team_leader'
         )
         read_only_fields = (
             'id', 'competition', 'secret_code', 'is_participating', 'joined_at', 'created_at',

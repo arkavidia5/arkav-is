@@ -96,6 +96,7 @@ class Team(models.Model):
     name = models.CharField(max_length=50, unique=True)
     secret_code = models.CharField(max_length=20, default=generate_team_secret_code, unique=True)
     members = models.ManyToManyField(to=User, related_name='teams', through='TeamMember')
+    team_leader = models.OneToOneField(to=User, related_name='team_leader',on_delete=models.PROTECT)
     active_stage = models.ForeignKey(to=Stage, related_name='active_teams', on_delete=models.PROTECT)
     is_participating = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
