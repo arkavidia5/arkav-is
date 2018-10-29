@@ -34,7 +34,7 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: Register,
-      // beforeEnter: requireGuest
+      beforeEnter: requireGuest
     }
   ]
 })

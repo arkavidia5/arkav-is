@@ -17,14 +17,16 @@
             </v-flex>
             
             
-            <v-form class="mt-3" @submit.prevent="login">
+            <v-form class="mt-3" @submit.prevent="register">
               <v-layout row>
-                <v-text-field label="Nama Depan" class="mr-1"></v-text-field> 
+                <v-text-field label="Nama Depan" class="mr-1" v-model="first_name" required></v-text-field> 
                 
-                <v-text-field label="Nama Belakang" class="ml-1"></v-text-field>
+                <v-text-field label="Nama Belakang" class="ml-1" v-model="last_name"></v-text-field>
               </v-layout>
+              <v-text-field label="Email" type="mail" required :rules="emailRules" v-model="email"></v-text-field>
               <v-text-field v-model="username" label="Username" autocomplete="username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
+              <v-text-field v-model="confirm_password" label="Confirm Password" type="password" required :rules="[(v) => !!v || 'Confirm Password cannot be empty', (v) => v === password || 'Password does not match']"></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
               </v-alert>
@@ -55,8 +57,17 @@
 
   export default {
     data: () => ({
+      first_name: '',
+      last_name: '',
       username: '',
+      email: '',
       password: '',
+      confirm_password: '',
+      emailRules: [
+          (v) => !!v || 'E-mail is required',
+          (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+      ],
+      
     }),
     computed: {
       ...mapState({
@@ -66,14 +77,18 @@
     },
     methods: {
       ...mapActions({
-        loginAction: 'auth/login'
+        registerAction: 'auth/register'
       }),
 
-      login() {
-        this.loginAction({
+      register() {
+        this.registerAction({
+          first_name: this.first_name,
+          last_name: this.last_name,
+          email: this.email,
           username: this.username,
-          password: this.password,
+          password: this.password,  
           router: this.$router
+
         })
       }
     },
