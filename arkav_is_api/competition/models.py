@@ -21,7 +21,7 @@ class Competition(models.Model):
     name = models.CharField(max_length=50)
     max_team_members = models.IntegerField(default=1)
     is_registration_open = models.BooleanField(default=True)
-
+    view_icon = models.URLField(default='')
     def __str__(self):
         return self.name
 
