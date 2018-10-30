@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h1 class="mb-3 futura-bt primary--text">Competitions</h1>
-    <v-card  class="row md8 elevation-2 pa-2">
+    <h1 class="mb-3 futura-bt primary--text">Competition</h1>
+    <v-card class="row elevation-2 pa-2" style="max-width: 900px;">
         <header class="text-header pa-2">
           <h1>Your Teams</h1>
         </header>
         <v-layout row wrap>
-          <v-flex md2 sm3 xs12 pa-4 ma-1 elevation-1 v-for="item in teams" :key="`teams-${item.id}`">
+          <v-flex md3 sm4 xs12 pa-4 ma-1 elevation-1 v-for="item in teams" :key="`teams-${item.id}`">
             <router-link class="no-decoration" :to="`/team/${item.id}`">
               <v-layout row justify-center>
                 <img :src="item.competition.view_icon" alt="" height=60>
@@ -16,7 +16,7 @@
               </v-layout>
             </router-link>
           </v-flex>
-          <v-flex md2 sm3 xs12 pa-4 ma-1 elevation-1 v-if="teams.length < 2">
+          <v-flex md3 sm4 xs12 pa-4 ma-1 elevation-1 v-if="teams.length < 2">
             <router-link class="no-decoration" to="/create-team">
               <v-layout row justify-center>
                 <i class="material-icons" style="font-size: 4.5rem;">add_circle</i>
