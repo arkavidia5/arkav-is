@@ -4,6 +4,8 @@ import { requireLogin, requireGuest } from './guards.js'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import TeamPage from './views/TeamPage.vue'
+import Dashboard from './views/Dashboard.vue'
+import Register from './views/Register.vue'
 
 Vue.use(Router)
 
@@ -17,6 +19,11 @@ export default new Router({
       beforeEnter: requireLogin,
       children: [
         {
+          path: '',
+          name: 'dashboard',
+          component: Dashboard
+        },
+        {
           path: 'teams',
           name: 'teams',
           component: TeamPage,
@@ -29,5 +36,11 @@ export default new Router({
       component: Login,
       beforeEnter: requireGuest
     },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register,
+      beforeEnter: requireGuest
+    }
   ]
 })
