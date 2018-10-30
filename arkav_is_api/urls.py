@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API routes
-    path('api/auth/', include('arkav_is_api.auth.urls')),
+    path('api/auth/', include('arkav_is_api.arkavauth.urls')),
     path('api/competitions/', include('arkav_is_api.competition.urls')),
 
     # File upload routes

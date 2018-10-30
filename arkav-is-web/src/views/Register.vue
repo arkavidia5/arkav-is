@@ -24,7 +24,6 @@
                 <v-text-field label="Nama Belakang" class="ml-1" v-model="last_name"></v-text-field>
               </v-layout>
               <v-text-field label="Email" type="mail" required :rules="emailRules" v-model="email"></v-text-field>
-              <v-text-field v-model="username" label="Username" autocomplete="username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-text-field v-model="confirm_password" label="Confirm Password" type="password" required :rules="[(v) => !!v || 'Confirm Password cannot be empty', (v) => v === password || 'Password does not match']"></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
@@ -85,7 +84,6 @@
           first_name: this.first_name,
           last_name: this.last_name,
           email: this.email,
-          username: this.username,
           password: this.password,  
           router: this.$router
 

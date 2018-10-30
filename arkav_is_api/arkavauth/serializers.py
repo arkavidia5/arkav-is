@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,19 +12,18 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'username', 'first_name', 'last_name', 'email',
+            'first_name', 'last_name', 'email',
             'is_staff', 'is_active', 'last_login', 'date_joined',
         )
         read_only_fields = ('last_login', 'date_joined')
 
 
 class LoginRequestSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
+    email = serializers.CharField(max_length=150)
     password = serializers.CharField()
 
 
 class RegistrationRequestSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
     first_name = serializers.CharField(max_length=30)
     last_name = serializers.CharField(max_length=150)
     email = serializers.EmailField()

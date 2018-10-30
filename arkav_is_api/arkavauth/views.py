@@ -5,7 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
-from django.contrib.auth.models import User
+from .models import User
 from .serializers import (
     UserSerializer,
     LoginRequestSerializer,
@@ -40,7 +40,7 @@ def login_view(request):
     request_serializer.is_valid(raise_exception=True)
 
     user = authenticate(
-        username=request_serializer.validated_data['username'],
+        email=request_serializer.validated_data['email'],
         password=request_serializer.validated_data['password'],
     )
     if user is None:
@@ -75,7 +75,6 @@ def registration_view(request):
     request_serializer.is_valid(raise_exception=True)
     with transaction.atomic():
         user = User.objects.create_user(
-            username=request_serializer.validated_data['username'],
             email=request_serializer.validated_data['email'],
             password=request_serializer.validated_data['password'],
         )
