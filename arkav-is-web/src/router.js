@@ -6,7 +6,6 @@ import Login from './views/Login.vue'
 import TeamPage from './views/TeamPage.vue'
 import Dashboard from './views/Dashboard.vue'
 import Register from './views/Register.vue'
-import CompetitionPage from './views/CompetitionPage.vue'
 
 Vue.use(Router)
 
@@ -28,11 +27,6 @@ export default new Router({
           path: 'teams',
           name: 'teams',
           component: TeamPage,
-        },
-        {
-          path: 'competitions',
-          name: 'competitions',
-          component: CompetitionPage,
         },
       ]
     },

@@ -73,8 +73,4 @@
     text-transform: uppercase;
     font-size: 20px;
   }
-  .router-link-active {
-    color: #04464F;
-    padding-bottom: 4px;
-  }
 </style>
