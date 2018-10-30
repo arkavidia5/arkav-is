@@ -38,7 +38,7 @@
     </router-link>
     <v-menu flat offset-y>
       <v-btn flat slot="activator">
-        {{user.username}}
+        {{user.first_name}}
         <v-icon>arrow_drop_down</v-icon>
       </v-btn>
       <v-list>
