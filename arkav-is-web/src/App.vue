@@ -55,6 +55,9 @@ export default {
     border-bottom: 6px solid;
     border-bottom-color: var(--v-primary-base, #1976d2);
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   .column {
     flex-direction: column;
   }

@@ -35,6 +35,7 @@
   import { mapState, mapActions } from 'vuex'
 
   export default {
+    name: "Competitions",
     computed: {
       ...mapState({
         competitions: state => state.competition.competitions,
@@ -48,8 +49,7 @@
       }),
     },
     beforeMount() {
-      this.getCompetitions(),
-      this.getTeams()
+      this.getCompetitions()
     }
   }
 </script>
