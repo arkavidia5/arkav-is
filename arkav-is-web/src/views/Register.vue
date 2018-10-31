@@ -18,11 +18,7 @@
             
             
             <v-form class="mt-3" @submit.prevent="register">
-              <v-layout row>
-                <v-text-field label="Nama Depan" class="mr-1" v-model="first_name" required></v-text-field> 
-                
-                <v-text-field label="Nama Belakang" class="ml-1" v-model="last_name"></v-text-field>
-              </v-layout>
+              <v-text-field label="Name" v-model="full_name"></v-text-field>
               <v-text-field label="Email" type="mail" required :rules="emailRules" v-model="email"></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-text-field v-model="confirm_password" label="Confirm Password" type="password" required :rules="[(v) => !!v || 'Confirm Password cannot be empty', (v) => v === password || 'Password does not match']"></v-text-field>
@@ -81,8 +77,7 @@
 
       register() {
         this.registerAction({
-          first_name: this.first_name,
-          last_name: this.last_name,
+          full_name: this.full_name,
           email: this.email,
           password: this.password,  
           router: this.$router

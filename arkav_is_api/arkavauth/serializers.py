@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'first_name', 'last_name', 'email',
+            'full_name', 'email',
             'is_staff', 'is_active', 'last_login', 'date_joined',
         )
         read_only_fields = ('last_login', 'date_joined')
@@ -24,11 +24,6 @@ class LoginRequestSerializer(serializers.Serializer):
 
 
 class RegistrationRequestSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=30)
-    last_name = serializers.CharField(max_length=150)
+    full_name = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField()
-
-    def validate_username(self, value):
-        User.username_validator(value)
-        return value
