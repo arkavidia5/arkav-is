@@ -18,7 +18,7 @@ class StageInline(admin.TabularInline):
 
 @admin.register(Competition)
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'max_team_members', 'is_registration_open']
+    list_display = ['id', 'name', 'min_team_members','max_team_members', 'is_registration_open']
     list_display_links = ['id', 'name']
     list_filter = ['is_registration_open']
     inlines = [StageInline]
