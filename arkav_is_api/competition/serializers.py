@@ -1,12 +1,17 @@
 from rest_framework import serializers
-from .models import Competition, Stage, Team, TeamMember, TaskResponse, File
+from .models import Competition, Stage, Team, TeamMember, TaskResponse, File, CompetitionCategory
 
-
+class CompetitionCategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompetitionCategory
+        fields = ('id','name')
+        read_only_fields = ('id','name')
 class CompetitionSerializer(serializers.ModelSerializer):
+    categories = CompetitionCategoriesSerializer(many=True)
     class Meta:
         model = Competition
-        fields = ('id', 'name', 'max_team_members', 'min_team_members', 'is_registration_open', 'view_icon')
-        read_only_fields = ('id', 'name', 'max_team_members', 'min_team_members', 'is_registration_open', 'view_icon')
+        fields = ('id', 'name', 'max_team_members', 'min_team_members', 'is_registration_open', 'categories', 'view_icon')
+        read_only_fields = ('id', 'name', 'max_team_members', 'min_team_members', 'is_registration_open', 'categories', 'view_icon')
 
 
 class StageSerializer(serializers.ModelSerializer):
@@ -99,3 +104,4 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
         fields = ('id', 'slug')
+

@@ -6,6 +6,7 @@ from .models import (
     Team,
     TeamMember,
     TaskResponse,
+    CompetitionCategory
 )
 
 
@@ -86,3 +87,8 @@ class TeamAdmin(admin.ModelAdmin):
     def has_completed_active_stage(self, instance):
         return instance.has_completed_active_stage
     has_completed_active_stage.boolean = True
+
+@admin.register(CompetitionCategory)
+class CompetitionCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    list_display_links = ['name']

@@ -16,11 +16,19 @@ def generate_team_secret_code():
     """
     return get_random_string(length=6, allowed_chars=ascii_uppercase + digits)
 
+class CompetitionCategory(models.Model):
+    name = models.CharField(max_length=50, default='')
+    def __str__(self):
+        return self.name 
+    class Meta:
+        verbose_name = "Competition Category"
+        verbose_name_plural = "Competition Categories"
 
 class Competition(models.Model):
     name = models.CharField(max_length=50)
     max_team_members = models.IntegerField(default=1)
     min_team_members = models.IntegerField(default=1)
+    categories = models.ManyToManyField(CompetitionCategory)
     is_registration_open = models.BooleanField(default=True)
     view_icon = models.URLField(default='')
     def __str__(self):
