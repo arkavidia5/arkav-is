@@ -28,6 +28,11 @@ export default {
         if(!competition || !name || !category || !school || !members) {
             throw 'Pastikan seluruh data terisi'
         }
+        let categories = competition.categories.map(a => a.name)
+        console.log(category)
+        if(!(categories.includes(category))) {
+            throw 'Kategori tidak sesuai'
+        }
         if(members.length < competition.min_team_members || members.length > competition.max_team_members) {
             throw 'Jumlah peserta tidak sesuai'
         }
@@ -43,9 +48,15 @@ export default {
             team_school: school,
             members: members
         };
+        console.log(postData)
         let response = await api.post('/competitions/register-team/', postData, {ignoreUnauthorizedError: false})
       } catch (err) {
-        commit('addError', err)
+          if(err.response) {
+              commit('addError', err.response.data)
+          } else {
+            commit('addError', err)
+          }
+        
       } finally {
         commit('setLoading', false)
       }

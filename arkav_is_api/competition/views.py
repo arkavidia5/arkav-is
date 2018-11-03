@@ -70,15 +70,26 @@ class RegisterTeamView(views.APIView):
                             code='competition_already_registered',
                             detail='One user can only participate in one team per competition.',
                         )
+                #Unique Validation
+                if Team.objects.filter(name=team_name).exists():
+                    raise ValidationError(
+                        code='competition_already_registered',
+                        detail='Team name already taken'
+                    )
+                if Team.objects.get(team_leader__email=request_members[0]['email']):
+                    raise ValidationError(
+                        code='competition_already_registered',
+                        detail='Each user can only lead one team'
+                    )
                 # Create a new team and add the current user as an approved member to the team
                 new_team = Team.objects.create(
                     competition=competition, 
                     name=team_name,
                     category= team_category,
                     school= team_school,
-                    team_leader = members[0]
+                    team_leader= member[0]
                 )
-                
+
                 for member in members:
                     TeamMember.objects.create(team=new_team, user=member, is_approved=False)
 
