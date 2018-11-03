@@ -24,9 +24,6 @@ export default {
     background-position: center;
     background-repeat: repeat;
   }
-  .container {
-    margin-top: 50px;
-  }
   .application a.body-link {
     color: inherit;
     text-decoration: none;
@@ -58,6 +55,12 @@ export default {
     border-bottom: 6px solid;
     border-bottom-color: var(--v-primary-base, #1976d2);
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  .column {
+    flex-direction: column;
+  }
   .futura-bt {
     font-family: 'Futura Md BT Bold'
   }
@@ -70,7 +73,7 @@ export default {
   .futura-lt.bold {
     font-family: 'FuturaLT-Bold'
   }
-  .text-right {
-    text-align: right;
+  .no-decoration {
+    text-decoration: none !important;
   }
 </style>

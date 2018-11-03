@@ -17,7 +17,7 @@
             </v-flex>
             
             <v-form class="mt-3" @submit.prevent="login">
-              <v-text-field v-model="username" label="Username" autocomplete="username" required></v-text-field>
+              <v-text-field v-model="email" label="Email" autocomplete="username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
@@ -52,7 +52,7 @@
 
   export default {
     data: () => ({
-      username: '',
+      email: '',
       password: '',
     }),
     computed: {
@@ -68,7 +68,7 @@
 
       login() {
         this.loginAction({
-          username: this.username,
+          email: this.email,
           password: this.password,
           router: this.$router
         })

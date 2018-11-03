@@ -6,7 +6,7 @@ import Login from './views/Login.vue'
 import TeamPage from './views/TeamPage.vue'
 import Dashboard from './views/Dashboard.vue'
 import Register from './views/Register.vue'
-
+import CreateTeam from './views/CreateTeam'
 Vue.use(Router)
 
 export default new Router({
@@ -28,6 +28,11 @@ export default new Router({
           name: 'teams',
           component: TeamPage,
         },
+        {
+          path: 'create-team',
+          name: 'create-team',
+          component: CreateTeam,
+        }
       ]
     },
     {

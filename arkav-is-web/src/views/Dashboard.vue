@@ -1,23 +1,14 @@
 <template>
     <div>
-        <v-card></v-card>
+        <Competitions/>
     </div>
 </template>
 <script>
 import {mapState, mapActions} from 'vuex'
+import Competitions from '../components/Competitions'
 export default {
-    computed: {
-      ...mapState({
-        competitions: state => state.competitions.competitions
-      })
-    },
-    methods: {
-        ...mapActions({
-            fetch: 'competition/fetch_competitions'
-        })
-    }, 
-    mounted: function() {
-        this.fetch();   
-    }
+  components: {
+      Competitions,
+  }
 }
 </script>

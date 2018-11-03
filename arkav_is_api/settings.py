@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'arkav_is_api.competition',
+    'arkav_is_api.arkavauth'
 ]
+AUTH_USER_MODEL = 'arkavauth.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

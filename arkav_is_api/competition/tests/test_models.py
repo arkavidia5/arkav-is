@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.db import IntegrityError
-from django.contrib.auth.models import User
+from arkav_is_api.arkavauth.models import User
 from arkav_is_api.competition.models import Competition, Team, TeamMember, Task, TaskResponse, TaskCategory, TaskWidget
 
 
@@ -20,16 +20,16 @@ class CompetitionModelsTests(TestCase):
         self.ctf_stage_contest = self.competition_ctf.stages.create(name='CTF Contest', order=2)
         self.ctf_empty_stage = self.competition_ctf.stages.create(name='CTF Empty', order=99)
 
-        self.user1 = User.objects.create_user(username='user1')
-        self.user2 = User.objects.create_user(username='user2')
-        self.user3 = User.objects.create_user(username='user3')
-        self.user4 = User.objects.create_user(username='user4')
-        self.user5 = User.objects.create_user(username='user5')
-        self.user6 = User.objects.create_user(username='user6')
-        self.user7 = User.objects.create_user(username='user7')
-        self.user8 = User.objects.create_user(username='user8')
-        self.user9 = User.objects.create_user(username='user9')
-        self.user10 = User.objects.create_user(username='user10')
+        self.user1 = User.objects.create_user(email='user1')
+        self.user2 = User.objects.create_user(email='user2')
+        self.user3 = User.objects.create_user(email='user3')
+        self.user4 = User.objects.create_user(email='user4')
+        self.user5 = User.objects.create_user(email='user5')
+        self.user6 = User.objects.create_user(email='user6')
+        self.user7 = User.objects.create_user(email='user7')
+        self.user8 = User.objects.create_user(email='user8')
+        self.user9 = User.objects.create_user(email='user9')
+        self.user10 = User.objects.create_user(email='user10')
         
 
         self.ctf_team1 = Team.objects.create(name='ctf1', competition=self.competition_ctf, team_leader=self.user1)
@@ -141,7 +141,7 @@ class CompetitionModelsTests(TestCase):
             pass
     def test_enforce_user_can_only_lead_one_team(self):
         try:
-            self.teamleader = User.objects.create(username='teamleader')
+            self.teamleader = User.objects.create(email='teamleader')
             Team.objects.create(name='teamintest', competition=self.competition_cp, team_leader=self.teamleader)
             Team.objects.create(name='teamintest2', competition=self.competition_ctf, team_leader=self.teamleader)
             self.fail('User cannot lead more than one team')

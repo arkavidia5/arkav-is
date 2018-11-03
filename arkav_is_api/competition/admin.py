@@ -6,6 +6,7 @@ from .models import (
     Team,
     TeamMember,
     TaskResponse,
+    CompetitionCategory
 )
 
 
@@ -18,7 +19,7 @@ class StageInline(admin.TabularInline):
 
 @admin.register(Competition)
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'max_team_members', 'is_registration_open']
+    list_display = ['id', 'name', 'min_team_members','max_team_members', 'is_registration_open']
     list_display_links = ['id', 'name']
     list_filter = ['is_registration_open']
     inlines = [StageInline]
@@ -86,3 +87,8 @@ class TeamAdmin(admin.ModelAdmin):
     def has_completed_active_stage(self, instance):
         return instance.has_completed_active_stage
     has_completed_active_stage.boolean = True
+
+@admin.register(CompetitionCategory)
+class CompetitionCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    list_display_links = ['name']

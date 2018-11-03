@@ -31,11 +31,11 @@ export default {
     },
   },
   actions: {
-    async login({ commit }, { username, password, router }) {
+    async login({ commit }, { email, password, router }) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.post('/auth/login/', { username, password }, { ignoreUnauthorizedError: true })
+        let response = await api.post('/auth/login/', { email, password }, { ignoreUnauthorizedError: true })
         commit('setUser', response.data)
 
         // Redirect after login
@@ -48,11 +48,11 @@ export default {
         commit('setLoading', false)
       }
     },
-    async register({commit}, {first_name, last_name, username, email, password, router}) {
+    async register({commit}, {full_name, email, password, router}) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.post('/auth/register/', {first_name, last_name, username, email, password}, { ignoreUnauthorizedError: true })
+        let response = await api.post('/auth/register/', {full_name, email, password}, { ignoreUnauthorizedError: true })
         commit ('setUser', response.data)
         //Redirect if Register successful
         let redirectTo = this.loginRedirect;

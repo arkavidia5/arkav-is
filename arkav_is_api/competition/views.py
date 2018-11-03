@@ -112,9 +112,10 @@ class JoinTeamView(views.APIView):
 
 
 class ListTeamsView(generics.ListAPIView):
-    queryset = Team.objects.all()
-    serializer_class = TeamSerializer
-    permission_classes = (IsAuthenticated,)
+        serializer_class = TeamSerializer
+        permission_classes = (IsAuthenticated,)
+        def get_queryset(self):
+            return Team.objects.filter(team_members__user__email__in=[self.request.user])
 
 
 class RetrieveUpdateTeamView(generics.RetrieveUpdateAPIView):

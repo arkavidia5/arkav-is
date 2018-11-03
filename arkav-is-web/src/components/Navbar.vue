@@ -38,7 +38,7 @@
     </router-link>
     <v-menu flat offset-y>
       <v-btn flat slot="activator">
-        {{user.username}}
+        {{user.full_name}}
         <v-icon>arrow_drop_down</v-icon>
       </v-btn>
       <v-list>
@@ -72,9 +72,5 @@
     font-weight: bold;
     text-transform: uppercase;
     font-size: 20px;
-  }
-  .router-link-active {
-    color: #04464F;
-    padding-bottom: 4px;
   }
 </style>
