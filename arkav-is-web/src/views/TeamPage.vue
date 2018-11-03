@@ -5,8 +5,8 @@
         <v-icon>menu</v-icon>
       </v-btn>
       <div>
-        <h2 class="display-1 font-weight-bold">GituKanYa</h2>
-        <div class="caption font-weight-bold primary--text">Data Mining</div>
+        <h2 class="display-1 font-weight-bold">{{team.name}}</h2>
+        <div class="caption font-weight-bold primary--text">{{team.competition.name}}</div>
       </div>
     </header>
 
@@ -15,12 +15,10 @@
       <TaskSidebar class="task-sidebar grey lighten-4 px-2" :visible="!shouldCollapseSidebar || sidebarActive" />
       <v-slide-x-transition>
         <section class="task-content px-4 py-3" v-show="!shouldCollapseSidebar || !sidebarActive">
-          <h2 class="headline font-weight-bold">
-            Kode Tim
-          </h2>
-
-          <br /><br /><br /><br /><br /><br /><br /><br />
-          <br /><br /><br /><br /><br /><br /><br /><br />
+          <h2>Anggota Tim</h2>
+          <v-layout v-for="member in team.team_members">
+              {{member.name}}
+          </v-layout>
         </section>
       </v-slide-x-transition>
     </div>
@@ -31,21 +29,37 @@
 
 <script>
   import TaskSidebar from '../components/TaskSidebar.vue'
-
+  import {mapState, mapActions} from 'vuex'
   export default {
     components: {
       TaskSidebar
     },
+    data() {
+      return {
+        sidebarActive: false,
+        team_id: this.$route.params.id,
+      }
+    },
     computed: {
       shouldCollapseSidebar() {
         return this.$vuetify.breakpoint.smAndDown
-      }
+      },
+      ...mapState({
+        loading: state => state.team.loading,
+        error: state => state.team.errors,
+        team: state => state.team.team,
+      }),
     },
-    data() {
-      return {
-        sidebarActive: false
-      }
+    methods: {
+      ...mapActions({
+            getTeam: 'team/getTeam',
+        }),
     },
+    beforeMount() {  
+      this.getTeam({
+        team_id: this.team_id
+      })
+    }
   }
 </script>
 

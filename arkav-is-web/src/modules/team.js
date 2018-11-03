@@ -5,12 +5,14 @@ export default {
   state: {
     errors: [],
     loading: false,
-    competitions: [],
-    teams: [],
+    team: '',
   },
   mutations: {
     addError(state, message) {
       state.errors.push(message + '')
+    },
+    setTeam(state, team) {
+        state.team = team
     },
     clearError(state) {
       state.errors = []
@@ -60,5 +62,21 @@ export default {
         commit('setLoading', false)
       }
     },
+    async getTeam({commit}, {team_id}) {
+        try {
+            commit('setLoading', true)
+            let response  = await api.get('/competitions/teams/'+team_id+'/');
+            commit('setTeam', response.data)
+        } catch (err) {
+            if(err.response) {
+                commit('addError', err.response.data)
+            } else {
+                commit('addError', err)
+            }
+            
+        } finally {
+            commit('setLoading', false)
+        }
+    }
   }
 }

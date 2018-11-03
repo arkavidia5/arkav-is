@@ -21,23 +21,37 @@ class StageSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'name', 'order')
 
 
+class TeamMemberSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
+    name = serializers.CharField(source='user.full_name', read_only=True)
+    id = serializers.IntegerField(source='user.id', read_only=True)
+    user_active = serializers.BooleanField(source='user.is_active', read_only=True)
+    class Meta:
+        model = TeamMember
+        fields = ('id', 'email', 'name', 'is_approved', 'created_at', 'user_active')
+        read_only_fields = ('id','email', 'name', 'created_at', 'user_active')
+
+
+
 class TeamSerializer(serializers.ModelSerializer):
     competition = CompetitionSerializer(read_only=True)
+    joined_at = serializers.SerializerMethodField()
+
+
+    def get_joined_at(self, instance):
+        current_user = self.context['request'].user
+        if current_user.is_authenticated:
+            try:
+                return TeamMember.objects.get(team=instance, user=current_user).created_at
+            except TeamMember.DoesNotExist:
+                return None
+        else:
+            return None
 
     class Meta:
         model = Team
-        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader')
-        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader')
-
-
-class TeamMemberSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', read_only=True)
-    name = serializers.CharField(source='user.get_full_name', read_only=True)
-
-    class Meta:
-        model = TeamMember
-        fields = ('username', 'name', 'is_approved', 'created_at')
-        read_only_fields = ('username', 'name', 'created_at')
+        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader', 'joined_at')
+        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader', 'joined_at')
 
 
 class TaskResponseSerializer(serializers.ModelSerializer):
@@ -59,11 +73,11 @@ class TeamDetailsSerializer(TeamSerializer):
     class Meta:
         model = Team
         fields = (
-            'id', 'competition', 'name', 'secret_code', 'is_participating', 'joined_at', 'created_at',
+            'id', 'competition', 'name', 'secret_code', 'is_participating', 'created_at',
             'team_members', 'active_stage_id', 'stages', 'task_responses', 'team_leader'
         )
         read_only_fields = (
-            'id', 'competition', 'secret_code', 'is_participating', 'joined_at', 'created_at',
+            'id', 'competition', 'secret_code', 'is_participating', 'created_at',
             'team_members', 'active_stage_id', 'stages', 'task_responses'
         )
 

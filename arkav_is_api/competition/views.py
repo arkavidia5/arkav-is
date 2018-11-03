@@ -92,7 +92,7 @@ class RegisterTeamView(views.APIView):
                 )
 
                 for member in members:
-                    TeamMember.objects.create(team=new_team, user=member, is_approved=False)
+                    TeamMember.objects.create(team=new_team, user=member, is_approved=True)
 
                 response_serializer = TeamSerializer(new_team)
                 return Response(data=response_serializer.data)

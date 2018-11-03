@@ -7,7 +7,7 @@
         </header>
         <v-layout row wrap>
           <v-flex md3 sm4 xs12 pa-4 ma-1 elevation-1 v-for="item in teams" :key="`teams-${item.id}`">
-            <router-link class="no-decoration" :to="`/team/${item.id}`">
+            <router-link class="no-decoration" :to="`/teams/${item.id}`">
               <v-layout row justify-center>
                 <img :src="item.competition.view_icon" alt="" height=60>
               </v-layout>

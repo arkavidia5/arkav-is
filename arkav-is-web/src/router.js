@@ -24,8 +24,8 @@ export default new Router({
           component: Dashboard
         },
         {
-          path: 'teams',
-          name: 'teams',
+          path: 'teams/:id',
+          name: 'team',
           component: TeamPage,
         },
         {
