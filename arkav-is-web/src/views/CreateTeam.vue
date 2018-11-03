@@ -129,7 +129,8 @@ export default {
                 name: this.name,
                 category: this.category,
                 school: this.school,
-                members: this.members
+                members: this.members,
+                router: this.$router
             })
         }
     }, 

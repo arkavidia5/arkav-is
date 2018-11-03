@@ -20,7 +20,7 @@ export default {
     },
   },
   actions: {
-    async submitTeam({ commit }, {competition, name, category, school, members}) {
+    async submitTeam({ commit }, {router, competition, name, category, school, members}) {
       try {
         commit('setLoading', true)
         commit('clearError')
@@ -29,7 +29,6 @@ export default {
             throw 'Pastikan seluruh data terisi'
         }
         let categories = competition.categories.map(a => a.name)
-        console.log(category)
         if(!(categories.includes(category))) {
             throw 'Kategori tidak sesuai'
         }
@@ -48,8 +47,8 @@ export default {
             team_school: school,
             members: members
         };
-        console.log(postData)
         let response = await api.post('/competitions/register-team/', postData, {ignoreUnauthorizedError: false})
+        router.push({name: 'dashboard'})
       } catch (err) {
           if(err.response) {
               commit('addError', err.response.data)

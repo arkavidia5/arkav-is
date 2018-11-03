@@ -76,7 +76,8 @@ class RegisterTeamView(views.APIView):
                         code='competition_already_registered',
                         detail='Team name already taken'
                     )
-                if Team.objects.get(team_leader__email=request_members[0]['email']):
+               
+                if Team.objects.filter(team_leader__email=request_members[0]['email']).exists():
                     raise ValidationError(
                         code='competition_already_registered',
                         detail='Each user can only lead one team'
@@ -87,7 +88,7 @@ class RegisterTeamView(views.APIView):
                     name=team_name,
                     category= team_category,
                     school= team_school,
-                    team_leader= member[0]
+                    team_leader= members[0]
                 )
 
                 for member in members:
