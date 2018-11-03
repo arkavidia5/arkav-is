@@ -36,7 +36,14 @@ export default {
                 throw 'Pastikan seluruh data valid'
             }
         });
-        let response = await api.post('/register-team/', {competition}, { ignoreUnauthorizedError: true })
+        let postData = {
+            competition_id: competition.id,
+            team_name: name,
+            team_category: category,
+            team_school: school,
+            members: members
+        };
+        let response = await api.post('/competitions/register-team/', postData, {ignoreUnauthorizedError: false})
       } catch (err) {
         commit('addError', err)
       } finally {

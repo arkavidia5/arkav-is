@@ -23,33 +23,11 @@ class StageSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     competition = CompetitionSerializer(read_only=True)
-    is_approved_team_member = serializers.SerializerMethodField()
-    joined_at = serializers.SerializerMethodField()
-
-    def get_is_approved_team_member(self, instance):
-        current_user = self.context['request'].user
-        if current_user.is_authenticated:
-            try:
-                return TeamMember.objects.get(team=instance, user=current_user).is_approved
-            except TeamMember.DoesNotExist:
-                return False
-        else:
-            return False
-
-    def get_joined_at(self, instance):
-        current_user = self.context['request'].user
-        if current_user.is_authenticated:
-            try:
-                return TeamMember.objects.get(team=instance, user=current_user).created_at
-            except TeamMember.DoesNotExist:
-                return None
-        else:
-            return None
 
     class Meta:
         model = Team
-        fields = ('id', 'competition', 'name', 'is_participating', 'is_approved_team_member', 'joined_at', 'team_leader')
-        read_only_fields = ('id', 'competition', 'is_participating', 'is_approved_team_member', 'joined_at', 'team_leader')
+        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader')
+        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader')
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -89,10 +67,15 @@ class TeamDetailsSerializer(TeamSerializer):
             'team_members', 'active_stage_id', 'stages', 'task_responses'
         )
 
-
+class RegisterTeamMemberRequestSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=50)
+    email = serializers.EmailField()
 class RegisterTeamRequestSerializer(serializers.Serializer):
     competition_id = serializers.PrimaryKeyRelatedField(queryset=Competition.objects.all())
     team_name = serializers.CharField(max_length=50, min_length=3)
+    team_category = serializers.CharField(max_length=50)
+    team_school = serializers.CharField(max_length=30)
+    members = RegisterTeamMemberRequestSerializer(many=True)
 
 
 class JoinTeamRequestSerializer(serializers.Serializer):

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
-
+from arkav_is_api.arkavauth.models import User
 # TODO: fix to use proper Django setting import
 from arkav_is_api.settings import S3_BUCKET_BASE_URL, UPLOAD_DIR, S3_BUCKET_NAME
 
@@ -48,20 +48,39 @@ class RegisterTeamView(views.APIView):
         request_serializer.is_valid(raise_exception=True)
         competition = request_serializer.validated_data['competition_id']
         team_name = request_serializer.validated_data['team_name']
-
+        team_category = request_serializer.validated_data['team_category']
+        team_school = request_serializer.validated_data['team_school']
+        request_members = request_serializer.validated_data['members']
+        members = []
         # Only register if registration is open for this competition
         if competition.is_registration_open:
             with transaction.atomic():
+                #Create a new User if registered user does not exist
+                for member in request_members:
+                    if User.objects.filter(email=member['email']).exists():
+                        user = User.objects.get(email=member['email'])
+                        members.append(user)
+                    else:
+                        user = User.objects.create_user(email=member['email'], password=None, full_name=member['name'], is_active=False)
+                        members.append(user)
                 # A user can't register in a competition if he/she already participated in the same competition
-                if TeamMember.objects.filter(team__competition=competition, user=request.user).exists():
-                    raise ValidationError(
-                        code='competition_already_registered',
-                        detail='You can only participate in one team per competition.',
-                    )
-
+                for member in members:
+                    if TeamMember.objects.filter(team__competition=competition, user=member).exists():
+                        raise ValidationError(
+                            code='competition_already_registered',
+                            detail='One user can only participate in one team per competition.',
+                        )
                 # Create a new team and add the current user as an approved member to the team
-                new_team = Team.objects.create(competition=competition, name=team_name)
-                TeamMember.objects.create(team=new_team, user=request.user, is_approved=True)
+                new_team = Team.objects.create(
+                    competition=competition, 
+                    name=team_name,
+                    category= team_category,
+                    school= team_school,
+                    team_leader = members[0]
+                )
+                
+                for member in members:
+                    TeamMember.objects.create(team=new_team, user=member, is_approved=False)
 
                 response_serializer = TeamSerializer(new_team)
                 return Response(data=response_serializer.data)

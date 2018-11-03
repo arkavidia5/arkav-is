@@ -49,7 +49,7 @@
       }),
     },
     beforeMount() {
-      this.getCompetitions()
+      this.getTeams()
     }
   }
 </script>
