@@ -33,6 +33,10 @@ class EmailConfirmationAttemptSerializer(serializers.Serializer):
     token = serializers.CharField()
 
 
+class TryPasswordResetAttemptSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
 class PasswordResetAttemptSerializer(serializers.Serializer):
     token = serializers.CharField()
     password = serializers.CharField()

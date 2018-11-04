@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import { requireLogin, requireGuest } from './guards.js'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
+import ForgotPassword from './views/ForgotPassword'
+import ResetPassword from './views/ResetPassword'
 import TeamPage from './views/TeamPage.vue'
 import Dashboard from './views/Dashboard.vue'
 import Register from './views/Register.vue'
@@ -45,6 +47,18 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: Register,
+      beforeEnter: requireGuest
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPassword,
+      beforeEnter: requireGuest
+    },
+    {
+      path: '/reset-password/:token',
+      name: 'reset-password',
+      component: ResetPassword,
       beforeEnter: requireGuest
     }
   ]
