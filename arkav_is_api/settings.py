@@ -137,3 +137,11 @@ STATIC_URL = '/static/'
 S3_BUCKET_NAME = ""
 S3_BUCKET_BASE_URL = ""
 UPLOAD_DIR = "temp"
+
+# SendGrid settings
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'arkavidia'
+EMAIL_HOST_PASSWORD = 'Arkavidia@2019'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
