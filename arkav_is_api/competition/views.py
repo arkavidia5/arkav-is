@@ -188,7 +188,7 @@ class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView)
 class SubmitTaskResponseView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request,  format=None,*args, **kwargs):
         # Only approved team members can submit a response
         team = get_object_or_404(
             Team.objects.all(),
@@ -223,10 +223,10 @@ class SubmitTaskResponseView(views.APIView):
                     'response': response,
                     'status': task_response_status,
                     'last_submitted_at': timezone.now(),
-                },
+                }
             )
 
-            response_serializer = TaskResponseSerializer(new_task_response)
+            response_serializer = TaskResponseSerializer(new_task_response[0])
             return Response(data=response_serializer.data)
         else:
             raise ValidationError(
@@ -259,7 +259,7 @@ class FileView(views.APIView):
 
     def post(self, request, slug=None, format=None):
         uploaded_file = request.data['file']
-        filename = request.data['filename']
+        filename = request.user.email+'_'+request.data['filename']
         with open(f'{UPLOAD_DIR}/{filename}', 'wb') as f:
             for chunk in uploaded_file.chunks():
                 f.write(chunk)

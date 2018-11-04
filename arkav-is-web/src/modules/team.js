@@ -6,6 +6,7 @@ export default {
     errors: [],
     loading: false,
     team: '',
+    saving: false,
   },
   mutations: {
     addError(state, message) {
@@ -20,6 +21,9 @@ export default {
     setLoading(state, isLoading) {
       state.loading = isLoading
     },
+    setSaving(state, isSaving) {
+        state.saving = isSaving
+    }
   },
   actions: {
     async submitTeam({ commit }, {router, competition, name, category, school, members}) {
@@ -49,7 +53,7 @@ export default {
             team_school: school,
             members: members
         };
-        let response = await api.post('/competitions/register-team/', postData, {ignoreUnauthorizedError: false})
+        let response = await api.post('/competitions/register-team/', postData, {ignoreUnauthorizedError: false});
         router.push({name: 'dashboard'})
       } catch (err) {
           if(err.response) {
@@ -65,17 +69,41 @@ export default {
     async getTeam({commit}, {team_id}) {
         try {
             commit('setLoading', true)
+
             let response  = await api.get('/competitions/teams/'+team_id+'/');
             commit('setTeam', response.data)
         } catch (err) {
-            if(err.response) {
-                commit('addError', err.response.data)
-            } else {
-                commit('addError', err)
-            }
-            
+           commit('addError',err)
         } finally {
             commit('setLoading', false)
+        }
+    },
+    async submitTask({commit}, {task, data}) {
+        try {
+            commit('setSaving', true)
+            let team = this.state.team.team
+            if(task.widget == 'file_upload') {                
+                let filename = team.id+"_"+team.name+"_"+data.name
+                let formData = new FormData();
+                formData.append('file' , data);
+                formData.append('filename', filename)
+                let file_response = await api.post('file/', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                data = file_response.data.slug
+            }
+            let postData = {
+                "team_id": team.id,
+                "response": data
+            }
+            let response = await api.post('competitions/teams/'+team.id+'/tasks/'+task.id+'/', postData)
+            console.log(response)            
+        } catch (err) {
+            commit('addError', err)
+        } finally {
+            commit('setSaving', false)
         }
     }
   }

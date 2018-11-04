@@ -27,6 +27,6 @@ urlpatterns = [
     path('api/competitions/', include('arkav_is_api.competition.urls')),
 
     # File upload routes
-    path('file/', FileView.as_view()),
+    path('api/file/', FileView.as_view()),
     path('file/<str:slug>/', FileView.as_view()),
 ]

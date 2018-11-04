@@ -136,4 +136,4 @@ STATIC_URL = '/static/'
 
 S3_BUCKET_NAME = ""
 S3_BUCKET_BASE_URL = ""
-UPLOAD_DIR = "temp"
+UPLOAD_DIR = os.path.join(BASE_DIR, 'files/')

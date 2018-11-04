@@ -137,6 +137,7 @@ ehthumbs_vista.db
 
 # Temporary files
 temp/*
-
+files/*
+!files/.gitkeep
 # PyCharm
 .idea

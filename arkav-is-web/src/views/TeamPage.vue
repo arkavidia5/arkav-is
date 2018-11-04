@@ -62,7 +62,7 @@
               {{task.widget_parameters}}
             </div>
             <v-flex>
-              <Widget :type="task.widget" />
+              <Widget :task="task" />
             </v-flex>
           </v-flex>
         </section>
@@ -71,11 +71,16 @@
 
 
   </v-card>
-  <v-layout v-else row justify-center>
+  <v-layout v-else-if="loading" row justify-center>
      <v-progress-circular
       indeterminate
       color="primary"
     ></v-progress-circular>
+  </v-layout>
+  <v-layout v-else-if="errors">
+      <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
+        {{error}}
+      </v-alert>
   </v-layout>
 </template>
 
@@ -101,7 +106,7 @@
       },
       ...mapState({
         loading: state => state.team.loading,
-        error: state => state.team.errors,
+        errors: state => state.team.errors,
         team: state => state.team.team,
       }),
     },
@@ -124,7 +129,7 @@
         return tasks
       }
     },
-    beforeMount() {  
+    mounted() { 
       this.getTeam({
         team_id: this.team_id
       })
