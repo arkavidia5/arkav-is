@@ -11,6 +11,7 @@ from .serializers import (
     LoginRequestSerializer,
     RegistrationRequestSerializer,
     EmailConfirmationAttemptSerializer,
+    TryPasswordResetAttemptSerializer,
     PasswordResetAttemptSerializer,
 )
 
@@ -114,10 +115,10 @@ class EmailConfirmationAttemptView(views.APIView):
         attempt = EmailConfirmationAttempt.objects.filter(token=token).first()
 
         if attempt is None:
-            return Response(data={'status': 'wrong token'}, status=400)
+            return Response(data={'status': 'Invalid token.'}, status=400)
 
         if attempt.confirmed or attempt.user.email_confirmed:
-            return Response(data={'status': 'already confirmed'}, status=400)
+            return Response(data={'status': 'Email has been confirmed.'}, status=400)
 
         attempt.confirm()
 
@@ -127,12 +128,17 @@ class EmailConfirmationAttemptView(views.APIView):
 class TryPasswordResetAttemptView(views.APIView):
 
     def post(self, request):
-        user = request.user
+        request_serializer = TryPasswordResetAttemptSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
 
-        attempt, _ = PasswordResetAttempt.objects.get_or_create(user=user)
-        attempt.generate_new_token()
-        attempt.send_email()
-        attempt.save()
+        email = request_serializer.validated_data['email']
+        user = User.objects.filter(email=email).first()
+
+        if user is not None:
+            attempt, _ = PasswordResetAttempt.objects.get_or_create(user=user)
+            attempt.generate_new_token()
+            attempt.send_email()
+            attempt.save()
 
         return Response(data={'status': 'ok'})
 
@@ -145,12 +151,12 @@ class PasswordResetAttemptView(views.APIView):
 
         token = request_serializer.validated_data['token']
 
-        attempt = PasswordResetAttempt.objects.get(token=token)
+        attempt = PasswordResetAttempt.objects.filter(token=token).first()
 
         if attempt is None or attempt.used:
-            return Response(data={'status': 'wrong token'}, status=400)
+            return Response(data={'status': 'Invalid token.'}, status=400)
 
-        user = request.user
+        user = attempt.user
         with transaction.atomic():
             attempt.used = True
             attempt.save()
@@ -158,4 +164,4 @@ class PasswordResetAttemptView(views.APIView):
             user.set_password(request_serializer.validated_data['password'])
             user.save()
 
-        return Response(data={'status': 'reseted'})
+        return Response(data={'status': 'Reseted.'})

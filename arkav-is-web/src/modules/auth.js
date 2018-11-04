@@ -4,6 +4,7 @@ export default {
   namespaced: true,
   state: {
     errors: [],
+    messages: [],
     loading: false,
     user: null,
     loginRedirect: null,
@@ -16,6 +17,9 @@ export default {
   mutations: {
     addError(state, message) {
       state.errors.push(message + '')
+    },
+    addMessage(state, message) {
+      state.messages.push(message + '')
     },
     clearError(state) {
       state.errors = []
@@ -74,6 +78,42 @@ export default {
         location.reload(true)
       } catch (err) {
         commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async tryResetPassword({ commit }, { email }) {
+      try {
+        commit('setLoading', true)
+        commit('clearError')
+        let response = await api.post('/auth/try-reset-password/', { email }, { ignoreUnauthorizedError: true })
+
+        commit('addMessage', [response.data.status])
+      } catch (err) {
+        if (err.response.data.email) {
+          // if email is invalid
+          commit('addError', err.response.data.email)
+        } else {
+          commit('addError', err)
+        }
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async resetPassword({ commit }, { password, token }) {
+      try {
+        commit('setLoading', true)
+        commit('clearError')
+        let response = await api.post('/auth/reset-password/', { password, token }, { ignoreUnauthorizedError: true })
+
+        commit('addMessage', [response.data.status])
+      } catch (err) {
+        if (err.response.data.status) {
+          // if email is invalid
+          commit('addError', err.response.data.status)
+        } else {
+          commit('addError', err)
+        }
       } finally {
         commit('setLoading', false)
       }
