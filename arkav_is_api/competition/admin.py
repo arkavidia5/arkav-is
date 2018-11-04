@@ -6,7 +6,9 @@ from .models import (
     Team,
     TeamMember,
     TaskResponse,
-    CompetitionCategory
+    CompetitionCategory,
+    TaskCategory,
+    TaskWidget,
 )
 
 
@@ -90,5 +92,15 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(CompetitionCategory)
 class CompetitionCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    list_display_links = ['name']
+
+@admin.register(TaskCategory)
+class TaskCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    list_display_links = ['name']
+
+@admin.register(TaskWidget)
+class TaskWidgetAdmin(admin.ModelAdmin):
     list_display = ['name']
     list_display_links = ['name']
