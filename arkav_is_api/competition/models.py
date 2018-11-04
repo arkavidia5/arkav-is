@@ -220,3 +220,4 @@ class TaskResponse(models.Model):
 class File(models.Model):
     slug = models.CharField(default=generate_random_str, max_length=30)
     filename = models.CharField(max_length=30)
+    content_type = models.CharField(max_length=30)

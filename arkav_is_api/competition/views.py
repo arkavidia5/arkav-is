@@ -2,12 +2,14 @@ import boto3
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.http import HttpResponse
 from rest_framework import status, generics, views
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from arkav_is_api.arkavauth.models import User
+from .models import generate_random_str
 # TODO: fix to use proper Django setting import
 from arkav_is_api.settings import S3_BUCKET_BASE_URL, UPLOAD_DIR, S3_BUCKET_NAME
 
@@ -244,27 +246,25 @@ class FileView(views.APIView):
 
     def get(self, request, slug=None, format=None):
         try:
-            File.objects.get(slug=slug)
+            file = File.objects.get(slug=slug)
+            return HttpResponse(open(f'{UPLOAD_DIR}/{file.filename}', 'rb'),content_type=file.content_type)
         except File.DoesNotExist:
             data = {
                 "error": "File Not Found"
             }
             return Response(data, status=status.HTTP_404_NOT_FOUND)
-
-        data = {
-            "url": f"{S3_BUCKET_BASE_URL}/{slug}"
-        }
-
-        return Response(data)
+    
+        
 
     def post(self, request, slug=None, format=None):
         uploaded_file = request.data['file']
         filename = request.user.email+'_'+request.data['filename']
+        
         with open(f'{UPLOAD_DIR}/{filename}', 'wb') as f:
             for chunk in uploaded_file.chunks():
                 f.write(chunk)
 
-        file = File(filename=filename)
+        file = File(filename=filename, content_type = uploaded_file.content_type)
         file.save()
 
         # self.upload_to_s3(filename, file.slug)
