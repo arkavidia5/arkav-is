@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User
+from .models import User, EmailConfirmationAttempt, PasswordResetAttempt
 
 
 @admin.register(User)
@@ -22,6 +22,16 @@ class UserAdmin(DjangoUserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    list_display = ('email', 'full_name', 'is_staff')
+    list_display = ('email', 'full_name', 'is_staff', 'is_active')
     search_fields = ('email', 'full_name')
     ordering = ('email',)
+
+
+@admin.register(EmailConfirmationAttempt)
+class EmailConfirmationAttemptAdmin(admin.ModelAdmin):
+    list_display = ('user', 'confirmed')
+
+
+@admin.register(PasswordResetAttempt)
+class PasswordResetAttemptAdmin(admin.ModelAdmin):
+    list_display = ('user', 'used')

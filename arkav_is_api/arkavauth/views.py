@@ -1,15 +1,17 @@
-from rest_framework import permissions, status
+from rest_framework import permissions, status, views
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
-from .models import User
+from .models import User, EmailConfirmationAttempt, PasswordResetAttempt
 from .serializers import (
     UserSerializer,
     LoginRequestSerializer,
     RegistrationRequestSerializer,
+    EmailConfirmationAttemptSerializer,
+    PasswordResetAttemptSerializer,
 )
 
 
@@ -76,7 +78,7 @@ def registration_view(request):
         user = User.objects.create_user(
             email=request_serializer.validated_data['email'],
             password=request_serializer.validated_data['password'],
-            full_name = request_serializer.validated_data['full_name'],
+            full_name=request_serializer.validated_data['full_name'],
         )
         user.save()
 
@@ -84,3 +86,76 @@ def registration_view(request):
     login(request, user)
     response_serializer = UserSerializer(request.user)
     return Response(data=response_serializer.data)
+
+
+class TryEmailConfirmationAttemptView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        user = request.user
+
+        if user.email_confirmed:
+            return Response(data={'status': 'already confirmed'}, status=400)
+
+        attempt, _ = EmailConfirmationAttempt.objects.get_or_create(user=user)
+        attempt.send_email()
+
+        return Response(data={'status': 'ok', 'token': attempt.token})
+
+
+class EmailConfirmationAttemptView(views.APIView):
+
+    def post(self, request):
+        request_serializer = EmailConfirmationAttemptSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        token = request_serializer.validated_data['token']
+
+        attempt = EmailConfirmationAttempt.objects.filter(token=token).first()
+
+        if attempt is None:
+            return Response(data={'status': 'wrong token'}, status=400)
+
+        if attempt.confirmed or attempt.user.email_confirmed:
+            return Response(data={'status': 'already confirmed'}, status=400)
+
+        attempt.confirm()
+
+        return Response(data={'status': 'confirmed'})
+
+
+class TryPasswordResetAttemptView(views.APIView):
+
+    def post(self, request):
+        user = request.user
+
+        attempt, _ = PasswordResetAttempt.objects.get_or_create(user=user)
+        attempt.generate_new_token()
+        attempt.send_email()
+        attempt.save()
+
+        return Response(data={'status': 'ok'})
+
+
+class PasswordResetAttemptView(views.APIView):
+
+    def post(self, request):
+        request_serializer = PasswordResetAttemptSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        token = request_serializer.validated_data['token']
+
+        attempt = PasswordResetAttempt.objects.get(token=token)
+
+        if attempt is None or attempt.used:
+            return Response(data={'status': 'wrong token'}, status=400)
+
+        user = request.user
+        with transaction.atomic():
+            attempt.used = True
+            attempt.save()
+
+            user.set_password(request_serializer.validated_data['password'])
+            user.save()
+
+        return Response(data={'status': 'reseted'})

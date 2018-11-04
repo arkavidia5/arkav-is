@@ -26,9 +26,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'z4z#u2gmm(+3^!$7b^kc3ijq8p3o&&hekk#^7er2o5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = strtobool(os.getenv('DEBUG', 'False'))
 ALLOWED_HOSTS = [
-	'dashboard.arkavidia.id',
-	'arkavidia.id',
-	'localhost',
+    'dashboard.arkavidia.id',
+    'arkavidia.id',
+    'localhost',
 ]
 
 
@@ -82,10 +82,9 @@ WSGI_APPLICATION = 'arkav_is_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-DATABASES= {
-    'default': dj_database_url.config(default="sqlite:///"+os.path.join(BASE_DIR,'db.sqlite3')),
+DATABASES = {
+    'default': dj_database_url.config(default="sqlite:///" + os.path.join(BASE_DIR, 'db.sqlite3')),
 }
-
 
 
 # Password validation
@@ -138,4 +137,13 @@ STATIC_URL = "https://static.arkavidia.id/5/django/"
 S3_BUCKET_NAME = ""
 S3_BUCKET_BASE_URL = ""
 UPLOAD_DIR = os.path.join(BASE_DIR, 'files/')
-STATIC_ROOT= os.path.join(BASE_DIR,'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+UPLOAD_DIR = "temp"
+
+# SendGrid settings
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'arkavidia'
+EMAIL_HOST_PASSWORD = 'Arkavidia@2019'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

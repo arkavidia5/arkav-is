@@ -1,6 +1,13 @@
+from string import ascii_letters
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.mail import send_mail
 from django.db import models
+from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
+
+
+def generate_random_str(length=30):
+    return get_random_string(length, allowed_chars=ascii_letters)
 
 
 class UserManager(BaseUserManager):
@@ -45,8 +52,70 @@ class User(AbstractUser):
     last_name = None
     full_name = models.CharField(max_length=75)
     email = models.EmailField(_('email address'), unique=True)
+    email_confirmed = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+
+class EmailConfirmationAttempt(models.Model):
+    """
+    An attempt to confirm email
+    """
+    user = models.OneToOneField(to=User, related_name='email_confirmation_attempt', on_delete=models.CASCADE)
+    token = models.CharField(max_length=30, default=generate_random_str)
+    confirmed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.user)
+
+    def send_email(self):
+        link = 'https://arkavidia.id/confirm-email/%s' % (self.token)
+
+        mail_subject = 'Email Confirmation'
+        mail_message = 'One last step to use your account!'
+        mail_from = 'Arkavidia 5 <noreply@arkavidia.id>'
+        mail_to = self.user.email
+        # TODO: make good html message
+        mail_html_message = 'Click <a href="%s"> here </a> to confirm your password' % (link)
+
+        send_mail(mail_subject, mail_message, mail_from, [mail_to], html_message=mail_html_message, fail_silently=False)
+
+    def confirm(self):
+        self.confirmed = True
+        self.save()
+
+        user = self.user
+        user.email_confirmed = True
+        user.save()
+
+
+class PasswordResetAttempt(models.Model):
+    """
+    An attempt to reset password.
+    """
+    user = models.OneToOneField(to=User, related_name='password_reset_attempt', on_delete=models.CASCADE)
+    token = models.CharField(max_length=30, default=generate_random_str)
+    used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.user)
+
+    def generate_new_token(self):
+        self.token = generate_random_str()
+        self.used = False
+        self.save()
+
+    def send_email(self):
+        link = 'https://arkavidia.id/reset-password/%s' % (self.token)
+
+        mail_subject = 'Password Reset'
+        mail_message = 'Reset your password'
+        mail_from = 'Arkavidia 5 <noreply@arkavidia.id>'
+        mail_to = self.user.email
+        # TODO: make good html message
+        mail_html_message = 'Click <a href="%s"> here </a> to reset your password' % (link)
+
+        send_mail(mail_subject, mail_message, mail_from, [mail_to], html_message=mail_html_message, fail_silently=False)
