@@ -108,5 +108,5 @@ class JoinTeamRequestSerializer(serializers.Serializer):
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
-        fields = ('id', 'slug','url')
+        fields = ('id', 'slug')
 

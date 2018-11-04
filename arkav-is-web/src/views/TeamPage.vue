@@ -33,7 +33,13 @@
           </v-subheader>
           <v-list-tile v-for="task in stage.tasks" @click="activateTask(task.id)">
             <v-list-tile-action>
-              <v-icon>radio_button_unchecked</v-icon>
+              <v-icon v-if="!getTaskResponse(task.id)">radio_button_unchecked</v-icon>
+              <v-flex v-if="resp = getTaskResponse(task.id)">
+              <v-icon v-if="resp.status == 'completed'" class="green--text">check_circle</v-icon>
+              <v-icon v-if="resp.status == 'awaiting_validation'" class="amber--text">hourglass_full</v-icon>
+              <v-icon v-if="resp.status == 'rejected'" class="red--text">error</v-icon>
+              </v-flex>
+              
             </v-list-tile-action>
             <v-list-tile-title class="body-2">
               {{task.name}}
@@ -56,7 +62,7 @@
                 </v-list-tile-content>
             </v-list>
           </v-flex>
-          <v-flex v-for="task in getTasks()" v-if="activeTask == task.id">
+          <v-flex v-for="task in getTasks()" v-if="activeTask == task.id" :key="`task-${task.id}`">
             <h2>{{task.name}}</h2>
             <div>
               {{task.widget_parameters}}
@@ -64,6 +70,19 @@
             <v-flex>
               <Widget :task="task" />
             </v-flex>
+            <div v-if="response = getTaskResponse(task.id)">
+              <h2>Submission</h2>
+              <v-flex v-if="task.widget === 'file_upload'">
+                <a :href="`/file/${response.response}/`" class="no-decoration" target="_blank">
+                  <v-btn color="info">
+                    <v-icon>launch</v-icon>
+                    Uploaded File
+                  </v-btn>
+                </a>
+                  Submitted: {{getFormattedDate(response.last_submitted_at)}}
+
+              </v-flex>
+            </div>
           </v-flex>
         </section>
       </v-slide-x-transition>
@@ -88,6 +107,7 @@
   import TaskSidebar from '../components/TaskSidebar.vue'
   import Widget from '../components/Widget.vue'
   import {mapState, mapActions} from 'vuex'
+  import moment from 'moment'
   export default {
     components: {
       TaskSidebar,
@@ -127,6 +147,12 @@
           }
         }
         return tasks
+      },
+      getTaskResponse: function(task_id) {
+        return this.team.task_responses.find(obj =>{return obj.task_id === task_id})
+      },
+      getFormattedDate: function(time) {
+        return moment(time).format('MMMM Do YYYY, hh:mm:ss');
       }
     },
     mounted() { 

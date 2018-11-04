@@ -99,7 +99,7 @@ export default {
                 "response": data
             }
             let response = await api.post('competitions/teams/'+team.id+'/tasks/'+task.id+'/', postData)
-            console.log(response)            
+            location.reload(true)
         } catch (err) {
             commit('addError', err)
         } finally {
