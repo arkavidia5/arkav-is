@@ -15,7 +15,7 @@
 
     <div class="task-container">
       <!-- TODO: when any of the menu items in task sidebar is pressed, set sidebarActive = false-->
-      <TaskSidebar class="task-sidebar grey lighten-4 px-2" :visible="!shouldCollapseSidebar || sidebarActive" >
+      <TaskSidebar class="task-sidebar grey lighten-4 px-2" :visible="!shouldCollapseSidebar || sidebarActive"  style="min-height:400px">
           <v-list class="transparent">
         <v-subheader class="text-uppercase">Informasi Tim</v-subheader>
     
