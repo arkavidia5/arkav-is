@@ -43,23 +43,11 @@ class TeamMemberSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     competition = CompetitionSerializer(read_only=True)
-    joined_at = serializers.SerializerMethodField()
-
-
-    def get_joined_at(self, instance):
-        current_user = self.context['request'].user
-        if current_user.is_authenticated:
-            try:
-                return TeamMember.objects.get(team=instance, user=current_user).created_at
-            except TeamMember.DoesNotExist:
-                return None
-        else:
-            return None
 
     class Meta:
         model = Team
-        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader', 'joined_at')
-        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader', 'joined_at')
+        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader')
+        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader')
 
 
 class TaskResponseSerializer(serializers.ModelSerializer):
