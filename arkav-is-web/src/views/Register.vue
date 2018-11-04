@@ -54,7 +54,6 @@
     data: () => ({
       first_name: '',
       last_name: '',
-      username: '',
       email: '',
       password: '',
       confirm_password: '',

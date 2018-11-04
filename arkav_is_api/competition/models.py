@@ -16,13 +16,17 @@ def generate_team_secret_code():
     """
     return get_random_string(length=6, allowed_chars=ascii_uppercase + digits)
 
+
 class CompetitionCategory(models.Model):
     name = models.CharField(max_length=50, default='')
+
     def __str__(self):
-        return self.name 
+        return self.name
+
     class Meta:
-        verbose_name = "Competition Category"
-        verbose_name_plural = "Competition Categories"
+        verbose_name = "competition category"
+        verbose_name_plural = "competition categories"
+
 
 class Competition(models.Model):
     name = models.CharField(max_length=50)
@@ -31,6 +35,7 @@ class Competition(models.Model):
     categories = models.ManyToManyField(CompetitionCategory)
     is_registration_open = models.BooleanField(default=True)
     view_icon = models.URLField(default='')
+
     def __str__(self):
         return self.name
 
@@ -107,7 +112,7 @@ class Team(models.Model):
     school = models.CharField(max_length=50, unique=False)
     secret_code = models.CharField(max_length=20, default=generate_team_secret_code, unique=True)
     members = models.ManyToManyField(to=User, related_name='teams', through='TeamMember')
-    team_leader = models.OneToOneField(to=User, related_name='team_leader',on_delete=models.PROTECT)
+    team_leader = models.OneToOneField(to=User, related_name='team_leader', on_delete=models.PROTECT)
     active_stage = models.ForeignKey(to=Stage, related_name='active_teams', on_delete=models.PROTECT)
     is_participating = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -169,7 +174,7 @@ class TeamMember(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s - %s' % (self.team.name, self.user.username)
+        return '%s - %s' % (self.team.name, self.user.email)
 
     class Meta:
         unique_together = (('team', 'user'),)  # Each team-user pair must be unique
@@ -215,9 +220,3 @@ class TaskResponse(models.Model):
     class Meta:
         unique_together = (('task', 'team'),)  # Each team can only have at most 1 task response per task
         get_latest_by = 'created_at'
-
-
-class File(models.Model):
-    slug = models.CharField(default=generate_random_str, max_length=30)
-    filename = models.CharField(max_length=120)
-    content_type = models.CharField(max_length=30)

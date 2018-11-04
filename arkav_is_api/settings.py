@@ -42,9 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
+    'arkav_is_api.arkavauth',
+    'arkav_is_api.uploader',
     'arkav_is_api.competition',
-    'arkav_is_api.arkavauth'
 ]
 AUTH_USER_MODEL = 'arkavauth.User'
 

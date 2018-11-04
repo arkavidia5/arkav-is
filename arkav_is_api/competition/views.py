@@ -19,7 +19,6 @@ from .models import (
     TeamMember,
     Task,
     TaskResponse,
-    File,
 )
 from .serializers import (
     CompetitionSerializer,
@@ -29,7 +28,6 @@ from .serializers import (
     TeamDetailsSerializer,
     TeamMemberSerializer,
     TaskResponseSerializer,
-    FileSerializer,
 )
 
 # TODO: tests
@@ -147,6 +145,7 @@ class JoinTeamView(views.APIView):
 class ListTeamsView(generics.ListAPIView):
         serializer_class = TeamSerializer
         permission_classes = (IsAuthenticated,)
+
         def get_queryset(self):
             return Team.objects.filter(team_members__user__email__in=[self.request.user])
 
@@ -181,7 +180,7 @@ class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView)
         instance = get_object_or_404(
             self.get_queryset(),
             team__id=self.kwargs['team_id'],
-            user__username=self.kwargs['username'],
+            user__email=self.kwargs['email'],
         )
         self.check_object_permissions(self.request, instance)
         return instance
@@ -235,43 +234,3 @@ class SubmitTaskResponseView(views.APIView):
                 code='team_not_participating',
                 detail='Your team is no longer participating in this competition.',
             )
-
-
-# TODO: move to separate app/package
-class FileView(views.APIView):
-    """
-    Get file URL or upload a file
-    """
-    renderer_classes = (JSONRenderer,)
-
-    def get(self, request, slug=None, format=None):
-        try:
-            file = File.objects.get(slug=slug)
-            return HttpResponse(open(f'{UPLOAD_DIR}/{file.filename}', 'rb'),content_type=file.content_type)
-        except File.DoesNotExist:
-            data = {
-                "error": "File Not Found"
-            }
-            return Response(data, status=status.HTTP_404_NOT_FOUND)
-    
-        
-
-    def post(self, request, slug=None, format=None):
-        uploaded_file = request.data['file']
-        filename = request.user.email+'_'+request.data['filename']
-        
-        with open(f'{UPLOAD_DIR}/{filename}', 'wb') as f:
-            for chunk in uploaded_file.chunks():
-                f.write(chunk)
-
-        file = File(filename=filename, content_type = uploaded_file.content_type)
-        file.save()
-
-        # self.upload_to_s3(filename, file.slug)
-        data = FileSerializer(file).data
-
-        return Response(data)
-
-    def upload_to_s3(self, filename, slug):
-        s3 = boto3.client("s3")
-        s3.upload_file(f"{UPLOAD_DIR}/{filename}", S3_BUCKET_NAME, slug)

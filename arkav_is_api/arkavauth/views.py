@@ -47,7 +47,7 @@ def login_view(request):
         return Response(
             {
                 'code': 'login_failed',
-                'detail': 'Wrong username or password.',
+                'detail': 'Wrong email or password.',
             },
             status=status.HTTP_401_UNAUTHORIZED,
         )
@@ -76,7 +76,7 @@ def registration_view(request):
         user = User.objects.create_user(
             email=request_serializer.validated_data['email'],
             password=request_serializer.validated_data['password'],
-            full_name = request_serializer.validated_data['full_name'],
+            full_name=request_serializer.validated_data['full_name'],
         )
         user.save()
 
