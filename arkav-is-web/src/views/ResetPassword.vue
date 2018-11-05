@@ -15,7 +15,7 @@
             <v-flex d-flex align-center justify-center>
               <h1 class="text-xs-center">Reset Password</h1>
             </v-flex>
-            <v-alert class="mt-3" :value="true" type="success" outline>
+            <v-alert class="mt-3" :value="true" type="success" outline v-if="messages.length > 0">
               Your password has been reset.
               <router-link to="/login" class="body-link">
                 Login here.
@@ -63,7 +63,8 @@
     },
     methods: {
       ...mapActions({
-        resetPasswordAction: 'auth/resetPassword'
+        resetPasswordAction: 'auth/resetPassword',
+        clearErrorAndMessageAction: 'auth/clearErrorAndMessage',
       }),
 
       resetPassword() {
@@ -74,5 +75,9 @@
         })
       }
     },
+    beforeRouteLeaveAction(to, from, next) {
+      this.clearErrorAndMessageAction()
+      next()
+    }
   }
 </script>

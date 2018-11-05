@@ -79,7 +79,7 @@ class EmailConfirmationAttempt(models.Model):
         mail_from = 'Arkavidia 5 <noreply@arkavidia.id>'
         mail_to = self.user.email
         # TODO: make good html message
-        mail_html_message = 'Click <a href="%s"> here </a> to confirm your password' % (link)
+        mail_html_message = 'Click <a href="%s"> here </a> to confirm your email' % (link)
 
         send_mail(mail_subject, mail_message, mail_from, [mail_to], html_message=mail_html_message, fail_silently=False)
 
