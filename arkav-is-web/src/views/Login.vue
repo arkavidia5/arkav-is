@@ -15,7 +15,7 @@
             <v-flex d-flex align-center justify-center>
               <h1 class="text-xs-center">Login</h1>
             </v-flex>
-            
+
             <v-form class="mt-3" @submit.prevent="login">
               <v-text-field v-model="email" label="Email" autocomplete="username" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
@@ -63,7 +63,8 @@
     },
     methods: {
       ...mapActions({
-        loginAction: 'auth/login'
+        loginAction: 'auth/login',
+        clearErrorAndMessageAction: 'auth/clearErrorAndMessage',
       }),
 
       login() {
@@ -74,5 +75,9 @@
         })
       }
     },
+    beforeRouteLeave(to, from, next) {
+      this.clearErrorAndMessageAction()
+      next()
+    }
   }
 </script>

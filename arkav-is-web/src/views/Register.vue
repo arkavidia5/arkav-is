@@ -73,7 +73,8 @@
     },
     methods: {
       ...mapActions({
-        registerAction: 'auth/register'
+        registerAction: 'auth/register',
+        clearErrorAndMessageAction: 'auth/clearErrorAndMessage',
       }),
 
       register() {
@@ -86,5 +87,9 @@
         })
       }
     },
+    beforeRouteLeave(to, from, next) {
+      this.clearErrorAndMessageAction()
+      next()
+    }
   }
 </script>

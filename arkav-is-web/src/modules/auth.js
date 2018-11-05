@@ -24,6 +24,9 @@ export default {
     clearError(state) {
       state.errors = []
     },
+    clearMessage(state) {
+      state.messages = []
+    },
     setLoading(state, isLoading) {
       state.loading = isLoading
     },
@@ -60,10 +63,15 @@ export default {
       try {
         commit('setLoading', true)
         commit('clearError')
-        await api.post('/auth/register/', {full_name, email, password}, { ignoreUnauthorizedError: true })
-        commit('addMessage', 'Email confirmation link has been sent to your email.')
+        let response = await api.post('/auth/register/', {full_name, email, password}, { ignoreUnauthorizedError: true })
+
+        commit('addMessage', response.data.detail)
       } catch (err) {
-        commit('addError', err)
+        if (err.response.data.detail) {
+          commit('addError', err.response.data.detail)
+        } else {
+          commit('addError', err)
+        }
       } finally {
         commit('setLoading', false)
       }
@@ -88,7 +96,7 @@ export default {
         commit('clearError')
         let response = await api.post('/auth/try-reset-password/', { email }, { ignoreUnauthorizedError: true })
 
-        commit('addMessage', [response.data.status])
+        commit('addMessage', response.data.detail)
       } catch (err) {
         if (err.response.data.email) {
           // if email is invalid
@@ -106,17 +114,37 @@ export default {
         commit('clearError')
         let response = await api.post('/auth/reset-password/', { password, token }, { ignoreUnauthorizedError: true })
 
-        commit('addMessage', [response.data.status])
+        commit('addMessage', [response.data.detail])
       } catch (err) {
-        if (err.response.data.status) {
-          // if email is invalid
-          commit('addError', err.response.data.status)
+        if (err.response.data.detail) {
+          commit('addError', err.response.data.detail)
         } else {
           commit('addError', err)
         }
       } finally {
         commit('setLoading', false)
       }
+    },
+    async confirmEmail({ commit }, { token }) {
+      try {
+        commit('setLoading', true)
+        commit('clearError')
+        let response = await api.post('/auth/confirm-email/', { token }, { ignoreUnauthorizedError: true })
+
+        commit('addMessage', response.data.detail)
+      } catch (err) {
+        if (err.response.data.detail) {
+          commit('addError', err.response.data.detail)
+        } else {
+          commit('addError', err)
+        }
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async clearErrorAndMessage({ commit }) {
+      commit('clearError')
+      commit('clearMessage')
     }
   }
 }

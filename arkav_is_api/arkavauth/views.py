@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth import authenticate, login, logout
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from .models import User, EmailConfirmationAttempt, PasswordResetAttempt
 from .serializers import (
     UserSerializer,
@@ -84,21 +84,27 @@ def logout_view(request):
 def registration_view(request):
     request_serializer = RegistrationRequestSerializer(data=request.data)
     request_serializer.is_valid(raise_exception=True)
-    with transaction.atomic():
-        user = User.objects.create_user(
-            email=request_serializer.validated_data['email'],
-            password=request_serializer.validated_data['password'],
-            full_name=request_serializer.validated_data['full_name'],
-        )
-        user.save()
+    try:
+        with transaction.atomic():
+            user = User.objects.create_user(
+                email=request_serializer.validated_data['email'],
+                password=request_serializer.validated_data['password'],
+                full_name=request_serializer.validated_data['full_name'],
+            )
+            user.save()
 
-        attempt, _ = EmailConfirmationAttempt.objects.get_or_create(user=user)
-        attempt.send_email()
+            attempt, _ = EmailConfirmationAttempt.objects.get_or_create(user=user)
+            attempt.send_email()
+    except IntegrityError:
+        return Response({
+            'code': 'error',
+            'detail': 'Email has been already used'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
-    # Login the user after registration
-    login(request, user)
-    response_serializer = UserSerializer(request.user)
-    return Response(data=response_serializer.data)
+    return Response({
+        'code': 'registered',
+        'detail': 'Email confirmation link has been sent to your email.'
+    })
 
 
 class EmailConfirmationAttemptView(views.APIView):
@@ -112,14 +118,23 @@ class EmailConfirmationAttemptView(views.APIView):
         attempt = EmailConfirmationAttempt.objects.filter(token=token).first()
 
         if attempt is None:
-            return Response(data={'status': 'Invalid token.'}, status=400)
+            return Response({
+                'code': 'invalid_token',
+                'detail': 'Invalid token.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         if attempt.confirmed or attempt.user.email_confirmed:
-            return Response(data={'status': 'Email has been confirmed.'}, status=400)
+            return Response({
+                'code': 'already_confirmed',
+                'detail': 'Email has been already confirmed.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         attempt.confirm()
 
-        return Response(data={'status': 'confirmed'})
+        return Response({
+            'code': 'ok',
+            'detail': 'Your email has been successfully confirmed.'
+        })
 
 
 class TryPasswordResetAttemptView(views.APIView):
@@ -137,7 +152,12 @@ class TryPasswordResetAttemptView(views.APIView):
             attempt.send_email()
             attempt.save()
 
-        return Response(data={'status': 'ok'})
+        return Response({
+            'code': 'ok',
+            'detail':
+                'If you have registered using that email, we have sent password reset link to your email.'
+                ' Please check your email.'
+        })
 
 
 class PasswordResetAttemptView(views.APIView):
@@ -151,7 +171,10 @@ class PasswordResetAttemptView(views.APIView):
         attempt = PasswordResetAttempt.objects.filter(token=token).first()
 
         if attempt is None or attempt.used:
-            return Response(data={'status': 'Invalid token.'}, status=400)
+            return Response({
+                'code': 'invalid_token',
+                'detail': 'Invalid token.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         user = attempt.user
         with transaction.atomic():
@@ -161,4 +184,6 @@ class PasswordResetAttemptView(views.APIView):
             user.set_password(request_serializer.validated_data['password'])
             user.save()
 
-        return Response(data={'status': 'Reseted.'})
+        return Response({
+            'code': 'ok',
+            'detail': 'Reseted.'})
