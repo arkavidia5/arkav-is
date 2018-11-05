@@ -17,6 +17,7 @@ class EmailConfirmationAttemptTestCase(TestCase):
 
     def test_confirm(self):
         attempt1 = EmailConfirmationAttempt.objects.create(user=self.user1)
+        attempt1.confirm()
         user = User.objects.get(email=self.user1.email)
         self.assertTrue(user.email_confirmed)
-        self.assertIsNotNone(attempt1.confirmed)
+        self.assertTrue(attempt1.confirmed)
