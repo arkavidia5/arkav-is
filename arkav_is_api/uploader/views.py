@@ -1,9 +1,9 @@
 import uuid
 from django import forms
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse, HttpResponse
 from .models import UploadedFile
 
 # TODO: add per-user upload size quota
@@ -49,3 +49,18 @@ def upload_file_view(request):
             },
             status=400,
         )
+
+
+@login_required
+@require_GET
+def download_file_view(request, file_id):
+    """
+    Download an uploaded file with the matching file_id.
+    file_id is a UUIDv4, which is hard to guess, so it should be quite secure
+    as long all pages which contain a link to it requires login.
+    """
+    uploaded_file = get_object_or_404(UploadedFile, id=file_id)
+    with uploaded_file.file.open('rb') as f:
+        response = HttpResponse(f.read())
+        response['Content-Disposition'] = 'inline; filename=' + uploaded_file.original_filename
+        return response
