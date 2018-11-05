@@ -27,6 +27,7 @@ def upload_file_view(request):
             original_filename=form.cleaned_data['file'].name,
             file_size=form.cleaned_data['file'].size,
             uploaded_by=request.user,
+            content_type=form.cleaned_data['file'].content_type,
             description=form.cleaned_data['description'],
         )
         instance.file = form.cleaned_data['file']
@@ -36,6 +37,7 @@ def upload_file_view(request):
                 'id': instance.id,
                 'original_filename': instance.original_filename,
                 'file_size': instance.file_size,
+                'content_type': instance.content_type,
                 'uploaded_by': instance.uploaded_by.email,
                 'uploaded_at': instance.uploaded_at,
                 'description': instance.description,
@@ -43,6 +45,7 @@ def upload_file_view(request):
             status=201,
         )
     else:
+        print(form.errors)
         return JsonResponse(
             {
                 'errors': form.errors,
@@ -60,7 +63,7 @@ def download_file_view(request, file_id):
     as long all pages which contain a link to it requires login.
     """
     uploaded_file = get_object_or_404(UploadedFile, id=file_id)
-    with uploaded_file.file.open('rb') as f:
-        response = HttpResponse(f.read())
-        response['Content-Disposition'] = 'inline; filename=' + uploaded_file.original_filename
-        return response
+    response = HttpResponse(uploaded_file.file.open('rb'), content_type = uploaded_file.content_type )
+    # response['Content-Type'] = 'application/pdf'
+    # response['Content-Disposition'] = 'inline; filename=' + uploaded_file.original_filename
+    return response

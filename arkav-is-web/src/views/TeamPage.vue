@@ -73,7 +73,7 @@
             <div v-if="response = getTaskResponse(task.id)">
               <h2>Submission</h2>
               <v-flex v-if="task.widget === 'file_upload'">
-                <a :href="`/file/${response.response}/`" class="no-decoration" target="_blank">
+                <a :href="`/api/upload/download/${response.response}/`" class="no-decoration" target="_blank">
                   <v-btn color="info">
                     <v-icon>launch</v-icon>
                     Uploaded File

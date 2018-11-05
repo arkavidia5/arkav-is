@@ -15,6 +15,7 @@ class UploadedFile(models.Model):
     original_filename = models.CharField(max_length=200)
     file_size = models.BigIntegerField()
     description = models.CharField(max_length=200)
+    content_type = models.CharField(max_length=200)
     uploaded_by = models.ForeignKey(to=User, related_name='uploaded_files', on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
