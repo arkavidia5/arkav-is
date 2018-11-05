@@ -25,7 +25,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', 'z4z#u2gmm(+3^!$7b^kc3ijq8p3o&&hekk#^7er2o5)!3e*rp9')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = strtobool(os.getenv('DEBUG', 'False'))
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+	'dashboard.arkavidia.id',
+	'arkavidia.id',
+	'localhost',
+]
 
 
 # Application definition
@@ -127,10 +131,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "https://static.arkavidia.id/5/django/"
 
 # File Upload Constants
 
 S3_BUCKET_NAME = ""
 S3_BUCKET_BASE_URL = ""
 UPLOAD_DIR = os.path.join(BASE_DIR, 'files/')
+STATIC_ROOT= os.path.join(BASE_DIR,'static/')
