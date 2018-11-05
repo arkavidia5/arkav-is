@@ -145,5 +145,5 @@ UPLOAD_DIR = "temp"
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.localhost')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'arkavidia')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'arkavidia')
-EMAIL_PORT = os.getenv('EMAIL_POST', '587')
+EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
 EMAIL_USE_TLS = True

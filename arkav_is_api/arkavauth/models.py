@@ -72,7 +72,7 @@ class EmailConfirmationAttempt(models.Model):
         return str(self.user)
 
     def send_email(self):
-        link = 'https://arkavidia.id/confirm-email/%s' % (self.token)
+        link = 'https://dashboard.arkavidia.id/confirm-email/%s' % (self.token)
 
         mail_subject = 'Email Confirmation'
         mail_message = 'One last step to use your account!'
@@ -109,7 +109,7 @@ class PasswordResetAttempt(models.Model):
         self.save()
 
     def send_email(self):
-        link = 'https://arkavidia.id/reset-password/%s' % (self.token)
+        link = 'https://dashboard.arkavidia.id/reset-password/%s' % (self.token)
 
         mail_subject = 'Password Reset'
         mail_message = 'Reset your password'
