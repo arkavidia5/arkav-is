@@ -1,7 +1,9 @@
 from string import ascii_letters
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.db import models
+from django.template.loader import get_template
+from django.template import Context
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -76,7 +78,7 @@ class EmailConfirmationAttempt(models.Model):
 
         mail_subject = 'Email Confirmation'
         mail_message = 'One last step to use your account!'
-        mail_from = 'Arkavidia 5 <noreply@arkavidia.id>'
+        mail_from = 'Arkavidia 5.0 <noreply@arkavidia.id>'
         mail_to = self.user.email
         # TODO: make good html message
         mail_html_message = 'Click <a href="%s"> here </a> to confirm your email' % (link)
@@ -111,11 +113,20 @@ class PasswordResetAttempt(models.Model):
     def send_email(self):
         link = 'https://dashboard.arkavidia.id/reset-password/%s' % (self.token)
 
+        template = get_template('password_reset.html')
+        context = {
+            'user': self.user,
+            'link': link
+        }
+
         mail_subject = 'Password Reset'
         mail_message = 'Reset your password'
-        mail_from = 'Arkavidia 5 <noreply@arkavidia.id>'
+        mail_from = 'Arkavidia 5.0 <noreply@arkavidia.id>'
         mail_to = self.user.email
-        # TODO: make good html message
-        mail_html_message = 'Click <a href="%s"> here </a> to reset your password' % (link)
+        mail_html_message = template.render(context)
+
+        mail = EmailMultiAlternatives(mail_subject, mail_message, mail_from, [mail_to])
+        mail.attach_alternative(mail_html_message, "text/html")
+        mail.send()
 
         send_mail(mail_subject, mail_message, mail_from, [mail_to], html_message=mail_html_message, fail_silently=False)
