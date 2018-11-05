@@ -13,18 +13,14 @@
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <v-flex d-flex align-center justify-center>
-              <h1 class="text-xs-center">Login</h1>
+              <h1 class="text-xs-center">Forgot Password</h1>
             </v-flex>
 
-            <v-form class="mt-3" @submit.prevent="login">
-              <v-text-field v-model="email" label="Email" autocomplete="email" required></v-text-field>
-              <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
+            <v-form class="mt-3" @submit.prevent="tryResetPassword" v-if="messages.length === 0">
+              <v-text-field v-model="email" label="Email" autocomplete="username" required></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
               </v-alert>
-              <div class="my-3">
-                <router-link to="/forgot-password" class="body-link">Lupa password?</router-link>
-              </div>
               <v-btn
                 depressed
                 large
@@ -33,13 +29,15 @@
                 type="submit"
                 :loading="loading"
                 :disabled="loading"
+                v-if="messages.length === 0"
               >
-                Login
+                Send Reset Password Link
               </v-btn>
-              <router-link to="/register" class="body-link">
-                Belum punya akun? Daftar disini
-              </router-link>
             </v-form>
+
+            <v-alert v-for="message in messages" :key="message" :value="true" type="success" outline class="mt-3">
+              {{ message }}
+            </v-alert>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -53,24 +51,23 @@
   export default {
     data: () => ({
       email: '',
-      password: '',
     }),
     computed: {
       ...mapState({
         errors: state => state.auth.errors,
+        messages: state => state.auth.messages,
         loading: state => state.auth.loading
       })
     },
     methods: {
       ...mapActions({
-        loginAction: 'auth/login',
+        tryResetPasswordAction: 'auth/tryResetPassword',
         clearErrorAndMessageAction: 'auth/clearErrorAndMessage',
       }),
 
-      login() {
-        this.loginAction({
+      tryResetPassword() {
+        this.tryResetPasswordAction({
           email: this.email,
-          password: this.password,
           router: this.$router
         })
       }

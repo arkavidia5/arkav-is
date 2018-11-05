@@ -27,3 +27,16 @@ class RegistrationRequestSerializer(serializers.Serializer):
     full_name = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField()
+
+
+class EmailConfirmationAttemptSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+
+class TryPasswordResetAttemptSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetAttemptSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    password = serializers.CharField()
