@@ -10,7 +10,7 @@
       <li>
         <v-menu offset-y>
           <a slot="activator" href="#" class="body-link hover-only">
-            {{ user.username }}<v-icon style="float: right">arrow_drop_down</v-icon>
+            {{ user.email }}<v-icon style="float: right">arrow_drop_down</v-icon>
           </a>
           <v-list>
             <v-list-tile @click="logout">

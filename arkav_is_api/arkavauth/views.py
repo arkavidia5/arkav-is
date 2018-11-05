@@ -50,7 +50,7 @@ def login_view(request):
         return Response(
             {
                 'code': 'login_failed',
-                'detail': 'Wrong username or password.',
+                'detail': 'Wrong email or password.',
             },
             status=status.HTTP_401_UNAUTHORIZED,
         )

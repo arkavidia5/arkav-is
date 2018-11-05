@@ -83,16 +83,15 @@ export default {
             commit('setSaving', true)
             let team = this.state.team.team
             if(task.widget == 'file_upload') {                
-                let filename = team.id+"_"+team.name+"_"+data.name
                 let formData = new FormData();
                 formData.append('file' , data);
-                formData.append('filename', filename)
-                let file_response = await api.post('file/', formData, {
+                formData.append('description', "File for "+ task.name +" from team " + team.name)
+                let file_response = await api.post('upload/', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                data = file_response.data.slug
+                data = file_response.data.id
             }
             let postData = {
                 "team_id": team.id,
@@ -101,6 +100,7 @@ export default {
             let response = await api.post('competitions/teams/'+team.id+'/tasks/'+task.id+'/', postData)
             location.reload(true)
         } catch (err) {
+            console.log(err)
             commit('addError', err)
         } finally {
             commit('setSaving', false)

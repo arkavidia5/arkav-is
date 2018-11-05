@@ -16,17 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from arkav_is_api.competition.views import FileView
-
 urlpatterns = [
     # Django admin site
     path('admin/', admin.site.urls),
 
     # API routes
     path('api/auth/', include('arkav_is_api.arkavauth.urls')),
+    path('api/upload/', include('arkav_is_api.uploader.urls')),
     path('api/competitions/', include('arkav_is_api.competition.urls')),
-
-    # File upload routes
-    path('api/file/', FileView.as_view()),
-    path('file/<str:slug>/', FileView.as_view()),
 ]

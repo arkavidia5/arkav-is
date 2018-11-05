@@ -1,13 +1,16 @@
 from rest_framework import serializers
-from .models import Competition, Stage, Task, Team, TeamMember, TaskResponse, File, CompetitionCategory
+from .models import Competition, Stage, Task, Team, TeamMember, TaskResponse, CompetitionCategory
 
 class CompetitionCategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompetitionCategory
         fields = ('id','name')
-        read_only_fields = ('id','name')
+        read_only_fields = ('id', 'name')
+
+
 class CompetitionSerializer(serializers.ModelSerializer):
     categories = CompetitionCategoriesSerializer(many=True)
+
     class Meta:
         model = Competition
         fields = ('id', 'name', 'max_team_members', 'min_team_members', 'is_registration_open', 'categories', 'view_icon')
@@ -28,6 +31,22 @@ class StageSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'order', 'tasks')
         read_only_fields = ('id', 'name', 'order','tasks')
 
+class TeamMemberSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(source='user.email', read_only=True)
+    name = serializers.CharField(source='user.get_full_name', read_only=True)
+
+    class Meta:
+        model = TeamMember
+        fields = ('email', 'name', 'is_approved', 'created_at')
+        read_only_fields = ('email', 'name', 'created_at')
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    competition = CompetitionSerializer(read_only=True)
+    class Meta:
+        model = Team
+        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader')
+        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader')
 
 class TeamMemberSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
@@ -38,16 +57,6 @@ class TeamMemberSerializer(serializers.ModelSerializer):
         model = TeamMember
         fields = ('id', 'email', 'name', 'is_approved', 'created_at', 'user_active')
         read_only_fields = ('id','email', 'name', 'created_at', 'user_active')
-
-
-
-class TeamSerializer(serializers.ModelSerializer):
-    competition = CompetitionSerializer(read_only=True)
-
-    class Meta:
-        model = Team
-        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader')
-        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader')
 
 
 class TaskResponseSerializer(serializers.ModelSerializer):
@@ -61,6 +70,7 @@ class TaskResponseSerializer(serializers.ModelSerializer):
 
 class TeamDetailsSerializer(TeamSerializer):
     competition = CompetitionSerializer(read_only=True)
+    team_leader = TeamMemberSerializer(read_only=True)
     team_members = TeamMemberSerializer(many=True, read_only=True)
     active_stage_id = serializers.PrimaryKeyRelatedField(source='active_stage', read_only=True)
     stages = StageSerializer(source='visible_stages', many=True, read_only=True)
@@ -77,9 +87,12 @@ class TeamDetailsSerializer(TeamSerializer):
             'team_members', 'active_stage_id', 'stages', 'task_responses'
         )
 
+
 class RegisterTeamMemberRequestSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=50)
     email = serializers.EmailField()
+
+
 class RegisterTeamRequestSerializer(serializers.Serializer):
     competition_id = serializers.PrimaryKeyRelatedField(queryset=Competition.objects.all())
     team_name = serializers.CharField(max_length=50, min_length=3)
@@ -90,11 +103,3 @@ class RegisterTeamRequestSerializer(serializers.Serializer):
 
 class JoinTeamRequestSerializer(serializers.Serializer):
     secret_code = serializers.CharField()
-
-
-# TODO: move to separate app/package
-class FileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = File
-        fields = ('id', 'slug')
-

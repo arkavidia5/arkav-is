@@ -17,7 +17,7 @@
             </v-flex>
 
             <v-form class="mt-3" @submit.prevent="login">
-              <v-text-field v-model="email" label="Email" autocomplete="username" required></v-text-field>
+              <v-text-field v-model="email" label="Email" autocomplete="email" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}

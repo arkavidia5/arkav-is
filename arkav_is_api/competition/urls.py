@@ -15,6 +15,6 @@ urlpatterns = [
     path('join-team/', JoinTeamView.as_view()),
     path('teams/', ListTeamsView.as_view()),
     path('teams/<int:team_id>/', RetrieveUpdateTeamView.as_view()),
-    # path('teams/<int:team_id>/members/<str:username>/', RetrieveUpdateDestroyTeamMemberView.as_view()),
+    path('teams/<int:team_id>/members/<str:email>/', RetrieveUpdateDestroyTeamMemberView.as_view()),
     path('teams/<int:team_id>/tasks/<int:task_id>/', SubmitTaskResponseView.as_view()),
 ]
