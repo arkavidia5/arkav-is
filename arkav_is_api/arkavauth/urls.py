@@ -5,9 +5,8 @@ from .views import (
     logout_view,
     registration_view,
     EmailConfirmationAttemptView,
-    TryEmailConfirmationAttemptView,
-    PasswordResetAttemptView,
     TryPasswordResetAttemptView,
+    PasswordResetAttemptView,
 )
 
 urlpatterns = [
@@ -15,7 +14,6 @@ urlpatterns = [
     path('login/', login_view),
     path('logout/', logout_view),
     path('register/', registration_view),
-    path('try-confirm-email/', TryEmailConfirmationAttemptView.as_view()),
     path('confirm-email/', EmailConfirmationAttemptView.as_view()),
     path('try-reset-password/', TryPasswordResetAttemptView.as_view()),
     path('reset-password/', PasswordResetAttemptView.as_view()),
