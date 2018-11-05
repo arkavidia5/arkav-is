@@ -47,21 +47,21 @@ export default {
         if (!redirectTo) redirectTo = { name: 'dashboard' }
         router.push(redirectTo)
       } catch (err) {
-        commit('addError', err)
+        if (err.response.data.detail) {
+          commit('addError', err.response.data.detail)
+        } else {
+          commit('addError', err)
+        }
       } finally {
         commit('setLoading', false)
       }
     },
-    async register({commit}, {full_name, email, password, router}) {
+    async register({commit}, {full_name, email, password}) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.post('/auth/register/', {full_name, email, password}, { ignoreUnauthorizedError: true })
-        commit ('setUser', response.data)
-        //Redirect if Register successful
-        let redirectTo = this.loginRedirect;
-        if (!redirectTo) redirectTo = {name: 'dashboard'}
-        router.push(redirectTo)
+        await api.post('/auth/register/', {full_name, email, password}, { ignoreUnauthorizedError: true })
+        commit('addMessage', 'Email confirmation link has been sent to your email.')
       } catch (err) {
         commit('addError', err)
       } finally {

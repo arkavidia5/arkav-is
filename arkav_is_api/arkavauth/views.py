@@ -55,6 +55,15 @@ def login_view(request):
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
+    if not user.email_confirmed:
+        return Response(
+            {
+                'code': 'not_confirmed_account',
+                'detail': 'Account email hasn\'t been confirmed. Check inbox for confirmation email',
+            },
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
     login(request, user)
     response_serializer = UserSerializer(request.user)
     return Response(data=response_serializer.data)
@@ -83,25 +92,13 @@ def registration_view(request):
         )
         user.save()
 
+        attempt, _ = EmailConfirmationAttempt.objects.get_or_create(user=user)
+        attempt.send_email()
+
     # Login the user after registration
     login(request, user)
     response_serializer = UserSerializer(request.user)
     return Response(data=response_serializer.data)
-
-
-class TryEmailConfirmationAttemptView(views.APIView):
-    permission_classes = (permissions.IsAuthenticated, )
-
-    def post(self, request):
-        user = request.user
-
-        if user.email_confirmed:
-            return Response(data={'status': 'already confirmed'}, status=400)
-
-        attempt, _ = EmailConfirmationAttempt.objects.get_or_create(user=user)
-        attempt.send_email()
-
-        return Response(data={'status': 'ok', 'token': attempt.token})
 
 
 class EmailConfirmationAttemptView(views.APIView):

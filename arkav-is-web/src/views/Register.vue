@@ -15,9 +15,8 @@
             <v-flex d-flex align-center justify-center>
               <h1 class="text-xs-center">Daftar</h1>
             </v-flex>
-            
-            
-            <v-form class="mt-3" @submit.prevent="register">
+
+            <v-form class="mt-3" @submit.prevent="register" v-if="messages.length === 0">
               <v-text-field label="Name" v-model="full_name"></v-text-field>
               <v-text-field label="Email" type="mail" required :rules="emailRules" v-model="email"></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
@@ -40,6 +39,10 @@
                 Sudah punya akun? Daftar disini
               </router-link>
             </v-form>
+
+            <v-alert v-for="message in messages" :key="message" :value="true" type="success" outline class="mt-3">
+              {{ message }}
+            </v-alert>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -52,9 +55,7 @@
 
   export default {
     data: () => ({
-      first_name: '',
-      last_name: '',
-      username: '',
+      full_name: '',
       email: '',
       password: '',
       confirm_password: '',
@@ -62,11 +63,11 @@
           (v) => !!v || 'E-mail is required',
           (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
-      
     }),
     computed: {
       ...mapState({
         errors: state => state.auth.errors,
+        messages: state => state.auth.messages,
         loading: state => state.auth.loading
       })
     },
@@ -79,7 +80,7 @@
         this.registerAction({
           full_name: this.full_name,
           email: this.email,
-          password: this.password,  
+          password: this.password,
           router: this.$router
 
         })
