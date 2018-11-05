@@ -43,29 +43,10 @@ class TeamMemberSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     competition = CompetitionSerializer(read_only=True)
-    team_leader = TeamMemberSerializer()
-    is_approved_team_member = serializers.SerializerMethodField()
-    joined_at = serializers.SerializerMethodField()
-
-    def get_is_approved_team_member(self, instance):
-        current_user = self.context['request'].user
-        if current_user.is_authenticated:
-            try:
-                return TeamMember.objects.get(team=instance, user=current_user).is_approved
-            except TeamMember.DoesNotExist:
-                return False
-        else:
-            return False
-
-    def get_joined_at(self, instance):
-        current_user = self.context['request'].user
-        if current_user.is_authenticated:
-            try:
-                return TeamMember.objects.get(team=instance, user=current_user).created_at
-            except TeamMember.DoesNotExist:
-                return None
-        else:
-            return None
+    class Meta:
+        model = Team
+        fields = ('id', 'competition', 'name', 'is_participating', 'team_leader')
+        read_only_fields = ('id', 'competition', 'is_participating', 'team_leader')
 
 class TeamMemberSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
