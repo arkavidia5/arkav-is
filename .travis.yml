@@ -1,9 +1,50 @@
 language: python
-python: 
-    - 3.6
+python: # For Django
+  - 3.6
+node_js: # For building Vue bundle
+  - "node"
+
+branches:
+  # Only run on these branches
+  # Note: can still automatically run on pull requests, etc. according to setting in web interface
+  only:
+  - master
 
 install:
+  # Install Django dependencies using Pipenv
   - pip install pipenv
-  - pipenv install 
+  - pipenv install
+  # Install Vue dependencies using NPM
+  - cd arkav-is-web
+  - npm install
+  - cd ..
+
 script:
+  # Test Django
   - pipenv run python manage.py test
+  # Test Vue
+  - cd arkav-is-web
+  - npm run test
+  - cd ..
+
+before_deploy:
+  # Copy Django static files to static directory
+  - pipenv run python manage.py collectstatic
+  # Build Vue bundle, which will be placed in the arkav-is-web/dist directory
+  - cd arkav-is-web
+  - npm run build
+  - cd ..
+  # Clean up non-repository files except build results and static files
+  # by stashing all files, then checking out only arkav-is-web/dist and static directories
+  - git stash --all
+  - git checkout stash@{0} ./arkav-is-web/dist ./static
+
+deploy:
+  # Push all project files, including build results, to the deploy branch
+  provider: pages
+  skip-cleanup: true  # Include files not in repository (build results, etc.) in deployment push
+  target_branch: deploy
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master  # Only deploy if running on the master branch
