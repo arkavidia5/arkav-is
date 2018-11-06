@@ -1,4 +1,4 @@
-language: generic
+language: python
 python: # For Django
   - 3.6
 node_js: # For building Vue bundle
