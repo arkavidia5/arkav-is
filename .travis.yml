@@ -16,7 +16,7 @@ install:
   - pipenv install
   # Install Vue dependencies using NPM
   - cd arkav-is-web
-  - npm ci
+  - npm install
   - cd ..
 
 script:
