@@ -36,8 +36,10 @@ before_deploy:
   - cd ..
   # Clean up non-repository files except build results and static files
   # by stashing all files, then checking out only arkav-is-web/dist and static directories
+  # ^3 refers to the untracked files in the stash:
+  # https://stackoverflow.com/questions/12681529/in-git-is-there-a-way-to-show-untracked-stashed-files-without-applying-the-stas
   - git stash --all
-  - git checkout stash@{0} ./arkav-is-web/dist ./static
+  - git checkout stash@{0}^3 ./arkav-is-web/dist ./static
 
 deploy:
   # Push all project files, including build results, to the deploy branch
