@@ -97,7 +97,7 @@ class RegisterTeamRequestSerializer(serializers.Serializer):
     competition_id = serializers.PrimaryKeyRelatedField(queryset=Competition.objects.all())
     team_name = serializers.CharField(max_length=50, min_length=3)
     team_category = serializers.CharField(max_length=50)
-    team_school = serializers.CharField(max_length=30)
+    team_school = serializers.CharField(max_length=50)
     members = RegisterTeamMemberRequestSerializer(many=True)
 
 
