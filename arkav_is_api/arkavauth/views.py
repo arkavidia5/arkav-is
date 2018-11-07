@@ -182,10 +182,9 @@ class PasswordResetAttemptView(views.APIView):
             attempt.save()
             if not user.email_confirmed:
                 email_confirmation, created = EmailConfirmationAttempt.objects.get_or_create(user=user)
-                if not created: 
-                    return HttpResponse(status=500)
                 email_confirmation.confirm()
                 email_confirmation.save()
+                user.email_confirmed = True
             user.set_password(request_serializer.validated_data['password'])
             user.save()
 
