@@ -6,6 +6,12 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+# Default value function manually copied here to maintain reference to this function,
+# since this function is changed in the next migration
+def generate_random_str(length=30):
+    return get_random_string(length, allowed_chars=ascii_letters)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -17,7 +23,7 @@ class Migration(migrations.Migration):
             name='EmailConfirmationAttempt',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('token', models.CharField(default=arkav_is_api.arkavauth.models.generate_random_str, max_length=30)),
+                ('token', models.CharField(default=generate_random_str, max_length=30)),
                 ('confirmed', models.BooleanField(default=False)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='email_confirmation_attempt', to=settings.AUTH_USER_MODEL)),
             ],
@@ -26,7 +32,7 @@ class Migration(migrations.Migration):
             name='PasswordResetAttempt',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('token', models.CharField(default=arkav_is_api.arkavauth.models.generate_random_str, max_length=30)),
+                ('token', models.CharField(default=generate_random_str, max_length=30)),
                 ('used', models.BooleanField(default=False)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='password_reset_attempt', to=settings.AUTH_USER_MODEL)),
             ],

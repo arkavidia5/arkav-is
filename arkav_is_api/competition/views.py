@@ -10,8 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from arkav_is_api.arkavauth.models import User
 from .models import generate_random_str
-# TODO: fix to use proper Django setting import
-from arkav_is_api.settings import S3_BUCKET_BASE_URL, UPLOAD_DIR, S3_BUCKET_NAME
 
 from .models import (
     Competition,

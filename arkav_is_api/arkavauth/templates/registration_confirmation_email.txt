@@ -1,0 +1,7 @@
+Halo, {{ user.full_name }}!
+
+Terima kasih sudah mendaftar!
+Akses link ini untuk mengaktifkan akun Anda: https://dashboard.arkavidia.id/confirm-email/{{ token }}
+
+--
+Tim Arkavidia 5.0

@@ -131,13 +131,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # File Upload Constants
 
-S3_BUCKET_NAME = ""
-S3_BUCKET_BASE_URL = ""
 UPLOAD_DIR = os.path.join(BASE_DIR, 'files/')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 UPLOAD_DIR = "temp"
 
 # SendGrid settings
@@ -147,3 +146,5 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'arkavidia')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'arkavidia')
 EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
 EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = 'Arkavidia 5.0 <noreply@arkavidia.id>'

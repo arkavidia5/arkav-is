@@ -1,8 +1,10 @@
 from string import ascii_uppercase, digits, ascii_letters
 from django.db import models
-from arkav_is_api.arkavauth.models import User
 from django.utils.crypto import get_random_string
 from django.utils import timezone
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from arkav_is_api.arkavauth.models import User
 
 
 def generate_random_str(length=30):
@@ -168,17 +170,54 @@ class TeamMember(models.Model):
     """
     Many-to-many through/pivot table between Team and User.
     """
-    team = models.ForeignKey(to=Team, related_name='team_members', on_delete=models.PROTECT)
+    team = models.ForeignKey(to=Team, related_name='team_members', on_delete=models.CASCADE)
     user = models.ForeignKey(to=User, related_name='team_members', on_delete=models.PROTECT)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s - %s' % (self.team.name, self.user.email)
+        return '%s - %s (%s)' % (self.team.name, self.user.full_name, self.user.email)
 
     class Meta:
         unique_together = (('team', 'user'),)  # Each team-user pair must be unique
         get_latest_by = 'created_at'
+
+
+class TeamInvitation(models.Model):
+    """
+    Many-to-many through/pivot table between Team and User.
+    """
+    team = models.ForeignKey(to=Team, related_name='team_invitations', on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=75)
+    email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '%s - %s (%s)' % (self.team.name, self.full_name, self.email)
+
+    class Meta:
+        unique_together = (('team', 'email'),)  # Each team-email pair must be unique
+        get_latest_by = 'created_at'
+
+    def send_team_invitation_email(self):
+        text_template = get_template('team_invitation_confirmation_email.txt')
+        html_template = get_template('team_invitation_confirmation_email.html')
+        mail_subject = 'Pendaftaran Tim Arkavidia 5.0'
+
+        context = {
+            'team': self.team,
+            'full_name': self.full_name,
+            'token': self.token,
+        }
+
+        mail_from = 'Arkavidia 5.0 <noreply@arkavidia.id>'
+        mail_to = self.email
+        mail_text_message = text_template.render(context)
+        mail_html_message = html_template.render(context)
+
+        mail = EmailMultiAlternatives(mail_subject, mail_text_message, mail_from, [mail_to])
+        mail.attach_alternative(mail_html_message, "text/html")
+        mail.send()
 
 
 class TaskResponse(models.Model):
@@ -198,7 +237,7 @@ class TaskResponse(models.Model):
     )
 
     task = models.ForeignKey(to=Task, related_name='task_responses', on_delete=models.PROTECT)
-    team = models.ForeignKey(to=Team, related_name='task_responses', on_delete=models.PROTECT)
+    team = models.ForeignKey(to=Team, related_name='task_responses', on_delete=models.CASCADE)
     response = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     last_submitted_at = models.DateTimeField(default=timezone.now)
