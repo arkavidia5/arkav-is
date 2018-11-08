@@ -183,6 +183,8 @@ def password_reset_confirmation_view(request):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         attempt.user.set_password(new_password)
+        # Also confirm this user's email, for backward compatibility
+        attempt.user.is_email_confirmed = True
         attempt.user.save()
         attempt.is_confirmed = True
         attempt.save()
