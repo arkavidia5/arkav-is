@@ -38,7 +38,6 @@ class UserAdmin(DjangoUserAdmin):
 class RegistrationConfirmationAttemptAdmin(admin.ModelAdmin):
     list_display = ['user', 'token', 'is_confirmed', 'email_last_sent_at']
     list_filter = ['is_confirmed']
-    search_fields = ['user']
     readonly_fields = ['user', 'token', 'email_last_sent_at']
     actions = [resend_email]
 
@@ -50,7 +49,6 @@ class RegistrationConfirmationAttemptAdmin(admin.ModelAdmin):
 class PasswordResetConfirmationAttemptAdmin(admin.ModelAdmin):
     list_display = ['user', 'token', 'is_confirmed', 'email_last_sent_at']
     list_filter = ['is_confirmed']
-    search_fields = ['user']
     readonly_fields = ['user', 'token', 'email_last_sent_at']
     actions = [resend_email]
 
