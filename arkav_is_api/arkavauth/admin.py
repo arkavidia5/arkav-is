@@ -17,11 +17,19 @@ class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no username field."""
 
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        (_('Personal info'), {'fields': ('full_name',)}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (
+            None,
+            {'fields': ['full_name', 'email', 'password']}
+        ),
+        (
+            _('Permissions'),
+            {'fields': ['is_active', 'is_email_confirmed', 'is_staff',
+                        'is_superuser', 'groups', 'user_permissions']}
+        ),
+        (
+            _('Important dates'),
+            {'fields': ('last_login', 'date_joined')}
+        ),
     )
     add_fieldsets = (
         (None, {
@@ -38,8 +46,10 @@ class UserAdmin(DjangoUserAdmin):
 class RegistrationConfirmationAttemptAdmin(admin.ModelAdmin):
     list_display = ['user', 'token', 'is_confirmed', 'email_last_sent_at']
     list_filter = ['is_confirmed']
-    readonly_fields = ['user', 'token', 'email_last_sent_at']
+    readonly_fields = ['token', 'email_last_sent_at']
+    autocomplete_fields = ['user']
     actions = [resend_email]
+    search_fields = ['user__full_name', 'user__email']
 
     class Meta:
         ordering = ['-email_last_sent_at']
@@ -49,8 +59,10 @@ class RegistrationConfirmationAttemptAdmin(admin.ModelAdmin):
 class PasswordResetConfirmationAttemptAdmin(admin.ModelAdmin):
     list_display = ['user', 'token', 'is_confirmed', 'email_last_sent_at']
     list_filter = ['is_confirmed']
-    readonly_fields = ['user', 'token', 'email_last_sent_at']
+    readonly_fields = ['token', 'email_last_sent_at']
+    autocomplete_fields = ['user']
     actions = [resend_email]
+    search_fields = ['user__full_name', 'user__email']
 
     class Meta:
         ordering = ['-email_last_sent_at']
