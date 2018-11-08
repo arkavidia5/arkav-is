@@ -20,6 +20,16 @@ Prerequisites: Python 3.6, Pipenv
 - To run tests, `python manage.py test`
 - After editing any model or pulling changes which include changes to migrations, you need to run migrations again (`python manage.py migrate`)
 - After adding/removing packages (editing Pipfile) or pulling changes which include changes to the Pipfile, you need to run `pipenv update`
+- To debug emails, you can run a simple SMTP server locally using `python -m smtpd -n -c DebuggingServer localhost:1025`. Don't forget to adjust your `.env` file as follows:
+```
+...
+EMAIL_HOST=localhost
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+EMAIL_PORT=1025
+EMAIL_USE_TLS=False
+...
+```
 
 ### Web
 

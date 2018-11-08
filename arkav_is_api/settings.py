@@ -135,11 +135,11 @@ MEDIA_ROOT = os.getenv('MEDIA_ROOT', os.path.join(BASE_DIR, 'uploads/'))
 
 # Email settings
 
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.localhost')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'arkavidia')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'arkavidia')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', None)
 EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = strtobool(os.getenv('EMAIL_USE_TLS', 'True'))
 
 DEFAULT_FROM_EMAIL = 'Arkavidia 5.0 <noreply@arkavidia.id>'
 
