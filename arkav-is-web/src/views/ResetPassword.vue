@@ -2,7 +2,7 @@
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
       <v-flex xs12 sm10 md4>
-              <v-flex d-flex align-center justify-center mb-4>
+          <v-flex d-flex align-center justify-center mb-4>
             <v-flex text-xs-right>
               <img src="https://static.arkavidia.id/5/images/logo.svg" height=50 >
             </v-flex>
@@ -16,9 +16,9 @@
               <h1 class="text-xs-center">Reset Password</h1>
             </v-flex>
             <v-alert class="mt-3" :value="true" type="success" outline v-if="messages.length > 0">
-              Your password has been reset.
+              Password Anda berhasil di-reset.
               <router-link to="/login" class="body-link">
-                Login here.
+                Klik disini untuk login.
               </router-link>
             </v-alert>
             <v-form class="mt-3" @submit.prevent="resetPassword" v-if="messages.length === 0" :key="true">
@@ -70,7 +70,7 @@
       resetPassword() {
         this.resetPasswordAction({
           token: this.$route.params.token,
-          password: this.password,
+          new_password: this.password,
           router: this.$router
         })
       }

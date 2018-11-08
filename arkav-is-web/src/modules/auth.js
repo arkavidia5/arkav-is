@@ -94,7 +94,7 @@ export default {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.post('/auth/try-reset-password/', { email }, { ignoreUnauthorizedError: true })
+        let response = await api.post('/auth/reset-password/', { email }, { ignoreUnauthorizedError: true })
 
         commit('addMessage', response.data.detail)
       } catch (err) {
@@ -108,11 +108,11 @@ export default {
         commit('setLoading', false)
       }
     },
-    async resetPassword({ commit }, { password, token }) {
+    async resetPassword({ commit }, { new_password, token }) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.post('/auth/reset-password/', { password, token }, { ignoreUnauthorizedError: true })
+        let response = await api.post('/auth/confirm-password-reset/', { new_password, token }, { ignoreUnauthorizedError: true })
 
         commit('addMessage', [response.data.detail])
       } catch (err) {
@@ -129,7 +129,7 @@ export default {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.post('/auth/confirm-email/', { token }, { ignoreUnauthorizedError: true })
+        let response = await api.post('/auth/confirm-registration/', { token }, { ignoreUnauthorizedError: true })
 
         commit('addMessage', response.data.detail)
       } catch (err) {

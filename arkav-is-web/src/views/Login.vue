@@ -17,13 +17,16 @@
             </v-flex>
 
             <v-form class="mt-3" @submit.prevent="login">
-              <v-text-field v-model="email" label="Email" autocomplete="email" required></v-text-field>
+              <v-text-field v-model="email" label="Email" type="email" autocomplete="email" required></v-text-field>
               <v-text-field v-model="password" label="Password" type="password" autocomplete="current-password" required></v-text-field>
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
               </v-alert>
-              <div class="my-3">
+              <div class="mt-3 mb-1">
                 <router-link to="/forgot-password" class="body-link">Lupa password?</router-link>
+              </div>
+              <div class="mt-1 mb-3">
+                <router-link to="/register" class="body-link">Belum punya akun? Daftar disini</router-link>
               </div>
               <v-btn
                 depressed
@@ -36,9 +39,6 @@
               >
                 Login
               </v-btn>
-              <router-link to="/register" class="body-link">
-                Belum punya akun? Daftar disini
-              </router-link>
             </v-form>
           </v-card-text>
         </v-card>
