@@ -1,4 +1,4 @@
-from string import ascii_uppercase, digits, ascii_letters
+from string import ascii_uppercase, digits
 from django.db import models
 from django.utils.crypto import get_random_string
 from django.utils import timezone
@@ -7,20 +7,16 @@ from django.template.loader import get_template
 from arkav_is_api.arkavauth.models import User
 
 
-def generate_random_str(length=30):
-    return get_random_string(length, allowed_chars=ascii_letters)
-
-
-def generate_team_secret_code():
+def generate_team_invitation_token():
     """
-    Generate a new random secret code for identifying a team (for team member registrations).
-    Format: 6 characters, uppercase alphabet and numbers.
+    Generate a new random secret code for identifying a team invitation.
+    Format: 16 characters, uppercase alphabet and numbers.
     """
-    return get_random_string(length=6, allowed_chars=ascii_uppercase + digits)
+    return get_random_string(16, allowed_chars=ascii_uppercase + digits)
 
 
 class CompetitionCategory(models.Model):
-    name = models.CharField(max_length=50, default='')
+    name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
@@ -110,9 +106,8 @@ class Team(models.Model):
     """
     competition = models.ForeignKey(to=Competition, related_name='teams', on_delete=models.PROTECT)
     name = models.CharField(max_length=50, unique=True)
-    category = models.CharField(max_length=50)
-    school = models.CharField(max_length=50, unique=False)
-    secret_code = models.CharField(max_length=20, default=generate_team_secret_code, unique=True)
+    category = models.ForeignKey(to=CompetitionCategory, related_name='teams', on_delete=models.PROTECT)
+    institution = models.CharField(max_length=50)
     members = models.ManyToManyField(to=User, related_name='teams', through='TeamMember')
     team_leader = models.OneToOneField(to=User, related_name='team_leader', on_delete=models.PROTECT)
     active_stage = models.ForeignKey(to=Stage, related_name='active_teams', on_delete=models.PROTECT)
@@ -121,14 +116,6 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
-
-    @property
-    def approved_members(self):
-        return User.objects.filter(team_members__team=self, team_members__is_approved=True)
-
-    @property
-    def pending_members(self):
-        return User.objects.filter(team_members__team=self, team_members__is_approved=False)
 
     @property
     def has_completed_active_stage(self):
@@ -144,9 +131,6 @@ class Team(models.Model):
         stages which comes after the active_stage should not be visible.
         '''
         return self.competition.stages.filter(order__lte=self.active_stage.order)
-
-    def generate_secret_code(self):
-        return generate_team_secret_code()
 
     def save(self, *args, **kwargs):
         # Use the first stage of the competition as the default for active_stage.
@@ -169,55 +153,67 @@ class Team(models.Model):
 class TeamMember(models.Model):
     """
     Many-to-many through/pivot table between Team and User.
+    User can be None if not registered yet (still inviting).
     """
     team = models.ForeignKey(to=Team, related_name='team_members', on_delete=models.CASCADE)
-    user = models.ForeignKey(to=User, related_name='team_members', on_delete=models.PROTECT)
-    is_approved = models.BooleanField(default=False)
+    user = models.ForeignKey(to=User, related_name='team_members', null=True, blank=True, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # These fields are for storing invitations to the team, i.e. when user is null
+    # When this TeamMember has user, use user.full_name and user.email
+    invitation_full_name = models.CharField(max_length=75)
+    invitation_email = models.EmailField()
+    invitation_token = models.CharField(max_length=30, default=generate_team_invitation_token, unique=True)
+    email_last_sent_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def has_account(self):
+        return self.user is not None
+
+    @property
+    def full_name(self):
+        if self.has_account:
+            return self.user.full_name
+        else:
+            return self.invitation_full_name
+
+    @property
+    def email(self):
+        if self.has_account:
+            return self.user.email
+        else:
+            return self.invitation_email
+
+    def send_invitation_email(self):
+        context = {
+            'team': self.team,
+            'full_name': self.invitation_full_name,
+            'token': self.invitation_token,
+        }
+        text_template = get_template('team_invitation_confirmation_email.txt')
+        html_template = get_template('team_invitation_confirmation_email.html')
+        mail_text_message = text_template.render(context)
+        mail_html_message = html_template.render(context)
+
+        mail = EmailMultiAlternatives(
+            subject='Pendaftaran Tim Arkavidia 5.0',
+            body=mail_text_message,
+            to=[self.invitation_email]
+        )
+        mail.attach_alternative(mail_html_message, "text/html")
+        mail.send()
+        self.email_last_sent_at = timezone.now()
+        self.save()
+
     def __str__(self):
-        return '%s - %s (%s)' % (self.team.name, self.user.full_name, self.user.email)
+        if self.has_account:
+            return '%s - %s (%s)' % (self.team.name, self.user.full_name, self.user.email)
+        else:
+            return '%s - %s (%s)' % (self.team.name, self.invitation_full_name, self.invitation_email)
 
     class Meta:
         unique_together = (('team', 'user'),)  # Each team-user pair must be unique
         get_latest_by = 'created_at'
-
-
-class TeamInvitation(models.Model):
-    """
-    Many-to-many through/pivot table between Team and User.
-    """
-    team = models.ForeignKey(to=Team, related_name='team_invitations', on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=75)
-    email = models.EmailField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return '%s - %s (%s)' % (self.team.name, self.full_name, self.email)
-
-    class Meta:
-        unique_together = (('team', 'email'),)  # Each team-email pair must be unique
-        get_latest_by = 'created_at'
-
-    def send_team_invitation_email(self):
-        text_template = get_template('team_invitation_confirmation_email.txt')
-        html_template = get_template('team_invitation_confirmation_email.html')
-        mail_subject = 'Pendaftaran Tim Arkavidia 5.0'
-
-        context = {
-            'team': self.team,
-            'full_name': self.full_name,
-            'token': self.token,
-        }
-
-        mail_from = 'Arkavidia 5.0 <noreply@arkavidia.id>'
-        mail_to = self.email
-        mail_text_message = text_template.render(context)
-        mail_html_message = html_template.render(context)
-
-        mail = EmailMultiAlternatives(mail_subject, mail_text_message, mail_from, [mail_to])
-        mail.attach_alternative(mail_html_message, "text/html")
-        mail.send()
 
 
 class TaskResponse(models.Model):

@@ -2,6 +2,12 @@
 
 import arkav_is_api.competition.models
 from django.db import migrations, models
+from string import ascii_uppercase, digits
+from django.utils.crypto import get_random_string
+
+
+def generate_team_secret_code():
+    return get_random_string(length=6, allowed_chars=ascii_uppercase + digits)
 
 
 class Migration(migrations.Migration):
@@ -19,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='team',
             name='secret_code',
-            field=models.CharField(default=arkav_is_api.competition.models.generate_team_secret_code, max_length=20, unique=True),
+            field=models.CharField(default=generate_team_secret_code, max_length=20, unique=True),
         ),
     ]
