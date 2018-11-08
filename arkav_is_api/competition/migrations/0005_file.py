@@ -2,7 +2,7 @@
 
 import arkav_is_api.competition.models
 from django.db import migrations, models
-from string import ascii_letters, digits
+from string import ascii_letters
 from django.utils.crypto import get_random_string
 
 

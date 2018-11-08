@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='passwordresetconfirmationattempt',
             name='token',
-            field=models.CharField(default=arkav_is_api.arkavauth.models.generate_email_confirmation_token, max_length=30, unique=True),
+            field=models.CharField(default=arkav_is_api.arkavauth.models.generate_email_confirmation_token, max_length=30, null=True, unique=False),
         ),
         migrations.AlterField(
             model_name='registrationconfirmationattempt',
             name='token',
-            field=models.CharField(default=arkav_is_api.arkavauth.models.generate_email_confirmation_token, max_length=30, unique=True),
+            field=models.CharField(default=arkav_is_api.arkavauth.models.generate_email_confirmation_token, max_length=30, null=True, unique=False),
         ),
     ]

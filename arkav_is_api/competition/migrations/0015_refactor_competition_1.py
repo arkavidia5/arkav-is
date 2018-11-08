@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='teammember',
             name='invitation_token',
-            field=models.CharField(default=arkav_is_api.competition.models.generate_team_invitation_token, max_length=30, unique=True),
+            field=models.CharField(default=arkav_is_api.competition.models.generate_team_invitation_token, max_length=30, null=True, unique=False),
         ),
         migrations.AlterField(
             model_name='competitioncategory',

@@ -4,6 +4,8 @@ import arkav_is_api.arkavauth.models
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+from string import ascii_letters
+from django.utils.crypto import get_random_string
 
 
 # Default value function manually copied here to maintain reference to this function,
