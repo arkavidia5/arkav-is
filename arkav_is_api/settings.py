@@ -17,21 +17,6 @@ from distutils.util import strtobool
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'z4z#u2gmm(+3^!$7b^kc3ijq8p3o&&hekk#^7er2o5)!3e*rp9')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = strtobool(os.getenv('DEBUG', 'False'))
-ALLOWED_HOSTS = [
-    'dashboard.arkavidia.id',
-    'arkavidia.id',
-    'localhost',
-]
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -80,13 +65,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'arkav_is_api.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-DATABASES = {
-    'default': dj_database_url.config(default="sqlite:///" + os.path.join(BASE_DIR, 'db.sqlite3')),
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -107,39 +85,55 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     )
 }
 
 
+# -----------------------------
+# ENVIRONMENT-SPECIFIC SETTINGS
+# -----------------------------
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = strtobool(os.getenv('DEBUG', 'False'))
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY', 'z4z#u2gmm(+3^!$7b^kc3ijq8p3o&&hekk#^7er2o5)!3e*rp9')
+
+ALLOWED_HOSTS = [
+    'dashboard.arkavidia.id',
+    'arkavidia.id',
+    'localhost',
+]
+
+# Database
+# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+# Read from DATABASE_URL environment variable
+DATABASES = {
+    'default': dj_database_url.config(default="sqlite:///" + os.path.join(BASE_DIR, 'db.sqlite3')),
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'Asia/Jakarta'
-
+TIME_ZONE = os.getenv('TIME_ZONE', 'Asia/Jakarta')
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'static/'))
 
-# File Upload Constants
+# File uploads will be stored in this directory
 
-UPLOAD_DIR = os.path.join(BASE_DIR, 'files/')
+MEDIA_ROOT = os.getenv('MEDIA_ROOT', os.path.join(BASE_DIR, 'uploads/'))
 
-UPLOAD_DIR = "temp"
-
-# SendGrid settings
+# Email settings
 
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.localhost')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'arkavidia')
@@ -148,3 +142,8 @@ EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
 EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'Arkavidia 5.0 <noreply@arkavidia.id>'
+
+# Security-related settings - only enable if HTTPS is enabled
+
+CSRF_COOKIE_SECURE = strtobool(os.getenv('CSRF_COOKIE_SECURE', 'False'))
+SESSION_COOKIE_SECURE = strtobool(os.getenv('SESSION_COOKIE_SECURE', 'False'))

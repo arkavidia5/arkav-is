@@ -1,4 +1,3 @@
-import os
 from django.db import models
 from arkav_is_api.arkavauth.models import User
 
@@ -6,7 +5,7 @@ from arkav_is_api.arkavauth.models import User
 def generate_upload_to_path(instance, filename):
     if instance.id is None:
         raise RuntimeError('Uploaded file ID has not been set.')
-    return os.path.join('uploads/', str(instance.id))
+    return str(instance.id)
 
 
 class UploadedFile(models.Model):

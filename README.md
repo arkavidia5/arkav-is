@@ -9,9 +9,10 @@ Prerequisites: Python 3.6, Pipenv
 1. `cd` to the repo's directory
 2. For the first run, `pipenv install` to download dependencies
 3. `pipenv shell`
-4. For the first run, `python manage.py migrate` to run DB migrations (create DB tables)
-5. For the first run, `python manage.py createsuperuser` to create a superuser for testing
-6. To run, `python manage.py runserver`
+4. Copy `.env.example` to `.env` and edit its contents as necessary
+5. For the first run, `python manage.py migrate` to run DB migrations (create DB tables)
+6. For the first run, `python manage.py createsuperuser` to create a superuser for testing
+7. To run, `python manage.py runserver`
 
 #### Notes for API
 
@@ -52,3 +53,23 @@ Prerequisites: Node.js 8+
 7. On the Github website, create a new pull request from your branch to master.
 8. Wait for your pull request to be reviewed. If there is anything you need to fix, commit the fix and push it to Github.
 9. When the reviewer approves your change, your branch will be merged to master.
+
+## Deployment
+
+- Set up a database
+- Use `pipenv install --deploy` to install dependencies
+- Copy `.env.example` to `.env` and adjust its contents as necessary
+- Don't forget to `python manage.py migrate`
+- Don't forget to `python manage.py collectstatic`
+- Don't forget to `cd arkav-is-web`, then `npm run build`
+- Ensure `MEDIA_ROOT` directory is writable by Django
+- Run Django using a WSGI server, e.g. Gunicorn
+- Set Gunicorn to run as a service, e.g. using systemd
+- Ensure that the Gunicorn service loads environment variables from your `.env` file
+- Set up a reverse proxy (e.g. Nginx):
+    - Proxy `/api/` and `/admin` to Gunicorn
+    - Serve `STATIC_ROOT` directory contents according to `STATIC_URL`
+    - Serve `arkav-is-web/dist` directory contents
+    - Direct any mismatched URLs to `arkav-is-web/dist/index.html`
+    - Set up HTTPS, e.g. using Let's Encrypt and Certbot
+- Don't forget to back up regularly
