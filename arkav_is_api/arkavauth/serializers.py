@@ -4,12 +4,13 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField()
-    is_staff = serializers.BooleanField()
-    is_active = serializers.BooleanField()
-    is_email_confirmed = serializers.BooleanField()
-    last_login = serializers.DateTimeField()
-    date_joined = serializers.DateTimeField()
+    full_name = serializers.CharField(max_length=75)
+    email = serializers.EmailField(read_only=True)
+    is_staff = serializers.BooleanField(read_only=True)
+    is_active = serializers.BooleanField(read_only=True)
+    is_email_confirmed = serializers.BooleanField(read_only=True)
+    last_login = serializers.DateTimeField(read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = User
@@ -17,7 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
             'full_name', 'email',
             'is_staff', 'is_active', 'is_email_confirmed', 'last_login', 'date_joined',
         )
-        read_only_fields = ('last_login', 'date_joined')
+        read_only_fields = (
+            'email', 'is_staff', 'is_active', 'is_email_confirmed', 'last_login', 'date_joined',
+        )
 
 
 class LoginRequestSerializer(serializers.Serializer):

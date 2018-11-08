@@ -193,7 +193,6 @@ def password_reset_confirmation_view(request):
     })
 
 
-@ensure_csrf_cookie
 @sensitive_post_parameters('password', 'new_password')
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated, ))
@@ -219,3 +218,12 @@ def password_change_view(request):
         'code': 'password_change_succesful',
         'detail': 'Your password has been changed.'
     })
+
+
+@api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated, ))
+def edit_user_view(request):
+    serializer = UserSerializer(request.user, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(data=serializer.data)

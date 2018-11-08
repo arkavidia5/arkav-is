@@ -8,6 +8,7 @@ from .views import (
     password_reset_view,
     password_reset_confirmation_view,
     password_change_view,
+    edit_user_view,
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
     path('reset-password/', password_reset_view),
     path('confirm-password-reset/', password_reset_confirmation_view),
     path('change-password/', password_change_view),
+    path('edit-user/', edit_user_view),
 ]

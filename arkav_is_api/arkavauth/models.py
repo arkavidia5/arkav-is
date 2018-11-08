@@ -78,7 +78,7 @@ class RegistrationConfirmationAttempt(models.Model):
     An attempt to confirm registration using email.
     """
     user = models.OneToOneField(to=User, related_name='registration_confirmation_attempt', on_delete=models.CASCADE)
-    token = models.CharField(max_length=30, default=generate_email_confirmation_token)
+    token = models.CharField(max_length=30, default=generate_email_confirmation_token, unique=True)
     is_confirmed = models.BooleanField(default=False)
     email_last_sent_at = models.DateTimeField(null=True, blank=True)
 
@@ -111,7 +111,7 @@ class PasswordResetConfirmationAttempt(models.Model):
     An attempt to confirm password reset using email.
     """
     user = models.OneToOneField(to=User, related_name='password_reset_confirmation_attempt', on_delete=models.CASCADE)
-    token = models.CharField(max_length=30, default=generate_email_confirmation_token)
+    token = models.CharField(max_length=30, default=generate_email_confirmation_token, unique=True)
     is_confirmed = models.BooleanField(default=False)
     email_last_sent_at = models.DateTimeField(null=True, blank=True)
 
