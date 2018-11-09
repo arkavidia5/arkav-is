@@ -47,7 +47,7 @@ def login_view(request):
     request_serializer.is_valid(raise_exception=True)
 
     user = authenticate(
-        email=request_serializer.validated_data['email'],
+        email=request_serializer.validated_data['email'].lower(),
         password=request_serializer.validated_data['password'],
     )
     if user is None:
@@ -91,7 +91,7 @@ def registration_view(request):
 
     with transaction.atomic():
         user = User.objects.create_user(
-            email=request_serializer.validated_data['email'],
+            email=request_serializer.validated_data['email'].lower(),
             password=request_serializer.validated_data['password'],
             full_name=request_serializer.validated_data['full_name'],
         )
@@ -138,7 +138,7 @@ def registration_confirmation_view(request):
 def password_reset_view(request):
     request_serializer = PasswordResetRequestSerializer(data=request.data)
     request_serializer.is_valid(raise_exception=True)
-    email = request_serializer.validated_data['email']
+    email = request_serializer.validated_data['email'].lower()
 
     with transaction.atomic():
         user = User.objects.filter(email=email).first()

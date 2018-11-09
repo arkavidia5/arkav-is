@@ -88,7 +88,7 @@ class AddTeamMemberView(views.APIView):
         request_serializer = AddTeamMemberRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         full_name = request_serializer.validated_data['full_name']
-        email = request_serializer.validated_data['email']
+        email = request_serializer.validated_data['email'].lower()
 
         with transaction.atomic():
             team = get_object_or_404(Team.objects.all(), id=self.kwargs['team_id'])
@@ -109,7 +109,7 @@ class AddTeamMemberView(views.APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                member_user = User.objects.get(email__iexact=email)
+                member_user = User.objects.get(email=email)
                 # The user specified by the email is present, directly add to team
                 new_team_member = TeamMember.objects.create(
                     team=team,
