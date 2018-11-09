@@ -47,17 +47,38 @@ export default {
         commit('setLoading', false)
       }
     },
-    async getTeam({commit}, {team_id}) {
-        try {
-            commit('setLoading', true)
-
-            let response  = await api.get('/competitions/teams/'+team_id+'/');
-            commit('setTeam', response.data)
-        } catch (err) {
-           commit('addError',err)
-        } finally {
-            commit('setLoading', false)
-        }
+    async getTeam({ commit }, { team_id }) {
+      try {
+        commit('setLoading', true)
+        let response  = await api.get('/competitions/teams/' + team_id + '/')
+        commit('setTeam', response.data)
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async editTeam({ commit }, { team_id, name, institution }) {
+      try {
+        commit('setLoading', true)
+        let response = await api.patch('/competitions/teams/' + team_id + '/', { name, institution })
+        commit('setTeam', response.data)
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async deleteTeam({ commit }, { team_id, router }) {
+      try {
+        commit('setLoading', true)
+        await api.delete('/competitions/teams/' + team_id + '/');
+        router.push({ name: 'dashboard' })
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
     },
     async submitTask({commit}, {task, data}) {
         try {
@@ -66,7 +87,7 @@ export default {
             if(task.widget == 'file_upload') {
                 let formData = new FormData();
                 formData.append('file' , data);
-                formData.append('description', "File for "+ task.name +" from team " + team.name)
+                formData.append('description', "File for " + task.name + " from team " + team.name)
                 let file_response = await api.post('upload/', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -78,7 +99,7 @@ export default {
                 "team_id": team.id,
                 "response": data
             }
-            await api.post('competitions/teams/'+team.id+'/tasks/'+task.id+'/', postData)
+            await api.post('competitions/teams/' + team.id + '/tasks/' + task.id + '/', postData)
             location.reload(true)
 
         } catch (err) {

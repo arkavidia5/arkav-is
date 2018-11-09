@@ -21,7 +21,7 @@
       </li>
     </ul>
   </v-menu> -->
-  <v-toolbar fixed flat toolbar color="primary" dark style="z-index: 999">
+  <v-toolbar fixed flat toolbar color="primary" class="navbar" dark style="z-index: 999">
     <v-toolbar-title>
         <router-link to="/" style="text-decoration: none;">
             <v-layout>

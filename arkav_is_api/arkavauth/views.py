@@ -42,7 +42,6 @@ def get_current_session_view(request):
 @ensure_csrf_cookie
 @sensitive_post_parameters('password')
 @api_view(['POST'])
-@permission_classes((IsNotAuthenticated, ))
 def login_view(request):
     request_serializer = LoginRequestSerializer(data=request.data)
     request_serializer.is_valid(raise_exception=True)

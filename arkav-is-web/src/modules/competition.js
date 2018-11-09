@@ -30,7 +30,7 @@ export default {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.get('/competitions/', { ignoreUnauthorizedError: true })
+        let response = await api.get('/competitions/')
         commit('setCompetitions', response.data)
       } catch (err) {
         commit('addError', err)
@@ -42,7 +42,7 @@ export default {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.get('/competitions/teams/', { ignoreUnauthorizedError: true })
+        let response = await api.get('/competitions/teams/')
         commit('setTeams', response.data)
       } catch (err) {
         commit('addError', err)
