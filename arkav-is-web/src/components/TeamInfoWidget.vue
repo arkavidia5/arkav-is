@@ -4,13 +4,21 @@
     <br />
     <v-form @submit.prevent="editTeam">
       <v-text-field label="Kategori" v-model="category" disabled />
-      <v-text-field label="Nama tim" v-model="name" :disabled="loading" />
-      <v-text-field label="Asal universitas/sekolah" v-model="institution" :disabled="loading" />
-      <v-btn class="ma-0 mt-2" color="primary" type="submit" :loading="loading">Simpan</v-btn>
+      <v-text-field label="Nama tim" v-model="name" :disabled="loading || !team.competition.is_registration_open" />
+      <v-text-field label="Asal universitas/sekolah" v-model="institution" :disabled="loading || !team.competition.is_registration_open" />
+      <v-btn
+        class="ma-0 mt-2"
+        color="primary"
+        type="submit"
+        :loading="loading"
+        v-if="team.competition.is_registration_open"
+      >Simpan</v-btn>
     </v-form>
 
-    <h2 v-if="team.competition.is_registration_open" class="mt-5">Hapus Tim</h2>
-    <p><a href="#" class="body-link" @click="confirmDeleteTeam">Klik disini</a> untuk menghapus tim ini.</p>
+    <template v-if="team.competition.is_registration_open">
+      <h3 class="mt-5">Hapus Tim</h3>
+      <p><a href="#" class="body-link" @click="confirmDeleteTeam">Klik disini</a> untuk menghapus tim ini.</p>
+    </template>
   </v-flex>
 </template>
 

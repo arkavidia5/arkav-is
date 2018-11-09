@@ -13,7 +13,7 @@ export default {
       state.errors.push(message + '')
     },
     setTeam(state, team) {
-        state.team = team
+      state.team = team
     },
     clearError(state) {
       state.errors = []
@@ -22,7 +22,7 @@ export default {
       state.loading = isLoading
     },
     setSaving(state, isSaving) {
-        state.saving = isSaving
+      state.saving = isSaving
     }
   },
   actions: {
@@ -34,8 +34,8 @@ export default {
             throw 'Pastikan seluruh data terisi'
         }
 
-        await api.post('/competitions/register-team/', { competition_id, name, category, institution })
-        router.push({ name: 'dashboard' })
+        let response = await api.post('/competitions/register-team/', { competition_id, name, category, institution })
+        router.push({ name: 'team', params: { id: response.data.id } })
 
       } catch (err) {
           if (err.response) {
@@ -72,7 +72,7 @@ export default {
     async deleteTeam({ commit }, { team_id, router }) {
       try {
         commit('setLoading', true)
-        await api.delete('/competitions/teams/' + team_id + '/');
+        await api.delete('/competitions/teams/' + team_id + '/')
         router.push({ name: 'dashboard' })
       } catch (err) {
         commit('addError', err)
@@ -80,33 +80,68 @@ export default {
         commit('setLoading', false)
       }
     },
+    async setTeamLeader({ commit }, { team_id, email }) {
+      try {
+        commit('setLoading', true)
+        let response = await api.patch('/competitions/teams/' + team_id + '/', { team_leader_email: email })
+        commit('setTeam', response.data)
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async addTeamMember({ commit }, { team_id, full_name, email }) {
+      try {
+        commit('setLoading', true)
+        await api.post('/competitions/teams/' + team_id + '/members/', { full_name, email })
+        let response = await api.get('/competitions/teams/' + team_id + '/')
+        commit('setTeam', response.data)
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async removeTeamMember({ commit }, { team_id, team_member_id }) {
+      try {
+        commit('setLoading', true)
+        await api.delete('/competitions/teams/' + team_id + '/members/' + team_member_id + '/')
+        let response = await api.get('/competitions/teams/' + team_id + '/')
+        commit('setTeam', response.data)
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
     async submitTask({commit}, {task, data}) {
-        try {
-            commit('setSaving', true)
-            let team = this.state.team.team
-            if(task.widget == 'file_upload') {
-                let formData = new FormData();
-                formData.append('file' , data);
-                formData.append('description', "File for " + task.name + " from team " + team.name)
-                let file_response = await api.post('upload/', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                data = file_response.data.id
+      try {
+        commit('setSaving', true)
+        let team = this.state.team.team
+        if(task.widget == 'file_upload') {
+          let formData = new FormData();
+          formData.append('file' , data);
+          formData.append('description', "File for " + task.name + " from team " + team.name)
+          let file_response = await api.post('upload/', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
             }
-            let postData = {
-                "team_id": team.id,
-                "response": data
-            }
-            await api.post('competitions/teams/' + team.id + '/tasks/' + task.id + '/', postData)
-            location.reload(true)
-
-        } catch (err) {
-            commit('addError', err)
-        } finally {
-            commit('setSaving', false)
+          })
+          data = file_response.data.id
         }
+        let postData = {
+            "team_id": team.id,
+            "response": data
+        }
+        await api.post('competitions/teams/' + team.id + '/tasks/' + task.id + '/', postData)
+        let response = await api.get('/competitions/teams/' + team.id + '/')
+        commit('setTeam', response.data)
+      } catch (err) {
+        commit('addError', err)
+      } finally {
+        commit('setSaving', false)
+      }
     }
   }
 }

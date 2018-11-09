@@ -25,7 +25,7 @@
 
         <v-flex v-for="stage in team.stages" :key="stage.id">
           <v-subheader class="text-uppercase">{{stage.name}}</v-subheader>
-          <v-list-tile v-for="task in stage.tasks" @click="selectTask(task.id)">
+          <v-list-tile v-for="task in stage.tasks" :key="task.id" @click="selectTask(task.id)">
             <v-list-tile-action>
               <v-icon v-if="!getTaskResponse(task.id)">radio_button_unchecked</v-icon>
               <v-flex v-if="resp = getTaskResponse(task.id)">

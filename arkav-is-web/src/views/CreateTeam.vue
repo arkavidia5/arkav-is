@@ -10,9 +10,9 @@
               @click="activate(item)" cursor-pointer :active="competition.id==item.id">
               <img :src="item.view_icon" alt="" height="80">
               <div class="competition-name text-xs-center">{{item.name}}</div>
-              <div class="max-team-members text-xs-center" v-if="item.min_team_members != item.max_team_members">{{
-                  item.min_team_members }}-{{ item.max_team_members }} orang</div>
-              <div class="max-team-members text-xs-center" v-else>{{ item.max_team_members }} orang</div>
+              <div class="max-team-members text-xs-center" v-if="item.max_team_members > 1">
+                Tim: {{item.min_team_members}}-{{item.max_team_members}} orang</div>
+              <div class="max-team-members text-xs-center" v-else>Individual</div>
             </v-flex>
           </v-layout>
 
@@ -29,8 +29,8 @@
             <v-alert v-for="error in submitErrors" :key="error" :value="true" type="error" outline>
               {{ error }}
             </v-alert>
-            <v-btn class="mt-3" depressed large block color="primary" type="submit" :loading="submitLoading">
-              Daftarkan Tim
+            <v-btn class="mt-3" large block color="primary" type="submit" :loading="submitLoading">
+              Simpan dan Lanjutkan
             </v-btn>
           </v-form>
         </v-card-text>
