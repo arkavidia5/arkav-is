@@ -109,7 +109,7 @@ class Team(models.Model):
     category = models.ForeignKey(to=CompetitionCategory, related_name='teams', on_delete=models.PROTECT)
     institution = models.CharField(max_length=50)
     members = models.ManyToManyField(to=User, related_name='teams', through='TeamMember')
-    team_leader = models.OneToOneField(to=User, related_name='team_leader', on_delete=models.PROTECT)
+    team_leader = models.ForeignKey(to=User, related_name='led_teams', on_delete=models.PROTECT)
     active_stage = models.ForeignKey(to=Stage, related_name='active_teams', on_delete=models.PROTECT)
     is_participating = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -183,6 +183,10 @@ class TeamMember(models.Model):
             return self.user.email
         else:
             return self.invitation_email
+
+    @property
+    def is_team_leader(self):
+        return self.email == self.team.team_leader.email
 
     def send_invitation_email(self):
         context = {

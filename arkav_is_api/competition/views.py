@@ -168,7 +168,6 @@ class ListTeamsView(generics.ListAPIView):
         return Team.objects.filter(team_members__user=self.request.user)
 
 
-# TODO: disable edit/delete if competition's is_registration_open is false
 class RetrieveUpdateDestroyTeamView(generics.RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'team_id'
     serializer_class = TeamDetailsSerializer
@@ -176,23 +175,33 @@ class RetrieveUpdateDestroyTeamView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         # User should only be able to see teams in which he/she is a member
-        return Team.objects.filter(team_members__user=self.request.user)
+        # Disable edit/delete if competition's is_registration_open is false
+        if self.request.method == 'GET':
+            return self.request.user.teams
+        else:
+            return self.request.user.teams.filter(competition__is_registration_open=True)
 
 
-# TODO: disable edit/delete if competition's is_registration_open is false
 class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TeamMemberSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         # User should only be able to see teams in which he/she is a member
-        return TeamMember.objects.filter(user=self.request.user)
+        # Disable edit/delete if competition's is_registration_open is false
+        if self.request.method == 'GET':
+            return TeamMember.objects.filter(team__in=self.request.user.teams)
+        else:
+            return TeamMember.objects.filter(
+                team__in=self.request.user.teams,
+                team__competition__is_registration_open=True
+            )
 
     def get_object(self):
         instance = get_object_or_404(
             self.get_queryset(),
             team__id=self.kwargs['team_id'],
-            user__email=self.kwargs['email'],
+            id=self.kwargs['team_member_id'],
         )
         self.check_object_permissions(self.request, instance)
         return instance

@@ -89,14 +89,21 @@ resend_invitation_email.short_description = 'Resend the invitation email of the 
 
 class TeamMemberInline(admin.TabularInline):
     model = TeamMember
-    fields = ['user', 'has_user_account', 'invitation_full_name', 'invitation_email', 'invitation_token', 'created_at']
-    readonly_fields = ['has_user_account', 'created_at']
+    fields = [
+        'user', 'has_user_account', 'is_leader',
+        'invitation_full_name', 'invitation_email', 'invitation_token', 'created_at'
+    ]
+    readonly_fields = ['has_user_account', 'is_leader', 'created_at']
     actions = [resend_invitation_email]
     extra = 1
 
     def has_user_account(self, obj):
         return obj.has_account
     has_user_account.boolean = True
+
+    def is_leader(self, obj):
+        return obj.is_team_leader
+    is_leader.boolean = True
 
 
 @admin.register(Team)
