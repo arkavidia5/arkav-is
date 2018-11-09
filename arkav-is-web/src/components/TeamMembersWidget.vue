@@ -33,8 +33,10 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{member.full_name}}</v-list-tile-title>
-            <v-list-tile-sub-title v-if="member.is_team_leader">{{member.email}} - Ketua tim</v-list-tile-sub-title>
-            <v-list-tile-sub-title v-else>{{member.email}} - {{member.has_account ? 'Akun teraktivasi' : 'Email undangan terkirim'}}</v-list-tile-sub-title>
+            <v-list-tile-sub-title>
+              {{member.email}}
+              <v-icon v-if="member.has_account">how_to_reg</v-icon>
+            </v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
             <v-tooltip bottom>

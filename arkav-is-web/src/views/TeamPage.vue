@@ -53,7 +53,6 @@
 
 <script>
   import TaskSidebar from '../components/TaskSidebar.vue'
-  import Widget from '../components/Widget.vue'
   import TeamMembersWidget from '../components/TeamMembersWidget.vue'
   import TeamInfoWidget from '../components/TeamInfoWidget.vue'
   import FileUploadWidget from '../components/FileUploadWidget.vue'
@@ -62,7 +61,6 @@
   export default {
     components: {
       TaskSidebar,
-      Widget,
       TeamMembersWidget,
       TeamInfoWidget,
       FileUploadWidget,
@@ -103,7 +101,7 @@
         this.sidebarActive = false
       },
       getFormattedDate: function(time) {
-        return moment(time).format('DD MMMM YYYY, hh:mm:ss');
+        return moment(time).format('D MMMM YYYY, hh:mm:ss');
       }
     },
     mounted: function () {
