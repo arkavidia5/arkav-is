@@ -36,7 +36,7 @@ class ListCompetitionsView(generics.ListAPIView):
 class RegisterTeamView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request, format=None, *args, **kwargs):
         request_serializer = RegisterTeamRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         competition = request_serializer.validated_data['competition_id']
@@ -84,14 +84,14 @@ class RegisterTeamView(views.APIView):
 class AddTeamMemberView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request, format=None, *args, **kwargs):
         request_serializer = AddTeamMemberRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         full_name = request_serializer.validated_data['full_name']
         email = request_serializer.validated_data['email']
 
         with transaction.atomic():
-            team = get_object_or_404(Team.objects.all, team__id=self.kwargs['team_id'])
+            team = get_object_or_404(Team.objects.all(), id=self.kwargs['team_id'])
             self.check_object_permissions(self.request, team)
 
             # Check whether registration is open for this competition
@@ -109,7 +109,7 @@ class AddTeamMemberView(views.APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                member_user = User.objects.get(email=email)
+                member_user = User.objects.get(email__iexact=email)
                 # The user specified by the email is present, directly add to team
                 new_team_member = TeamMember.objects.create(
                     team=team,
@@ -133,7 +133,7 @@ class AddTeamMemberView(views.APIView):
 class ConfirmTeamMemberView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request, format=None, *args, **kwargs):
         request_serializer = ConfirmTeamMemberRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         invitation_token = request_serializer.validated_data['invitation_token']
@@ -177,7 +177,7 @@ class RetrieveUpdateDestroyTeamView(generics.RetrieveUpdateDestroyAPIView):
         # User should only be able to see teams in which he/she is a member
         # Disable edit/delete if competition's is_registration_open is false
         if self.request.method == 'GET':
-            return self.request.user.teams
+            return self.request.user.teams.all()
         else:
             return self.request.user.teams.filter(competition__is_registration_open=True)
 
@@ -190,10 +190,10 @@ class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView)
         # User should only be able to see teams in which he/she is a member
         # Disable edit/delete if competition's is_registration_open is false
         if self.request.method == 'GET':
-            return TeamMember.objects.filter(team__in=self.request.user.teams)
+            return TeamMember.objects.filter(team__in=self.request.user.teams.all())
         else:
             return TeamMember.objects.filter(
-                team__in=self.request.user.teams,
+                team__in=self.request.user.teams.all(),
                 team__competition__is_registration_open=True
             )
 
