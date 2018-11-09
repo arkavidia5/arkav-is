@@ -11,7 +11,7 @@ from .models import UploadedFile
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-    description = forms.CharField(max_length=200)
+    description = forms.CharField(max_length=200, required=False)
 
 
 @login_required

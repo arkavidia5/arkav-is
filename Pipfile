@@ -13,7 +13,6 @@ pylint-django = "*"
 [packages]
 django = ">=2.1.2"
 django-rest-framework = "*"
-"boto3" = "*"
 pymysql = "*"
 dj-database-url = "*"
 gunicorn = "*"

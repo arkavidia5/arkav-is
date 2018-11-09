@@ -21,15 +21,13 @@
       </li>
     </ul>
   </v-menu> -->
-  <v-toolbar fixed flat toolbar color="primary" dark style="z-index: 999">
+  <v-toolbar fixed flat toolbar color="primary" class="navbar" dark style="z-index: 999">
     <v-toolbar-title>
         <router-link to="/" style="text-decoration: none;">
-            <v-layout>
-                <img src="https://static.arkavidia.id/5/images/logo.svg" alt="" height="40">
-                <h1 class="futura-bt bold white--text" style="margin-left: 10px; text-decoration: none !important;" >
-                    ARKAVIDIA 5.0
-                </h1>
-            </v-layout>
+          <div class="logo d-flex align-center my-3">
+            <img src="https://static.arkavidia.id/5/images/logo.svg" height="36">
+            <span class="white--text ml-3">ARKAVIDIA 5.0</span>
+          </div>
         </router-link>
     </v-toolbar-title>
     <v-spacer></v-spacer>

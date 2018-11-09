@@ -1,18 +1,10 @@
-import boto3
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.http import HttpResponse
 from rest_framework import status, generics, views
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
 from arkav_is_api.arkavauth.models import User
-from .models import generate_random_str
-# TODO: fix to use proper Django setting import
-from arkav_is_api.settings import S3_BUCKET_BASE_URL, UPLOAD_DIR, S3_BUCKET_NAME
-
 from .models import (
     Competition,
     Team,
@@ -23,7 +15,8 @@ from .models import (
 from .serializers import (
     CompetitionSerializer,
     RegisterTeamRequestSerializer,
-    JoinTeamRequestSerializer,
+    AddTeamMemberRequestSerializer,
+    ConfirmTeamMemberRequestSerializer,
     TeamSerializer,
     TeamDetailsSerializer,
     TeamMemberSerializer,
@@ -43,144 +36,173 @@ class ListCompetitionsView(generics.ListAPIView):
 class RegisterTeamView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
+    def post(self, request, format=None, *args, **kwargs):
         request_serializer = RegisterTeamRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         competition = request_serializer.validated_data['competition_id']
-        team_name = request_serializer.validated_data['team_name']
-        team_category = request_serializer.validated_data['team_category']
-        team_school = request_serializer.validated_data['team_school']
-        request_members = request_serializer.validated_data['members']
-        members = []
+        team_name = request_serializer.validated_data['name']
+        team_category = request_serializer.validated_data['category']
+        team_institution = request_serializer.validated_data['institution']
+
         # Only register if registration is open for this competition
         if competition.is_registration_open:
             with transaction.atomic():
-                #Create a new User if registered user does not exist
-                for member in request_members:
-                    if User.objects.filter(email=member['email']).exists():
-                        user = User.objects.get(email=member['email'])
-                        members.append(user)
-                    else:
-                        user = User.objects.create_user(email=member['email'], password=None, full_name=member['name'], is_active=False)
-                        members.append(user)
+
                 # A user can't register in a competition if he/she already participated in the same competition
-                for member in members:
-                    if TeamMember.objects.filter(team__competition=competition, user=member).exists():
-                        raise ValidationError(
-                            code='competition_already_registered',
-                            detail='One user can only participate in one team per competition.',
-                        )
-                #Unique Validation
-                if Team.objects.filter(name=team_name).exists():
-                    raise ValidationError(
-                        code='competition_already_registered',
-                        detail='Team name already taken'
-                    )
-               
-                if Team.objects.filter(team_leader__email=request_members[0]['email']).exists():
-                    raise ValidationError(
-                        code='competition_already_registered',
-                        detail='Each user can only lead one team'
-                    )
-                # Create a new team and add the current user as an approved member to the team
+                if TeamMember.objects.filter(team__competition=competition, user=request.user).exists():
+                    return Response({
+                        'code': 'competition_already_registered',
+                        'detail': 'One user can only participate in one team per competition.'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
+                # Create a new team led by the current user
                 new_team = Team.objects.create(
-                    competition=competition, 
+                    competition=competition,
                     name=team_name,
-                    category= team_category,
-                    school= team_school,
-                    team_leader= members[0]
+                    category=team_category,
+                    institution=team_institution,
+                    team_leader=request.user
                 )
 
-                for member in members:
-                    TeamMember.objects.create(team=new_team, user=member, is_approved=True)
+                # Add the current user as team member
+                TeamMember.objects.create(
+                    team=new_team,
+                    user=request.user,
+                    invitation_full_name=request.user.full_name,
+                    invitation_email=request.user.email,
+                )
 
                 response_serializer = TeamSerializer(new_team)
                 return Response(data=response_serializer.data)
         else:
-            raise ValidationError(
-                code='competition_registration_closed',
-                detail='The competition you are trying to register to is not open for registration.',
-            )
+            return Response({
+                'code': 'competition_registration_closed',
+                'detail': 'The competition you are trying to register to is not open for registration.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class JoinTeamView(views.APIView):
+class AddTeamMemberView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, format=None):
-        request_serializer = JoinTeamRequestSerializer(data=request.data)
+    def post(self, request, format=None, *args, **kwargs):
+        request_serializer = AddTeamMemberRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
+        full_name = request_serializer.validated_data['full_name']
+        email = request_serializer.validated_data['email'].lower()
+
+        with transaction.atomic():
+            team = get_object_or_404(Team.objects.all(), id=self.kwargs['team_id'])
+            self.check_object_permissions(self.request, team)
+
+            # Check whether registration is open for this competition
+            if not team.competition.is_registration_open:
+                return Response({
+                    'code': 'competition_registration_closed',
+                    'detail': 'The competition you are trying to register to is not open for registration.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check whether this team is full
+            if team.team_members.count() >= team.competition.max_team_members:
+                return Response({
+                    'code': 'team_full',
+                    'detail': 'You have exceeded the maximum team members limit.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                member_user = User.objects.get(email=email)
+                # The user specified by the email is present, directly add to team
+                new_team_member = TeamMember.objects.create(
+                    team=team,
+                    user=member_user,
+                    invitation_full_name=member_user.full_name,
+                    invitation_email=member_user.email
+                )
+            except User.DoesNotExist:
+                # The user specified by the email is not present, send invitation
+                new_team_member = TeamMember.objects.create(
+                    team=team,
+                    invitation_full_name=full_name,
+                    invitation_email=email
+                )
+
+            new_team_member.send_invitation_email()
+
+            response_serializer = TeamMemberSerializer(new_team_member)
+            return Response(data=response_serializer.data)
+
+
+class ConfirmTeamMemberView(views.APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None, *args, **kwargs):
+        request_serializer = ConfirmTeamMemberRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+        invitation_token = request_serializer.validated_data['invitation_token']
+
         try:
-            team = Team.objects.select_related('competition', 'members').get(
-                secret_code=request_serializer.validated_data['secret_code'],
-            )
-        except Team.DoesNotExist:
-            raise ValidationError(
-                code='invalid_secret_code',
-                detail='The team invitation code you entered is not valid.',
-            )
+            team_member = TeamMember.objects.get(invitation_token=invitation_token)
 
-        # Only allow new team member if registration is open for the team's competition,
-        # and the number of team members is still less than the maximum team members limit.
-        if team.competition.is_registration_open and team.members.count() < team.competition.max_team_members:
-            with transaction.atomic():
-                # A user can't register in a competition if he/she already participated in the same competition
-                if TeamMember.objects.filter(team__competition=team.competition, user=request.user).exists():
-                    raise ValidationError(
-                        code='competition_already_registered',
-                        detail='You can only participate in one team per competition.',
-                    )
+            # Only allow confirming if the current user's email matches the invitation email
+            if team_member.invitation_email == request.user.email:
+                team_member.user = request.user
+                team_member.invitation_full_name = request.user.full_name
+                team_member.save()
+            else:
+                return Response({
+                    'code': 'wrong_email',
+                    'detail': 'Please login as the user with the email address to which your invitation email was sent.'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-                # Add the current user to the team (pending approval)
-                TeamMember.objects.create(team=team, user=request.user)
-
-                response_serializer = TeamSerializer(team)
-                return Response(data=response_serializer.data)
-        else:
-            raise ValidationError(
-                code='competition_registration_closed',
-                detail='The competition you are trying to register to is not open for registration.',
-            )
+        except TeamMember.DoesNotExist:
+            return Response({
+                'code': 'invalid_token',
+                'detail': 'The team invitatation token is not valid.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListTeamsView(generics.ListAPIView):
-        serializer_class = TeamSerializer
-        permission_classes = (IsAuthenticated,)
+    serializer_class = TeamSerializer
+    permission_classes = (IsAuthenticated,)
 
-        def get_queryset(self):
-            return Team.objects.filter(team_members__user__email__in=[self.request.user])
+    def get_queryset(self):
+        # User should only be able to see teams in which he/she is a member
+        return Team.objects.filter(team_members__user=self.request.user)
 
 
-class RetrieveUpdateTeamView(generics.RetrieveUpdateAPIView):
+class RetrieveUpdateDestroyTeamView(generics.RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'team_id'
     serializer_class = TeamDetailsSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        # User should only be able to see teams which he/she has been approved as a member
-        return Team.objects.filter(
-            team_members__user=self.request.user,
-            team_members__is_approved=True,
-        )
+        # User should only be able to see teams in which he/she is a member
+        # Disable edit/delete if competition's is_registration_open is false
+        if self.request.method == 'GET':
+            return self.request.user.teams.all()
+        else:
+            return self.request.user.teams.filter(competition__is_registration_open=True)
 
 
-# TODO: disable delete if competition's is_registration_open is false
 class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TeamMemberSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        # User should only be able to see teams which he/she has been approved as a member,
-        # except for deleting, for which the user can delete teams in which he/she is still pending confirmation.
-        if self.request.method == 'DELETE':
-            return TeamMember.objects.filter(user=self.request.user)
+        # User should only be able to see teams in which he/she is a member
+        # Disable edit/delete if competition's is_registration_open is false
+        if self.request.method == 'GET':
+            return TeamMember.objects.filter(team__in=self.request.user.teams.all())
         else:
-            return TeamMember.objects.filter(user=self.request.user, is_approved=True)
+            return TeamMember.objects.filter(
+                team__in=self.request.user.teams.all(),
+                team__competition__is_registration_open=True
+            )
 
     def get_object(self):
         instance = get_object_or_404(
             self.get_queryset(),
             team__id=self.kwargs['team_id'],
-            user__email=self.kwargs['email'],
+            id=self.kwargs['team_member_id'],
         )
         self.check_object_permissions(self.request, instance)
         return instance
@@ -189,13 +211,12 @@ class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView)
 class SubmitTaskResponseView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request,  format=None,*args, **kwargs):
-        # Only approved team members can submit a response
+    def post(self, request, format=None, *args, **kwargs):
+        # Only team members can submit a response
         team = get_object_or_404(
             Team.objects.all(),
             id=self.kwargs['team_id'],
-            team_members__user=self.request.user,
-            team_members__is_approved=True,
+            team_members__user=self.request.user
         )
 
         # A team can only respond to tasks in the currently active stage
@@ -230,7 +251,7 @@ class SubmitTaskResponseView(views.APIView):
             response_serializer = TaskResponseSerializer(new_task_response[0])
             return Response(data=response_serializer.data)
         else:
-            raise ValidationError(
-                code='team_not_participating',
-                detail='Your team is no longer participating in this competition.',
-            )
+            return Response({
+                'code': 'team_not_participating',
+                'detail': 'Your team is no longer participating in this competition.'
+            }, status=status.HTTP_400_BAD_REQUEST)

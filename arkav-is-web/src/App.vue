@@ -76,4 +76,16 @@ export default {
   .no-decoration {
     text-decoration: none !important;
   }
+
+  .shadowed-heading {
+    position: relative;
+    font-family: 'Futura Md BT Bold';
+    text-transform: uppercase;
+    font-size: 3rem;
+    color: #fff;
+    -webkit-text-stroke-color: #094260;
+    -webkit-text-stroke-width: 2px;
+    line-height: 1.2;
+    text-shadow: -3px -3px #ffd900;
+  }
 </style>

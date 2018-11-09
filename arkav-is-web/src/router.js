@@ -53,7 +53,7 @@ const router = new Router({
       component: Register,
       beforeEnter: requireGuest,
       meta: {
-        title: 'Registers Arkavidia 5.0'
+        title: 'Pendaftaran Arkavidia 5.0'
       },
     },
     {
@@ -62,7 +62,7 @@ const router = new Router({
       component: ForgotPassword,
       beforeEnter: requireGuest,
       meta: {
-        title: 'Forgot Password Arkavidia 5.0'
+        title: 'Reset Password Arkavidia 5.0'
       },
     },
     {
@@ -80,7 +80,7 @@ const router = new Router({
       component: ConfirmEmail,
       beforeEnter: requireGuest,
       meta: {
-        title: 'Confirm Email Arkavidia 5.0'
+        title: 'Konfirmasi Email Arkavidia 5.0'
       },
     }
   ],

@@ -5,89 +5,37 @@
         <v-icon>menu</v-icon>
       </v-btn>
       <v-layout row align-center>
-        <img :src="team.competition.view_icon" alt="" height="50">
-        <div class="ml-2">
-        <h2 class="display-1 font-weight-bold">{{team.name}}</h2>
-        <div class="caption font-weight-bold primary--text">{{team.competition.name}}</div>
+        <img :src="team.competition.view_icon" alt="" height="50" class="mr-3" v-show="!shouldCollapseSidebar">
+        <div>
+          <h2 class="display-1 font-weight-bold">{{team.name}}</h2>
+          <div class="caption font-weight-bold primary--text">{{team.competition.name}}</div>
         </div>
       </v-layout>
     </header>
 
     <div class="task-container">
       <!-- TODO: when any of the menu items in task sidebar is pressed, set sidebarActive = false-->
-      <TaskSidebar class="task-sidebar grey lighten-4 px-2" :visible="!shouldCollapseSidebar || sidebarActive"  style="min-height:400px">
-          <v-list class="transparent">
-        <v-subheader class="text-uppercase">Informasi Tim</v-subheader>
-    
-        <v-list-tile @click="activateTask('member')">
-          <v-list-tile-action>
-            <v-icon class="green--text">check_circle</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content class="pr-3">
-            <v-list-tile-title class="body-2">Anggota Tim</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-flex v-for="stage in team.stages" :key="`stage-${stage.name}`">
-          <v-subheader class="text-uppercase">
-            {{stage.name}}
-          </v-subheader>
-          <v-list-tile v-for="task in stage.tasks" @click="activateTask(task.id)">
-            <v-list-tile-action>
-              <v-icon v-if="!getTaskResponse(task.id)">radio_button_unchecked</v-icon>
-              <v-flex v-if="resp = getTaskResponse(task.id)">
-              <v-icon v-if="resp.status == 'completed'" class="green--text">check_circle</v-icon>
-              <v-icon v-if="resp.status == 'awaiting_validation'" class="amber--text">hourglass_full</v-icon>
-              <v-icon v-if="resp.status == 'rejected'" class="red--text">error</v-icon>
-              </v-flex>
-              
-            </v-list-tile-action>
-            <v-list-tile-title class="body-2">
-              {{task.name}}
-            </v-list-tile-title>
-          </v-list-tile>
-        </v-flex>    
-      </v-list>
-      </TaskSidebar>
+      <TaskSidebar
+        class="task-sidebar grey lighten-4 px-2"
+        :visible="!shouldCollapseSidebar || sidebarActive"
+        style="min-height:400px"
+        :team="team"
+        @selected="activateTask"
+      />
+
       <v-slide-x-transition>
         <section class="task-content px-4 py-3" v-show="!shouldCollapseSidebar || !sidebarActive">
-          <v-flex v-if="activeTask == 'member'">
-            <h2>Anggota Tim</h2>
-            <v-list v-for="member in team.team_members">
-                <v-list-tile-content>
-                  <v-list-tile-title>
-                    {{member.name}}
-                  </v-list-tile-title>
-                  <v-list-tile-sub-title>{{member.email}}</v-list-tile-sub-title>
-
-                </v-list-tile-content>
-            </v-list>
-          </v-flex>
-          <v-flex v-for="task in getTasks()" v-if="activeTask == task.id" :key="`task-${task.id}`">
-            <h2>{{task.name}}</h2>
-            <div>
-              {{task.widget_parameters}}
-            </div>
-            <v-flex>
-              <Widget :task="task" />
-            </v-flex>
-            <div v-if="response = getTaskResponse(task.id)">
-              <h2>Submission</h2>
-              <v-flex v-if="task.widget === 'file_upload'">
-                <a :href="`/api/upload/download/${response.response}/`" class="no-decoration" target="_blank">
-                  <v-btn color="info">
-                    <v-icon>launch</v-icon>
-                    Uploaded File
-                  </v-btn>
-                </a>
-                  Submitted: {{getFormattedDate(response.last_submitted_at)}}
-
-              </v-flex>
-            </div>
-          </v-flex>
+          <TeamMembersWidget :team="team" v-if="activeTaskId == 'team_members'" />
+          <TeamInfoWidget :team="team" v-if="activeTaskId === 'team_info'" />
+          <FileUploadWidget
+            :team="team"
+            :task="activeTask"
+            :taskResponse="activeTaskResponse"
+            v-if="activeTask && activeTask.widget === 'file_upload'"
+          />
         </section>
       </v-slide-x-transition>
     </div>
-
 
   </v-card>
   <v-layout v-else-if="loading" row justify-center>
@@ -106,56 +54,59 @@
 <script>
   import TaskSidebar from '../components/TaskSidebar.vue'
   import Widget from '../components/Widget.vue'
-  import {mapState, mapActions} from 'vuex'
+  import TeamMembersWidget from '../components/TeamMembersWidget.vue'
+  import TeamInfoWidget from '../components/TeamInfoWidget.vue'
+  import FileUploadWidget from '../components/FileUploadWidget.vue'
+  import { mapState, mapActions } from 'vuex'
   import moment from 'moment'
   export default {
     components: {
       TaskSidebar,
-      Widget
+      Widget,
+      TeamMembersWidget,
+      TeamInfoWidget,
+      FileUploadWidget,
     },
     data() {
       return {
         sidebarActive: false,
         team_id: this.$route.params.id,
-        activeTask: 'member',
+        activeTaskId: 'team_members',
       }
     },
     computed: {
-      shouldCollapseSidebar() {
-        return this.$vuetify.breakpoint.smAndDown
-      },
       ...mapState({
         loading: state => state.team.loading,
         errors: state => state.team.errors,
         team: state => state.team.team,
       }),
+      shouldCollapseSidebar() {
+        return this.$vuetify.breakpoint.smAndDown
+      },
+      activeTask() {
+        let tasks = [];
+        for (let i = 0; i < this.team.stages.length; i++) {
+          tasks = tasks.concat(this.team.stages[i].tasks)
+        }
+        return tasks.find(task => task && task.id === this.activeTaskId)
+      },
+      activeTaskResponse() {
+        return this.team.task_responses.find(taskResponse => taskResponse.task_id === this.activeTaskId)
+      },
     },
     methods: {
       ...mapActions({
-            getTeam: 'team/getTeam',
-        }),
-      activateTask: function(task) {
-        this.activeTask= task
+        getTeam: 'team/getTeam',
+      }),
+      activateTask: function (taskId) {
+        this.activeTaskId = taskId
         this.sidebarActive = false
       },
-      getTasks: function() {
-        let tasks = []
-        for(let i=0; i < this.team.stages.length; i++) {
-          let appendee = this.team.stages[i].tasks
-          for(let j=0;j < appendee.length; j++) {
-            tasks.push(appendee[j])
-          }
-        }
-        return tasks
-      },
-      getTaskResponse: function(task_id) {
-        return this.team.task_responses.find(obj =>{return obj.task_id === task_id})
-      },
       getFormattedDate: function(time) {
-        return moment(time).format('MMMM Do YYYY, hh:mm:ss');
+        return moment(time).format('DD MMMM YYYY, hh:mm:ss');
       }
     },
-    mounted() { 
+    mounted: function () {
       this.getTeam({
         team_id: this.team_id
       })
@@ -171,7 +122,7 @@
   }
 
   .task-sidebar {
-    z-index: 9999;
+    z-index: 99;
     flex: 1;
   }
 
@@ -186,5 +137,10 @@
 
   .task-content.slide-x-transition-leave-active {
     position: absolute;
+  }
+
+  .task-sidebar .v-list__tile__action,
+  .task-sidebar .v-list__tile__avatar {
+    min-width: 36px;
   }
 </style>

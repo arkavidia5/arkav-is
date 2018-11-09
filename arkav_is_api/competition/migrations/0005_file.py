@@ -2,6 +2,12 @@
 
 import arkav_is_api.competition.models
 from django.db import migrations, models
+from string import ascii_letters
+from django.utils.crypto import get_random_string
+
+
+def generate_random_str(length=30):
+    return get_random_string(length, allowed_chars=ascii_letters)
 
 
 class Migration(migrations.Migration):
@@ -15,7 +21,7 @@ class Migration(migrations.Migration):
             name='File',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', models.CharField(default=arkav_is_api.competition.models.generate_random_str, max_length=30)),
+                ('slug', models.CharField(default=generate_random_str, max_length=30)),
                 ('filename', models.CharField(max_length=30)),
             ],
         ),

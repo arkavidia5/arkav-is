@@ -13,17 +13,15 @@
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <v-flex d-flex align-center justify-center>
-              <h1 class="text-xs-center">Confirm Email</h1>
+              <h1 class="shadowed-heading text-xs-center">Confirm Email</h1>
             </v-flex>
             <v-alert class="mt-3" :value="true" type="success" outline v-for="message in messages" :key="message">
               {{ message }}
-              <router-link to="/login" class="body-link">
-                Login here.
-              </router-link>
             </v-alert>
             <v-alert class="mt-3" :value="true" type="error" outline v-for="error in errors" :key="error">
               {{ error }}
             </v-alert>
+            <v-btn to="/login" block color="primary" class="mt-3">Login</v-btn>
             <div class="text-xs-center" v-if="loading">
               <v-progress-circular class="mt-3" indeterminate></v-progress-circular>
             </div>

@@ -2,9 +2,10 @@ from django.urls import path
 from .views import (
     ListCompetitionsView,
     RegisterTeamView,
-    JoinTeamView,
+    AddTeamMemberView,
+    ConfirmTeamMemberView,
     ListTeamsView,
-    RetrieveUpdateTeamView,
+    RetrieveUpdateDestroyTeamView,
     RetrieveUpdateDestroyTeamMemberView,
     SubmitTaskResponseView,
 )
@@ -12,9 +13,10 @@ from .views import (
 urlpatterns = [
     path('', ListCompetitionsView.as_view()),
     path('register-team/', RegisterTeamView.as_view()),
-    path('join-team/', JoinTeamView.as_view()),
+    path('confirm-team-member/', ConfirmTeamMemberView.as_view()),
     path('teams/', ListTeamsView.as_view()),
-    path('teams/<int:team_id>/', RetrieveUpdateTeamView.as_view()),
-    path('teams/<int:team_id>/members/<str:email>/', RetrieveUpdateDestroyTeamMemberView.as_view()),
+    path('teams/<int:team_id>/', RetrieveUpdateDestroyTeamView.as_view()),
+    path('teams/<int:team_id>/members/', AddTeamMemberView.as_view()),
+    path('teams/<int:team_id>/members/<int:team_member_id>/', RetrieveUpdateDestroyTeamMemberView.as_view()),
     path('teams/<int:team_id>/tasks/<int:task_id>/', SubmitTaskResponseView.as_view()),
 ]

@@ -1,28 +1,25 @@
 <template>
   <div>
-    <h1 class="mb-3 futura-bt primary--text">COMPETITION</h1>
-    <v-card class="row elevation-2 pa-2" >
-        <header class="text-header pa-2">
-          <h1>Your Teams</h1>
-        </header>
+    <h1 class="mb-3 shadowed-heading text-xs-center text-md-left">Your Teams</h1>
+      <v-card class="row elevation-2 pa-4">
         <v-layout row wrap>
-          <v-flex md2 sm4 xs12 pa-4 ma-1 elevation-1 v-for="item in teams" :key="`teams-${item.id}`">
+          <v-flex md2 sm4 xs12 pa-3 ma-1 elevation-1 v-for="item in teams" :key="`teams-${item.id}`">
             <router-link class="no-decoration" :to="`/teams/${item.id}`">
               <v-layout row justify-center>
                 <img :src="item.competition.view_icon" alt="" height=60>
               </v-layout>
-              <v-layout row justify-center>
+              <v-layout row justify-center class="mt-3" style="line-height: 1.2">
                 <h2 class="text-xs-center">{{item.name}}</h2>
               </v-layout>
             </router-link>
           </v-flex>
-          <v-flex md2 sm4 xs12 pa-4 ma-1 elevation-1 v-if="teams.length < 2">
+          <v-flex md2 sm4 xs12 pa-3 ma-1 elevation-1>
             <router-link class="no-decoration" to="/create-team">
               <v-layout row justify-center>
                 <i class="material-icons" style="font-size: 4.5rem;">add_circle</i>
               </v-layout>
-              <v-layout row justify-center>
-                <h2 class="text-xs-center">Create a Team</h2>
+              <v-layout row justify-center class="mt-3" style="line-height: 1.2">
+                <h2 class="text-xs-center">Buat tim baru</h2>
               </v-layout>
             </router-link>
           </v-flex>
@@ -45,7 +42,7 @@
     methods: {
       ...mapActions({
         getCompetitions: 'competition/getCompetitions',
-        getTeams: 'competition/getTeams'        
+        getTeams: 'competition/getTeams'
       }),
     },
     beforeMount() {
