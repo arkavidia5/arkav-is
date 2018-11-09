@@ -16,8 +16,6 @@ def handle_user_post_save(sender, instance, created, **kwargs):
     in which he/she has been registered as a member.
     """
     if created:
-        print('Caught user registered')
-
         newly_registered_team_members = TeamMember.objects.filter(
             user__isnull=True,
             invitation_email=instance.email,

@@ -46,7 +46,7 @@
           type="success"
           outline
         >
-          Panitia telah memverifikasi file yang ada upload.
+          Panitia telah memverifikasi file yang Anda upload.
         </v-alert>
       </v-flex>
     </v-form>
