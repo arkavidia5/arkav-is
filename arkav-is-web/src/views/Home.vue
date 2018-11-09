@@ -1,9 +1,9 @@
 <template>
   <v-app class="app">
     <Navbar />
-    <v-container fluid main-container>
+    <v-container fluid class="main-container">
       <v-container>
-      <router-view />
+        <router-view />
       </v-container>
     </v-container>
   </v-app>
@@ -30,8 +30,7 @@
     background-repeat: no-repeat;
     background-position: bottom;
     background-size: 102%;
-  }
-  .app {
+    background-attachment: fixed;
   }
 </style>
 

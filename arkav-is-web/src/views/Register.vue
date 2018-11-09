@@ -13,7 +13,7 @@
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <v-flex d-flex align-center justify-center>
-              <h1 class="text-xs-center">Daftar</h1>
+              <h1 class="text-xs-center">Buat Akun Baru</h1>
             </v-flex>
 
             <v-form class="mt-3" @submit.prevent="register" v-if="messages.length === 0">
@@ -24,6 +24,9 @@
               <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
               </v-alert>
+              <div class="my-3">
+                <router-link to="/login" class="body-link">Sudah punya akun? Login disini</router-link>
+              </div>
               <v-btn
                 depressed
                 large
@@ -35,9 +38,6 @@
               >
                 Daftar
               </v-btn>
-              <router-link to="/login" class="body-link">
-                Sudah punya akun? Daftar disini
-              </router-link>
             </v-form>
 
             <v-alert v-for="message in messages" :key="message" :value="true" type="success" outline class="mt-3">

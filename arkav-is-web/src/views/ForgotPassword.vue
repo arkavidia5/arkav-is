@@ -13,7 +13,7 @@
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <v-flex d-flex align-center justify-center>
-              <h1 class="text-xs-center">Reset Password</h1>
+              <h1 class="shadowed-heading text-xs-center">Password Reset</h1>
             </v-flex>
 
             <v-form class="mt-3" @submit.prevent="tryResetPassword" v-if="messages.length === 0">

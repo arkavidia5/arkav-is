@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-3 futura-bt primary--text">COMPETITION</h1>
+    <h1 class="mb-3 shadowed-heading">Competitions</h1>
     <v-card class="row elevation-2 pa-2" >
         <header class="text-header pa-2">
           <h1>Your Teams</h1>
@@ -45,7 +45,7 @@
     methods: {
       ...mapActions({
         getCompetitions: 'competition/getCompetitions',
-        getTeams: 'competition/getTeams'        
+        getTeams: 'competition/getTeams'
       }),
     },
     beforeMount() {

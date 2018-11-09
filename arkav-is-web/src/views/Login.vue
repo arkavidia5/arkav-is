@@ -2,18 +2,18 @@
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
-          <v-flex d-flex align-center justify-center mb-4>
-            <v-flex text-xs-right>
-              <img src="https://static.arkavidia.id/5/images/logo.svg" height=50 >
-            </v-flex>
-            <h1 class="ml-3 futura-bt bold primary--text">
-              ARKAVIDIA 5.0
-            </h1>
+        <v-flex d-flex align-center justify-center mb-4>
+          <v-flex text-xs-right>
+            <img src="https://static.arkavidia.id/5/images/logo.svg" height=50 >
           </v-flex>
+          <h1 class="ml-3 futura-bt bold primary--text">
+            ARKAVIDIA 5.0
+          </h1>
+        </v-flex>
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <v-flex d-flex align-center justify-center>
-              <h1 class="text-xs-center">Login</h1>
+              <h1 class="shadowed-heading text-xs-center">Login</h1>
             </v-flex>
 
             <v-form class="mt-3" @submit.prevent="login">
