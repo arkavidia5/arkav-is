@@ -123,6 +123,7 @@ def registration_confirmation_view(request):
 
         if not attempt.is_confirmed:
             attempt.user.is_email_confirmed = True
+            attempt.user.save()
             attempt.is_confirmed = True
             attempt.save()
 

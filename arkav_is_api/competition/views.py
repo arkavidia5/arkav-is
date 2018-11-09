@@ -124,7 +124,8 @@ class AddTeamMemberView(views.APIView):
                     invitation_full_name=full_name,
                     invitation_email=email
                 )
-                new_team_member.send_invitation_email()
+
+            new_team_member.send_invitation_email()
 
             response_serializer = TeamMemberSerializer(new_team_member)
             return Response(data=response_serializer.data)

@@ -1,10 +1,31 @@
 from string import ascii_uppercase, digits
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from arkav_is_api.arkavauth.models import User
+
+
+@receiver(post_save, sender=User)
+def handle_user_post_save(sender, instance, created, **kwargs):
+    """
+    Connect newly registered user with any teams
+    in which he/she has been registered as a member.
+    """
+    if created:
+        print('Caught user registered')
+
+        newly_registered_team_members = TeamMember.objects.filter(
+            user__isnull=True,
+            invitation_email=instance.email,
+        )
+        for team_member in newly_registered_team_members:
+            team_member.user = instance
+            team_member.invitation_full_name = instance.full_name
+            team_member.save()
 
 
 def generate_team_invitation_token():
