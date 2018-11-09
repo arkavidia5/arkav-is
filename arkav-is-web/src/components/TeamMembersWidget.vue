@@ -61,7 +61,7 @@
       <v-form @submit.prevent="addTeamMember">
         <v-text-field label="Nama lengkap" v-model="invitation_full_name" :disabled="loading" />
         <v-text-field label="Email" v-model="invitation_email" :disabled="loading" />
-        <v-btn class="ma-0 mt-2" color="primary" type="submit" :loading="loading">Simpan</v-btn>
+        <v-btn class="ma-0 mt-2" color="primary" type="submit" :loading="loading">Tambahkan Anggota</v-btn>
       </v-form>
     </template>
   </v-flex>

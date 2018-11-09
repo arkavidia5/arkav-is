@@ -29,7 +29,6 @@
                 <router-link to="/register" class="body-link">Belum punya akun? Daftar disini</router-link>
               </div>
               <v-btn
-                depressed
                 large
                 block
                 color="primary"

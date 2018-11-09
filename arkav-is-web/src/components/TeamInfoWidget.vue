@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     ...mapState({
-      loading: state => state.team.saving
+      loading: state => state.team.loading
     })
   },
   methods: {

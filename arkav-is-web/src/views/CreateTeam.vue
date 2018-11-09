@@ -4,6 +4,7 @@
       <v-card class="elevation-3 pa-3">
         <v-card-text>
           <h1 class="shadowed-heading text-xs-center">Create Team</h1>
+          <v-progress-linear :indeterminate="true" v-if="loading"></v-progress-linear>
 
           <v-layout row wrap my-4>
             <v-flex class="competition-list" xs6 sm3 v-if="!loading" pa-3 d-flex column v-for="item in competitions" :key="item.id"

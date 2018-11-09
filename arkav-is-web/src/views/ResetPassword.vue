@@ -28,7 +28,6 @@
                 {{ error }}
               </v-alert>
               <v-btn
-                depressed
                 large
                 block
                 color="primary"

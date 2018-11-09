@@ -13,7 +13,7 @@
         <v-card class="elevation-3 pa-3">
           <v-card-text>
             <v-flex d-flex align-center justify-center>
-              <h1 class="text-xs-center">Buat Akun Baru</h1>
+              <h1 class="shadowed-heading text-xs-center">Register</h1>
             </v-flex>
 
             <v-form class="mt-3" @submit.prevent="register" v-if="messages.length === 0">
@@ -28,7 +28,6 @@
                 <router-link to="/login" class="body-link">Sudah punya akun? Login disini</router-link>
               </div>
               <v-btn
-                depressed
                 large
                 block
                 color="primary"

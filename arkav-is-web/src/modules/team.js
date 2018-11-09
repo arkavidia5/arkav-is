@@ -6,7 +6,6 @@ export default {
     errors: [],
     loading: false,
     team: '',
-    saving: false,
   },
   mutations: {
     addError(state, message) {
@@ -21,9 +20,6 @@ export default {
     setLoading(state, isLoading) {
       state.loading = isLoading
     },
-    setSaving(state, isSaving) {
-      state.saving = isSaving
-    }
   },
   actions: {
     async submitTeam({ commit }, { router, competition_id, name, category, institution }) {
@@ -115,32 +111,16 @@ export default {
         commit('setLoading', false)
       }
     },
-    async submitTask({commit}, {task, data}) {
+    async submitTaskResponse({ commit }, { team_id, task_id, response }) {
       try {
-        commit('setSaving', true)
-        let team = this.state.team.team
-        if(task.widget == 'file_upload') {
-          let formData = new FormData();
-          formData.append('file' , data);
-          formData.append('description', "File for " + task.name + " from team " + team.name)
-          let file_response = await api.post('upload/', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          })
-          data = file_response.data.id
-        }
-        let postData = {
-            "team_id": team.id,
-            "response": data
-        }
-        await api.post('competitions/teams/' + team.id + '/tasks/' + task.id + '/', postData)
-        let response = await api.get('/competitions/teams/' + team.id + '/')
-        commit('setTeam', response.data)
+        commit('setLoading', true)
+        await api.post('/competitions/teams/' + team_id + '/tasks/' + task_id + '/', { response })
+        let getResponse = await api.get('/competitions/teams/' + team_id + '/')
+        commit('setTeam', getResponse.data)
       } catch (err) {
         commit('addError', err)
       } finally {
-        commit('setSaving', false)
+        commit('setLoading', false)
       }
     }
   }
