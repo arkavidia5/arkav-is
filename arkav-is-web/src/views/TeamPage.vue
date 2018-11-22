@@ -33,6 +33,12 @@
             :taskResponse="activeTaskResponse"
             v-if="activeTask && activeTask.widget === 'file_upload'"
           />
+          <TextInputWidget
+            :team="team"
+            :task="activeTask"
+            :taskResponse="activeTaskResponse"
+            v-else-if="activeTask && activeTask.widget === 'text_input'"
+            />
         </section>
       </v-slide-x-transition>
     </div>
@@ -56,6 +62,7 @@
   import TeamMembersWidget from '../components/TeamMembersWidget.vue'
   import TeamInfoWidget from '../components/TeamInfoWidget.vue'
   import FileUploadWidget from '../components/FileUploadWidget.vue'
+  import TextInputWidget from '../components/TextInputWidget.vue'
   import { mapState, mapActions } from 'vuex'
   import moment from 'moment'
   export default {
@@ -64,6 +71,7 @@
       TeamMembersWidget,
       TeamInfoWidget,
       FileUploadWidget,
+      TextInputWidget,
     },
     data() {
       return {
