@@ -21,6 +21,10 @@ class StageInline(admin.TabularInline):
     extra = 1
     show_change_link = True
 
+def send_reminder(adminModel, request, queryset):
+    for item in queryset:
+        item.send_reminder()
+send_reminder.short_description = "Send reminder email"
 
 @admin.register(Competition)
 class CompetitionAdmin(admin.ModelAdmin):
@@ -108,6 +112,7 @@ class TeamMemberInline(admin.TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
+    actions = [send_reminder]
     list_display = ['id', 'name', 'competition', 'institution', 'category', 'team_leader',
                     'active_stage', 'has_completed_active_stage', 'is_participating', 'created_at']
     list_display_links = ['id', 'name']

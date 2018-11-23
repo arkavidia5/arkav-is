@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+</head>
+<body style="font-family: Roboto,sans-serif; line-height: 2;">
+    <table style="width: 100%; background-color: #FFFFF2 !important; background-image: url(https://dashboard.arkavidia.id/img/bg_pattern.feb36b04.png) !important; background-size: 50% !important; padding: 10px;">
+        <tr><td style="text-align: center"><img src="https://static.arkavidia.id/5/images/logo-long.png" height="50"></td></tr>
+        <tr><td>Halo, {{ team_name }}! </td></tr>
+        <tr><td>Diingatkan kembali untuk melengkapi tahap {{ active_stage.name }}:</td></tr>
+        {%  for i in tasks %}
+            <tr><td>- {{ i.name }}</td></tr>
+        {% endfor %}
+        <tr></tr>
+        <tr></tr>
+        <tr><td>Untuk melihat tim Anda, <a href="https://dashboard.arkavidia.id/">klik disini</a>.</td></tr>
+    </table>
+</body>
+</html>

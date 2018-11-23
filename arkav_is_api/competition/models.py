@@ -151,6 +151,38 @@ class Team(models.Model):
         '''
         return self.competition.stages.filter(order__lte=self.active_stage.order)
 
+    def send_reminder(self):
+        print(self.active_stage)
+
+        need_to_notify = []
+        for i in self.active_stage.tasks.all():
+            task_response_count = self.task_responses.filter(
+                task__stage=self.active_stage, status__in=[TaskResponse.COMPLETED, TaskResponse.AWAITING_VALIDATION],
+                task__id= i.id).count()
+            if(not task_response_count):
+                need_to_notify.append(i)
+        addresses = []
+        for i in self.members.all():
+            addresses.append(i.email)
+
+        context = {
+            'team_name': self.name,
+            'active_stage': self.active_stage,
+            'tasks': need_to_notify,
+        }
+        text_template = get_template('team_reminder_email.txt')
+        html_template = get_template('team_reminder_email.html')
+        mail_text_message = text_template.render(context)
+        mail_html_message = html_template.render(context)
+
+        mail = EmailMultiAlternatives(
+            subject='Reminder Lomba Arkavidia 5.0',
+            body=mail_text_message,
+            to=addresses
+        )
+        mail.attach_alternative(mail_html_message, "text/html")
+        mail.send()
+
     def save(self, *args, **kwargs):
         # Use the first stage of the competition as the default for active_stage.
         # Will fail if no competition is set or the competition does not have a stage yet.
