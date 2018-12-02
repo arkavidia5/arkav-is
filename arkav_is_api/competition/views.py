@@ -100,6 +100,13 @@ class AddTeamMemberView(views.APIView):
                     'code': 'competition_registration_closed',
                     'detail': 'The competition you are trying to register to is not open for registration.'
                 }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Check whether team is still participating in the competition
+            if not team.is_participating:
+                return Response({
+                    'code': 'team_not_participating',
+                    'detail': 'Your team is no longer participating in this competition.'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
             # Check whether this team is full
             if team.team_members.count() >= team.competition.max_team_members:
@@ -130,7 +137,8 @@ class AddTeamMemberView(views.APIView):
             response_serializer = TeamMemberSerializer(new_team_member)
             return Response(data=response_serializer.data)
 
-
+# DEPRECATED: not used anymore since we no longer need confirmation to add an email address to the team
+# TODO: remove
 class ConfirmTeamMemberView(views.APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -156,7 +164,7 @@ class ConfirmTeamMemberView(views.APIView):
         except TeamMember.DoesNotExist:
             return Response({
                 'code': 'invalid_token',
-                'detail': 'The team invitatation token is not valid.'
+                'detail': 'The team invitation token is not valid.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -176,11 +184,11 @@ class RetrieveUpdateDestroyTeamView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         # User should only be able to see teams in which he/she is a member
-        # Disable edit/delete if competition's is_registration_open is false
+        # Disable edit/delete if competition's is_registration_open is false or the team's is_participating is false
         if self.request.method == 'GET':
             return self.request.user.teams.all()
         else:
-            return self.request.user.teams.filter(competition__is_registration_open=True)
+            return self.request.user.teams.filter(competition__is_registration_open=True, is_participating=True)
 
 
 class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView):
@@ -189,13 +197,14 @@ class RetrieveUpdateDestroyTeamMemberView(generics.RetrieveUpdateDestroyAPIView)
 
     def get_queryset(self):
         # User should only be able to see teams in which he/she is a member
-        # Disable edit/delete if competition's is_registration_open is false
+        # Disable edit/delete if competition's is_registration_open is false or the team's is_participating is false
         if self.request.method == 'GET':
             return TeamMember.objects.filter(team__in=self.request.user.teams.all())
         else:
             return TeamMember.objects.filter(
                 team__in=self.request.user.teams.all(),
-                team__competition__is_registration_open=True
+                team__competition__is_registration_open=True,
+                team__is_participating=True
             )
 
     def get_object(self):
