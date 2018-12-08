@@ -35,7 +35,7 @@ class QuizAdmin(nested_admin.NestedModelAdmin):
     inlines = [
         QuestionInline,
     ]
-    list_display = ('name', 'is_open', 'is_publicg')
+    list_display = ('name', 'is_open', 'is_public')
 
 
 class AttemptAnswerInline(admin.TabularInline):
