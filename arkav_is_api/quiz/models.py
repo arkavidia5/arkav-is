@@ -16,6 +16,7 @@ QUIZ_SELECTION = (
 )
 
 class Quiz(models.Model):
+    slug = models.SlugField(max_length=150, unique=True)
     name = models.CharField(max_length=128)
     is_public = models.BooleanField(default=False)
     is_open = models.BooleanField(default=False)

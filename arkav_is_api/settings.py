@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'arkav_is_api.arkavauth',
     'arkav_is_api.uploader',
     'arkav_is_api.competition',
+    'arkav_is_api.preevent',
     'arkav_is_api.quiz'
 
 
