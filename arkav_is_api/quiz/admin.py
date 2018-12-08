@@ -1,10 +1,22 @@
-from django.apps import apps
 from django.contrib import admin
+from .models import Quiz, Question, QuestionSelection
+import nested_admin
 
 # Register your models here.
 
 
-app = apps.get_app_config('quiz')
+class QuestionSelectionInline(nested_admin.NestedTabularInline):
+    model = QuestionSelection
+    max_num = 5
+class QuestionInline(nested_admin.NestedTabularInline):
+    model = Question
+    inlines = [
+        QuestionSelectionInline
+    ]
 
-for model_name, model in app.models.items():
-    admin.site.register(model)
+@admin.register(Quiz)
+class QuizAdmin(nested_admin.NestedModelAdmin):
+    inlines = [
+        QuestionInline,
+    ]
+

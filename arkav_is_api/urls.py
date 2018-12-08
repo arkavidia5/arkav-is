@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/auth/', include('arkav_is_api.arkavauth.urls')),
     path('api/upload/', include('arkav_is_api.uploader.urls')),
     path('api/competitions/', include('arkav_is_api.competition.urls')),
+    path('api/quiz/', include('arkav_is_api.quiz.urls')),
 ]

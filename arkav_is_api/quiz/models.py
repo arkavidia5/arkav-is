@@ -10,6 +10,8 @@ class Quiz(models.Model):
     is_open = models.BooleanField(default=False)
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name_plural = "Quizes"
 
 
 class QuizParticipant(models.Model):
@@ -17,11 +19,13 @@ class QuizParticipant(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.PROTECT)
     is_participating = models.BooleanField(default=True)
 
+
 class Question(models.Model):
     quiz = models.ForeignKey(to=Quiz, on_delete=models.PROTECT)
     description = models.TextField()
     def __str__(self):
         return '%s - %s' % (self.quiz, self.id)
+
 
 class QuestionSelection(models.Model):
     QUIZ_SELECTION = (
