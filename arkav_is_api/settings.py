@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import dj_database_url
+import nested_admin
 from distutils.util import strtobool
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -27,10 +28,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'nested_admin',
     'arkav_is_api.arkavauth',
     'arkav_is_api.uploader',
     'arkav_is_api.competition',
     'arkav_is_api.quiz'
+
+
 ]
 AUTH_USER_MODEL = 'arkavauth.User'
 
