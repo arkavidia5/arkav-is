@@ -28,11 +28,14 @@ class Quiz(models.Model):
     class Meta:
         verbose_name_plural = "Quizes"
 
+class QuizParticipant(models.Model):
+    quiz = models.ForeignKey(to=Quiz, on_delete=models.PROTECT)
+    user = models.ForeignKey(to=User, on_delete=models.PROTECT)
+    is_participating = models.BooleanField(default=True)
 
 class QuizAttempt(models.Model):
     quiz = models.ForeignKey(to=Quiz, on_delete=models.PROTECT)
     user = models.ForeignKey(to=User, on_delete=models.PROTECT)
-    is_participating = models.BooleanField(default=True)
     start_time = models.TimeField(null=True, blank=True)
     finish_time = models.TimeField(null=True, blank=True)
     score = models.IntegerField(null=True, blank=True)
