@@ -19,7 +19,7 @@ from django.urls import include, path
 urlpatterns = [
     # Django admin site
     path('admin/', admin.site.urls),
-    path(r'^nested_admin/', include('nested_admin.urls')),
+    path('nested_admin/', include('nested_admin.urls')),
 
     # API routes
     path('api/auth/', include('arkav_is_api.arkavauth.urls')),

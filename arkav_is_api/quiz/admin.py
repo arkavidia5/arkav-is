@@ -8,7 +8,7 @@ import nested_admin
 class QuestionSelectionInline(nested_admin.NestedTabularInline):
     model = QuestionSelection
     max_num = 5
-class QuestionInline(nested_admin.NestedTabularInline):
+class QuestionInline(nested_admin.NestedStackedInline):
     model = Question
     inlines = [
         QuestionSelectionInline
