@@ -17,7 +17,6 @@ pymysql = "*"
 dj-database-url = "*"
 gunicorn = "*"
 django-nested-admin = "*"
-django-reversion = "*"
 
 [requires]
 python_version = "3.6"

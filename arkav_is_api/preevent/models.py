@@ -14,6 +14,14 @@ STATUS = (
 
 QUIZ_SLUG = 'coding-class'
 
+class Configuration(models.Model):
+    is_coding_class_registration_open = models.BooleanField(default=False)
+    coding_class_quiz_slug = models.SlugField()
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(Configuration, self).save(*args, **kwargs)
+
 
 class CodingClassParticipant(models.Model):
     user = models.OneToOneField(to=User, on_delete=models.PROTECT)

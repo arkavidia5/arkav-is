@@ -1,8 +1,16 @@
 from django.contrib import admin
 
 # Register your models here.
-from arkav_is_api.preevent.models import CodingClassParticipant
-from arkav_is_api.quiz.models import QuizAttempt
+from arkav_is_api.preevent.models import CodingClassParticipant, Configuration
+
+@admin.register(Configuration)
+class ConfigurationAdmin(admin.ModelAdmin):
+    list_display = (
+        'singleton','is_coding_class_registration_open', 'coding_class_quiz_slug'
+    )
+    def singleton(self,obj):
+        return 'Preevent Configuration '
+    pass
 
 
 def add_user_attempt(model, request, queryset):

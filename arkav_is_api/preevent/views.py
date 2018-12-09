@@ -8,8 +8,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from arkav_is_api import settings
-from arkav_is_api.preevent.models import CodingClassParticipant
+from arkav_is_api.preevent.models import CodingClassParticipant, Configuration
 from arkav_is_api.preevent.serializers import CodingClassRequestSerializer
+
+class RegistrationPing(views.APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, format=None):
+        data = {}
+        configuration = Configuration.objects.first()
+        data['coding_class_registration_open'] = configuration.is_coding_class_registration_open
+        return Response(data=data)
 
 
 class CodingClass(views.APIView):
@@ -19,7 +27,7 @@ class CodingClass(views.APIView):
         data['is_registration_open'] = settings.CODING_CLASS_REGISTRATION_OPEN
         return Response(data=data)
     def post(self, request, format=None):
-        if not settings.CODING_CLASS_REGISTRATION_OPEN:
+        if not Configuration.objects.first().is_coding_class_registration_open:
             return Response(data={'status': 403, 'message': 'Registration is closed'},
                             status=status.HTTP_403_FORBIDDEN)
         else:
