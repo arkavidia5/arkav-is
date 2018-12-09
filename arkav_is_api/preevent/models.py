@@ -16,7 +16,7 @@ QUIZ_SLUG = 'coding-class'
 
 
 class CodingClassParticipant(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.PROTECT)
+    user = models.OneToOneField(to=User, on_delete=models.PROTECT)
     birthday = models.DateField()
     domicile = models.CharField(max_length=128)
     school = models.CharField(max_length=128)
@@ -48,6 +48,3 @@ class CodingClassParticipant(models.Model):
             self.status = 3
             QuizAttempt.objects.filter(id=self.quiz_attempt_id).first().finish()
             self.save()
-
-
-

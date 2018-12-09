@@ -35,4 +35,7 @@ class CodingClassParticipantAdmin(admin.ModelAdmin):
     user_name.short_description = "Name"
 
     def quiz_attempt_score(self,obj):
-        return obj.quiz_attempt.score
+        if not obj.quiz_attempt:
+            return None
+        else:
+            return obj.quiz_attempt.score

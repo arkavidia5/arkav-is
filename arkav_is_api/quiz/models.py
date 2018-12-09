@@ -1,5 +1,5 @@
 import datetime
-
+import uuid
 from django.db import models, transaction
 
 # Create your models here.
@@ -82,6 +82,7 @@ class QuizAttempt(models.Model):
 
 class Question(models.Model):
     quiz = models.ForeignKey(to=Quiz, on_delete=models.PROTECT)
+    identifier = models.UUIDField(default= uuid.uuid4, unique=True)
     description = models.TextField()
     def __str__(self):
         return '%s - %s' % (self.quiz, self.id)
