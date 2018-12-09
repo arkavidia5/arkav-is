@@ -47,3 +47,4 @@ class CodingClassParticipantAdmin(admin.ModelAdmin):
             return None
         else:
             return obj.quiz_attempt.score
+    quiz_attempt_score.admin_order_field = 'quiz_attempt__score'
