@@ -8,7 +8,7 @@
         <img src="../assets/codingclass-02.svg" alt="" height="50" class="mr-3" v-show="!shouldCollapseSidebar">
         <div>
           <h2 class="display-1 font-weight-bold">Coding Class</h2>
-          <div class="caption font-weight-bold primary--text">SMA</div>
+          <div class="caption font-weight-bold primary--text">SMA/Sederajat</div>
         </div>
       </v-layout>
     </header>
@@ -27,6 +27,8 @@
         <section class="task-content px-4 py-3" v-show="!shouldCollapseSidebar || !sidebarActive">
 
           <CodingClassRegistrationForm v-if="activeTaskId === 'register'" :registration-data="registrationData"/>
+          <CodingClassOnlineTest v-if="activeTaskId === 'quiz'" :registration-data="registrationData"/>
+
         </section>
       </v-slide-x-transition>
     </div>
@@ -48,11 +50,13 @@
 <script>
   import CodingClassSidebar from '../components/CodingClassSidebar.vue'
   import CodingClassRegistrationForm from '../components/CodingClassRegistrationForm'
+  import CodingClassOnlineTest from '../components/CodingClassOnlineTest'
   import { mapState, mapActions } from 'vuex'
   export default {
     components: {
       CodingClassSidebar,
-      CodingClassRegistrationForm
+      CodingClassRegistrationForm,
+      CodingClassOnlineTest
     },
     data() {
       return {

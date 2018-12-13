@@ -8,6 +8,7 @@ export default {
     loading: false,
     isOpen: false,
     registrationData: [],
+    quiz: {},
   },
   mutations: {
     addError(state, message) {
@@ -27,6 +28,9 @@ export default {
     },
     setRegistrationOpen(state, status){
       state.isOpen = status
+    },
+    setQuiz(state, data){
+      state.quiz = data
     }
   },
   actions: {
@@ -76,6 +80,36 @@ export default {
           commit('setLoading', false)
       }
 
+    },
+    async  getQuiz({commit}) {
+      try {
+        commit('setLoading', true);
+        commit('clearError');
+        let response = await api.get('/quiz/coding-class/latest')
+        commit('setQuiz', response.data);
+      } catch(e) {
+        commit('addError', e);
+      } finally {
+        commit('setLoading', false);
+      }
+    },
+    async quickSave({commit}, data) {
+      try {
+        await api.post('/quiz/coding-class/latest/quicksave', data)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async finish({commit}, data) {
+        try {
+            commit('setLoading', true);
+            commit('clearError');
+            await api.post('/quiz/coding-class/latest/finish', data)
+        } catch (e) {
+            commit('addError', e);
+        } finally {
+            commit('setLoading', false);
+        }
     }
   }
 }

@@ -70,6 +70,6 @@
 
   .task-sidebar .v-list__tile__action,
   .task-sidebar .v-list__tile__avatar {
-    min-width: 72px;
+    min-width: 36px;
   }
 </style>
