@@ -1,4 +1,5 @@
 from django.db import models, transaction
+import re
 
 # Create your models here.
 from arkav_is_api.arkavauth.models import User
@@ -30,6 +31,7 @@ class CodingClassParticipant(models.Model):
     school = models.CharField(max_length=128)
     grade = models.CharField(max_length=20)
     status = models.IntegerField(choices=STATUS)
+    student_card = models.CharField(max_length=100)
     quiz_attempt = models.ForeignKey(to=QuizAttempt, on_delete= models.PROTECT,blank=True, null=True)
     def add_user_to_quiz_participant(self):
         with transaction.atomic():

@@ -41,6 +41,33 @@
             </v-text-field>
             </v-flex>
         </v-layout>
+            <a :href="getDownloadURL()" target="_blank" class="no-decoration" v-if="this.student_card">
+            <h4 align="center" class="primary--text">
+                Kartu Pelajar
+                <sup >
+                <v-icon style="font-size: 1rem">
+                    open_in_new
+                </v-icon>
+                </sup>
+            </h4>
+            </a>
+            <h4 align="center" class="primary--text" v-else>
+                Kartu Pelajar
+            </h4>
+        <v-layout class="row mb-4">
+            <v-flex xs8 offset-xs2>
+            <vue-dropzone
+              ref="dropzone"
+              id="dropzone"
+              :options="dropOptions"
+              @vdropzone-file-added="uploadFileAdded"
+              @vdropzone-success="uploadSuccess"
+              @vdropzone-error="uploadError"
+              @vdropzone-complete="uploadComplete"
+            />
+            </v-flex>
+
+        </v-layout>
 
         <v-btn color="primary" block type="submit" :loading="loading" :disabled="loading || !isOpen">
             Daftar
@@ -52,6 +79,7 @@
                 </v-alert>
                 </v-flex>
             </v-layout>
+
         </v-form>
         <v-dialog
           v-model="datepicker"
@@ -73,9 +101,16 @@
 </template>
 
 <script>
+import vueDropzone from 'vue2-dropzone'
+import { apiConfig, getCsrfToken } from '../api.js'
+
 import {mapState,mapActions} from 'vuex';
   export default {
     props: ['visible', 'registrationData'],
+    components: {
+      vueDropzone
+    },
+
     data: () => ({
         menu: '',
         formatted: '',
@@ -84,7 +119,17 @@ import {mapState,mapActions} from 'vuex';
         school: '',
         domicile: '',
         grade: '',
-        notNull: [v => !!v || 'Tidak Boleh Kosong']
+        notNull: [v => !!v || 'Tidak Boleh Kosong'],
+         dropOptions: {
+          url: apiConfig.baseURL + '/upload/',
+          maxFiles: 1,
+          acceptedFiles: 'image/*,application/pdf,application/zip,application/x-rar-compressed',
+          withCredentials: apiConfig.withCredentials,
+          maxFilesize: 10, // MB
+          addRemoveLinks: true,
+        },
+        dropzoneError: null,
+        student_card: ''
     }),
     methods: {
       ...mapActions({
@@ -97,7 +142,11 @@ import {mapState,mapActions} from 'vuex';
                 school: this.school,
                 domicile: this.domicile,
                 grade: this.grade,
+                student_card: this.student_card
             })
+        },
+        getDownloadURL: function() {
+          return apiConfig.baseURL + '/upload/download/' + this.student_card + '/'
         },
         refreshData: function() {
           if(this.registrationData.birthday)
@@ -108,7 +157,23 @@ import {mapState,mapActions} from 'vuex';
             this.school = this.registrationData.school;
           if(this.registrationData.grade)
             this.grade = this.registrationData.grade;
-        }
+          if(this.registrationData.student_card)
+            this.student_card = this.registrationData.student_card;
+        },
+         uploadFileAdded: function (file) {
+            this.dropzoneError = null
+          },
+          uploadSuccess: function (file, response) {
+            this.student_card = response.id
+              console.log(response.id)
+          },
+          uploadError: function (file, message, xhr) {
+            this.dropzoneError = message
+          },
+          uploadComplete: function (file) {
+            // Reset the dropzone
+            // this.$refs.dropzone.removeAllFiles(true)
+          },
     },
     computed: {
         ...mapState({
@@ -120,7 +185,11 @@ import {mapState,mapActions} from 'vuex';
         }),
     },
     mounted: function(){
-        this.refreshData()
+        this.refreshData();
+        this.$refs.dropzone.setOption(
+            'headers',
+            { [apiConfig.xsrfHeaderName || 'X-CSRFToken']: getCsrfToken() },
+        )
     },
     watch: {
         registrationData: function(val) {

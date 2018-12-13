@@ -65,13 +65,8 @@ export default {
         commit('setSuccess', false);
         commit('setLoading', true);
         commit('clearError');
-        let birthday = data.birthday;
-        let school = data.school;
-        let domicile = data.domicile;
-        let grade = data.grade;
-        await api.post('/preevent/codingclass',{
-          birthday, school, domicile, grade
-        });
+
+        await api.post('/preevent/codingclass',data);
 
         commit('setSuccess', true);
           location.reload();

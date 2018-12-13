@@ -1,6 +1,9 @@
 from django.contrib import admin
-
+import re
 # Register your models here.
+from django.urls import reverse
+from django.utils.html import format_html
+
 from arkav_is_api.preevent.models import CodingClassParticipant, Configuration
 
 @admin.register(Configuration)
@@ -35,7 +38,15 @@ class CodingClassParticipantAdmin(admin.ModelAdmin):
         add_user_attempt,
         finish_user_quiz
     ]
-    readonly_fields = ('user_name','quiz_attempt_score')
+    readonly_fields = ('user_name','quiz_attempt_score', 'file_link')
+
+    def file_link(self, instance):
+        uuidv4_regex = r'[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}'
+        if re.match(uuidv4_regex, str(instance.student_card)) is not None:
+            link = reverse('download', kwargs={'file_id': str(instance.student_card)})
+            return format_html('<a href="{}">Open file</a>', link)
+        else:
+            return ''
 
     def user_name(self,obj):
         return obj.user.full_name

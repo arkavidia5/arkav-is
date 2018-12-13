@@ -42,6 +42,7 @@ class CodingClass(views.APIView):
                 setattr(obj, 'domicile', serialized.validated_data['domicile'])
                 setattr(obj, 'school', serialized.validated_data['school'])
                 setattr(obj, 'grade', serialized.validated_data['grade'])
+                setattr(obj, 'student_card', serialized.validated_data['student_card'])
                 obj.save()
             else:
                 with transaction.atomic():
@@ -51,6 +52,7 @@ class CodingClass(views.APIView):
                         domicile=serialized.validated_data['domicile'],
                         school=serialized.validated_data['school'],
                         grade=serialized.validated_data['grade'],
+                        student_card= serialized.validated_data['student_card'],
                         status=1
                     )
                     obj.add_user_to_quiz_participant()

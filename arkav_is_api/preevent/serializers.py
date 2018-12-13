@@ -7,7 +7,7 @@ class CodingClassModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CodingClassParticipant
-        fields = ('birthday', 'school', 'domicile', 'grade', 'status', 'status_display')
+        fields = ('birthday', 'school', 'domicile', 'grade','student_card', 'status', 'status_display')
 
 
 
@@ -16,3 +16,4 @@ class CodingClassRequestSerializer(serializers.Serializer):
     domicile = serializers.CharField(max_length=100)
     school = serializers.CharField(max_length=150)
     grade = serializers.CharField(max_length=50)
+    student_card = serializers.CharField(max_length=100)
