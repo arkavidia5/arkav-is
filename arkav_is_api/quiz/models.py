@@ -37,10 +37,12 @@ class QuizParticipant(models.Model):
 class QuizAttempt(models.Model):
     quiz = models.ForeignKey(to=Quiz, on_delete=models.PROTECT)
     user = models.ForeignKey(to=User, on_delete=models.PROTECT)
-    start_time = models.TimeField(null=True, blank=True)
-    finish_time = models.TimeField(null=True, blank=True)
+    start_time = models.DateTimeField(null=True, blank=True)
+    finish_time = models.DateTimeField(null=True, blank=True)
     score = models.IntegerField(null=True, blank=True)
-
+    @property
+    def answers(self):
+        return AttemptAnswer.objects.filter(attempt=self)
     def post_create(sender, instance, created, **kwargs):
         if not created:
             pass
@@ -87,6 +89,9 @@ class Question(models.Model):
     def __str__(self):
         return '%s - %s' % (self.quiz, self.id)
 
+    @property
+    def selections(self):
+        return QuestionSelection.objects.filter(question=self)
 
 class QuestionSelection(models.Model):
     question = models.ForeignKey(to=Question, on_delete=models.PROTECT)
