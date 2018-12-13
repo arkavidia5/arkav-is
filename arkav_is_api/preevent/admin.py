@@ -35,7 +35,7 @@ class CodingClassParticipantAdmin(admin.ModelAdmin):
         add_user_attempt,
         finish_user_quiz
     ]
-    readonly_fields = ('user_name',)
+    readonly_fields = ('user_name','quiz_attempt_score')
 
     def user_name(self,obj):
         return obj.user.full_name

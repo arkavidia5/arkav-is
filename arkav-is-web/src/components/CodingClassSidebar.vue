@@ -19,7 +19,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-         <v-list-tile @click="selectTask('result')" v-if="registrationData.status > 2">
+         <v-list-tile @click="selectTask('result')" v-if="registrationData.status > 3">
           <v-list-tile-action>
             <v-icon>announcement</v-icon>
           </v-list-tile-action>

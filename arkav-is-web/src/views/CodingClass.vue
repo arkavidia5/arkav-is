@@ -28,6 +28,7 @@
 
           <CodingClassRegistrationForm v-if="activeTaskId === 'register'" :registration-data="registrationData"/>
           <CodingClassOnlineTest v-if="activeTaskId === 'quiz'" :registration-data="registrationData"/>
+          <CodingClassResult v-if="activeTaskId === 'result'" :registration-data="registrationData"/>
 
         </section>
       </v-slide-x-transition>
@@ -51,12 +52,14 @@
   import CodingClassSidebar from '../components/CodingClassSidebar.vue'
   import CodingClassRegistrationForm from '../components/CodingClassRegistrationForm'
   import CodingClassOnlineTest from '../components/CodingClassOnlineTest'
+  import CodingClassResult from '../components/CodingClassResult'
   import { mapState, mapActions } from 'vuex'
   export default {
     components: {
       CodingClassSidebar,
       CodingClassRegistrationForm,
-      CodingClassOnlineTest
+      CodingClassOnlineTest,
+      CodingClassResult
     },
     data() {
       return {

@@ -6,8 +6,8 @@ from arkav_is_api.quiz.models import Quiz, QuizParticipant, QuizAttempt
 
 STATUS = (
     (1, 'PENDING'),
-    (2, 'QUIZ_ATTEMPTED'),
-    (3, 'QUIZ_FINISHED'),
+    (2, 'QUIZ ATTEMPTED'),
+    (3, 'QUIZ FINISHED'),
     (4, 'ACCEPTED'),
     (5, 'REJECTED'),
 )
