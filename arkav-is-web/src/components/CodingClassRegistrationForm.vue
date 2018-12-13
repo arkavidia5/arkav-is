@@ -17,6 +17,7 @@
                         label="Tanggal Lahir"
                         v-model="birthday"
                         :rules="notNull"
+                        lazy-validation = true
                     ></v-text-field>
                     <v-btn icon @click="datepicker = true">
                         <v-icon>calendar_today</v-icon>
@@ -99,9 +100,13 @@ import {mapState,mapActions} from 'vuex';
             })
         },
         refreshData: function() {
+          if(this.registrationData.birthday)
             this.birthday = this.registrationData.birthday;
+          if(this.registrationData.domicile)
             this.domicile = this.registrationData.domicile;
+          if(this.registrationData.school)
             this.school = this.registrationData.school;
+          if(this.registrationData.grade)
             this.grade = this.registrationData.grade;
         }
     },

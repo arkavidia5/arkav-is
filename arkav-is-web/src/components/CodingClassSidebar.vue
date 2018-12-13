@@ -10,8 +10,7 @@
             <v-list-tile-title class="body-2">Registrasi</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-
-        <v-list-tile @click="selectTask('quiz')" v-if="registrationData">
+        <v-list-tile @click="selectTask('quiz')" v-if="registrationData.status > 1">
           <v-list-tile-action>
             <v-icon>assignment</v-icon>
           </v-list-tile-action>
@@ -20,7 +19,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-         <v-list-tile @click="selectTask('result')" v-if="registrationData">
+         <v-list-tile @click="selectTask('result')" v-if="registrationData.status > 2">
           <v-list-tile-action>
             <v-icon>announcement</v-icon>
           </v-list-tile-action>

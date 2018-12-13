@@ -3,11 +3,11 @@ from rest_framework import serializers
 from arkav_is_api.preevent.models import CodingClassParticipant
 
 class CodingClassModelSerializer(serializers.ModelSerializer):
-    status = serializers.CharField(source='get_status_display')
+    status_display = serializers.CharField(source='get_status_display')
 
     class Meta:
         model = CodingClassParticipant
-        fields = ('birthday', 'school', 'domicile', 'grade', 'status')
+        fields = ('birthday', 'school', 'domicile', 'grade', 'status', 'status_display')
 
 
 

@@ -72,7 +72,9 @@ export default {
         await api.post('/preevent/codingclass',{
           birthday, school, domicile, grade
         });
-        commit('setSuccess', true)
+
+        commit('setSuccess', true);
+          location.reload();
       } catch(e) {
           console.log(e);
           commit('addError', e);
@@ -105,6 +107,7 @@ export default {
             commit('setLoading', true);
             commit('clearError');
             await api.post('/quiz/coding-class/latest/finish', data)
+            location.reload()
         } catch (e) {
             commit('addError', e);
         } finally {

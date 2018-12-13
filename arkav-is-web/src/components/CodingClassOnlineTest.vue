@@ -27,8 +27,8 @@
         </v-layout>
         <v-layout row>
             <v-flex xs6 offset-xs3>
-                <v-btn block color="primary" @click="dialogBox = true">
-                    Finish
+                <v-btn block color="primary" @click="dialogBox = true" :disabled="quiz.finish_time">
+                    Selesai
                 </v-btn>
             </v-flex>
         </v-layout>
