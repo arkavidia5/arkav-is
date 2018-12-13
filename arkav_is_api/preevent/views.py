@@ -9,7 +9,8 @@ from rest_framework.response import Response
 
 from arkav_is_api import settings
 from arkav_is_api.preevent.models import CodingClassParticipant, Configuration
-from arkav_is_api.preevent.serializers import CodingClassRequestSerializer
+from arkav_is_api.preevent.serializers import CodingClassRequestSerializer, CodingClassModelSerializer
+
 
 class RegistrationPing(views.APIView):
     permission_classes = (IsAuthenticated,)
@@ -23,9 +24,10 @@ class RegistrationPing(views.APIView):
 class CodingClass(views.APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request, format=None):
-        data= {}
-        data['is_registration_open'] = settings.CODING_CLASS_REGISTRATION_OPEN
-        return Response(data=data)
+        obj = CodingClassParticipant.objects.filter(user=request.user).first()
+        serialized= CodingClassModelSerializer(obj)
+
+        return Response(data=serialized.data)
     def post(self, request, format=None):
         if not Configuration.objects.first().is_coding_class_registration_open:
             return Response(data={'status': 403, 'message': 'Registration is closed'},

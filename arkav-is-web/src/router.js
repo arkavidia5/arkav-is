@@ -10,6 +10,7 @@ import TeamPage from './views/TeamPage.vue'
 import Dashboard from './views/Dashboard.vue'
 import Register from './views/Register.vue'
 import CreateTeam from './views/CreateTeam'
+import CodingClass from './views/CodingClass'
 Vue.use(Router)
 
 const router = new Router({
@@ -30,6 +31,11 @@ const router = new Router({
           path: 'teams/:id',
           name: 'team',
           component: TeamPage,
+        },
+        {
+          path: 'preevent/codingclass',
+          name: 'codingclass',
+          component: CodingClass,
         },
         {
           path: 'create-team',
