@@ -20,12 +20,13 @@
         :visible="!shouldCollapseSidebar || sidebarActive"
         style="min-height:400px"
         @selected="activateTask"
+        :registration-data="registrationData"
       />
 
       <v-slide-x-transition>
         <section class="task-content px-4 py-3" v-show="!shouldCollapseSidebar || !sidebarActive">
 
-          <CodingClassRegistrationForm v-if="activeTaskId === 'register'"/>
+          <CodingClassRegistrationForm v-if="activeTaskId === 'register'" :registration-data="registrationData"/>
         </section>
       </v-slide-x-transition>
     </div>
@@ -71,6 +72,7 @@
     },
     methods: {
       ...mapActions({
+        getRegistrationOpen: 'codingclass/getRegistrationOpen',
         getRegistrationData: 'codingclass/getRegistrationData'
       }),
       activateTask: function (taskId) {
@@ -78,9 +80,11 @@
         this.sidebarActive = false
       },
     },
-    mounted: function () {
-      this.getRegistrationData()
+    beforeMount: function () {
+        this.getRegistrationOpen()
+        this.getRegistrationData();
     }
+
   }
 </script>
 
@@ -89,7 +93,7 @@
     border-bottom: solid 1px #eee;
     display: flex;
     align-items: center;
-  }
+  }    bg</v-flex>bg
 
   .task-sidebar {
     z-index: 99;

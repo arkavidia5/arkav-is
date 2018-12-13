@@ -4,6 +4,7 @@ export default {
   namespaced: true,
   state: {
     errors: [],
+    success: false,
     loading: false,
     isOpen: false,
     registrationData: [],
@@ -14,6 +15,9 @@ export default {
     },
     clearError(state) {
       state.errors = []
+    },
+    setSuccess(state, isSuccess) {
+      state.success = isSuccess;
     },
     setLoading(state, isLoading) {
       state.loading = isLoading
@@ -30,8 +34,10 @@ export default {
       try {
         commit('setLoading', true)
         let response = await api.get('/preevent/ping')
+        console.log(response)
         let open = response.data['coding_class_registration_open']
-        commit('setRegistrationOpen', !!open)
+        console.log(open)
+          commit('setRegistrationOpen', open)
       } catch (e) {
           commit('addError', e)
       } finally {
@@ -52,15 +58,17 @@ export default {
     },
     async register({commit}, data) {
       try {
+        commit('setSuccess', false);
         commit('setLoading', true);
         commit('clearError');
         let birthday = data.birthday;
         let school = data.school;
         let domicile = data.domicile;
         let grade = data.grade;
-        let response = await api.post('/preevent/codingclass',{
+        await api.post('/preevent/codingclass',{
           birthday, school, domicile, grade
-        })
+        });
+        commit('setSuccess', true)
       } catch(e) {
           console.log(e);
           commit('addError', e);

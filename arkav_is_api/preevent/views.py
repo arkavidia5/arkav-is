@@ -36,18 +36,23 @@ class CodingClass(views.APIView):
             serialized = CodingClassRequestSerializer(data=request.data)
             if not serialized.is_valid():
                 return Response(status=400, data={'status': 400, 'message': serialized.error_messages})
-            if CodingClassParticipant.objects.filter(user=request.user).first():
-                return Response(status=403, data={'status': 403, 'message': 'Satu user hanya dapat mendaftar sekali'})
-
-            with transaction.atomic():
-                obj = CodingClassParticipant.objects.create(
-                    user= request.user,
-                    birthday= serialized.validated_data['birthday'],
-                    domicile= serialized.validated_data['domicile'],
-                    school= serialized.validated_data['school'],
-                    grade= serialized.validated_data['grade'],
-                    status= 1
-                )
-                obj.add_user_to_quiz_participant()
-                obj.create_user_quiz_attempt()
-                return Response(status=200, data={'status': 200, 'message': 'OK'})
+            obj = CodingClassParticipant.objects.filter(user=request.user).first()
+            if obj:
+                setattr(obj, 'birthday', serialized.validated_data['birthday'])
+                setattr(obj, 'domicile', serialized.validated_data['domicile'])
+                setattr(obj, 'school', serialized.validated_data['school'])
+                setattr(obj, 'grade', serialized.validated_data['grade'])
+                obj.save()
+            else:
+                with transaction.atomic():
+                    obj, created = CodingClassParticipant.objects.update_or_create(
+                        user=request.user,
+                        birthday=serialized.validated_data['birthday'],
+                        domicile=serialized.validated_data['domicile'],
+                        school=serialized.validated_data['school'],
+                        grade=serialized.validated_data['grade'],
+                        status=1
+                    )
+                    obj.add_user_to_quiz_participant()
+                    obj.create_user_quiz_attempt()
+            return Response(status=200, data={'status': 200, 'message': 'OK'})

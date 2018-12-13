@@ -11,7 +11,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile @click="selectTask('quiz')">
+        <v-list-tile @click="selectTask('quiz')" v-if="registrationData">
           <v-list-tile-action>
             <v-icon>assignment</v-icon>
           </v-list-tile-action>
@@ -20,7 +20,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-         <v-list-tile @click="selectTask('result')">
+         <v-list-tile @click="selectTask('result')" v-if="registrationData">
           <v-list-tile-action>
             <v-icon>announcement</v-icon>
           </v-list-tile-action>
@@ -70,6 +70,6 @@
 
   .task-sidebar .v-list__tile__action,
   .task-sidebar .v-list__tile__avatar {
-    min-width: 36px;
+    min-width: 72px;
   }
 </style>

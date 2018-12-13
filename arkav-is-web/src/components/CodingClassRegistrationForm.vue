@@ -2,11 +2,15 @@
     <v-container>
         <v-form @submit.prevent="registerCodingClass">
         <h3>Informasi Pribadi</h3>
-        <v-text-field label="Nama Lengkap" disabled :value="user.full_name"/>
-        <v-text-field label="Email" disabled :value="user.email" landscape="true"/>
-        <h3>Informasi Tambahan</h3>
+            <v-layout class="row wrap" pa-2>
+                <v-text-field label="Nama Lengkap" disabled :value="user.full_name"/>
+            </v-layout>
+            <v-layout row pa-2  >
+                <v-text-field label="Email" disabled :value="user.email" landscape="true"/>
+            </v-layout>
 
-            <v-layout class="row wrap  align-center">
+        <!--<h3>Informasi Tambahan</h3>-->
+            <v-layout class="row wrap align-center">
                 <v-flex class="md4 sm6 xs12 pa-2 d-flex justify-center align-center">
                     <v-text-field
                         required
@@ -20,14 +24,13 @@
                 </v-flex>
                 <v-flex class="md6 sm6 xs12 offset-md2 pa-2">
                     <v-text-field required label="Kota Tempat Tinggal" v-model="domicile" :rules="notNull">
-
                     </v-text-field>
                 </v-flex>
             </v-layout>
 
         <v-layout class="row wrap">
             <v-flex pa-2 xs12 md6>
-            <v-text-field required label="Asal Sekolah" v-model="school" :rules="notNull">
+            <v-text-field required label="Asal Sekolah" v-model="school" :rules="notNull" >
 
             </v-text-field>
             </v-flex>
@@ -37,9 +40,17 @@
             </v-text-field>
             </v-flex>
         </v-layout>
-        <v-btn color="primary" block type="submit">
+
+        <v-btn color="primary" block type="submit" :loading="loading" :disabled="loading || !isOpen">
             Daftar
         </v-btn>
+            <v-layout>
+                <v-flex xs2 offset-xs5>
+                <v-alert color="success" value="true" outline v-if="success" icon="check">
+                    Success!
+                </v-alert>
+                </v-flex>
+            </v-layout>
         </v-form>
         <v-dialog
           v-model="datepicker"
@@ -63,7 +74,7 @@
 <script>
 import {mapState,mapActions} from 'vuex';
   export default {
-    props: ['visible','registrationData'],
+    props: ['visible', 'registrationData'],
     data: () => ({
         menu: '',
         formatted: '',
@@ -79,21 +90,38 @@ import {mapState,mapActions} from 'vuex';
         register: 'codingclass/register',
       }),
         registerCodingClass: function(){
+          console.log('Register..')
             this.register({
                 birthday: this.birthday,
                 school: this.school,
                 domicile: this.domicile,
                 grade: this.grade,
             })
+        },
+        refreshData: function() {
+            this.birthday = this.registrationData.birthday;
+            this.domicile = this.registrationData.domicile;
+            this.school = this.registrationData.school;
+            this.grade = this.registrationData.grade;
         }
     },
     computed: {
         ...mapState({
             user: state => state.auth.user,
+            loading: state => state.codingclass.loading,
+            error: state => state.codingclass.error,
+            success: state => state.codingclass.success,
+            isOpen: state => state.codingclass.isOpen
         }),
-
+    },
+    mounted: function(){
+        this.refreshData()
+    },
+    watch: {
+        registrationData: function(val) {
+            this.refreshData();
+        }
     }
-
   }
 </script>
 
