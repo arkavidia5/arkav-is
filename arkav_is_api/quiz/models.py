@@ -96,7 +96,7 @@ class Question(models.Model):
 class QuestionSelection(models.Model):
     question = models.ForeignKey(to=Question, on_delete=models.PROTECT)
     key = models.CharField(max_length=1, null=False, choices=QUIZ_SELECTION)
-    value = models.CharField(max_length=128, null=False)
+    value = models.TextField(null=False)
     is_correct = models.BooleanField(default=False)
 
     class Meta:

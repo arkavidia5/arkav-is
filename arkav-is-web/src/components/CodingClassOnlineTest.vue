@@ -4,17 +4,22 @@
             <h2>Pertanyaan #{{page}}</h2>
         </v-layout>
         <template v-for="(i,index) in quiz.answers" v-if="index === page-1">
-            <v-layout row quiz-question>
-                {{i.question.description}}
-            </v-layout>
+            <pre row quiz-question v-html="i.question.description"></pre>
             <v-layout>
-                <v-radio-group v-model="answers[i.question.identifier]" :disabled="quiz.finish_time" v-on:change="intermediateSave">
+                <v-radio-group v-model="answers[i.question.identifier]" v-on:change="intermediateSave">
                     <v-radio
                     v-for="item in i.question.selections"
                     :key="item.key"
-                    :label="`${item.key_display}. ${item.value}`"
                     :value="item.key"
-                    ></v-radio>
+                    style="display: flex !important; align-items: start;"
+                    >
+                      <template slot="label" class="radio-label">
+                          <v-layout class="row align-start">
+                          <pre class="mr-1">{{item.key_display}}.</pre>
+                          <pre v-html="item.value"></pre>
+                          </v-layout>
+                      </template>
+                    </v-radio>
                 </v-radio-group>
 
             </v-layout>
