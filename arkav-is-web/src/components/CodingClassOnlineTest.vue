@@ -27,7 +27,7 @@
         </template>
 
         <v-layout row justify-center>
-        <button class="v-pagination__item" :active="true" style="margin-left: -34px;" :class="{'v-pagination__item--active primary white--text': page==0}" @click="page = 1">
+        <button class="v-pagination__item" :active="true" style="margin-left: -34px;" :class="{'v-pagination__item--active primary white--text': page==0}" @click="page = 0">
             Tut
         </button>
         <v-pagination
