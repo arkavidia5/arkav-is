@@ -7,7 +7,7 @@
         <template v-for="(i,index) in quiz.answers" v-if="index === page-1">
             <pre row quiz-question v-html="i.question.description"></pre>
             <v-layout>
-                <v-radio-group v-model="answers[i.question.identifier]" v-on:change="intermediateSave">
+                <v-radio-group v-model="answers[i.question.identifier]" v-on:change="intermediateSave" :disabled="!!quiz.finish_time">
                     <v-radio
                     v-for="item in i.question.selections"
                     :key="item.key"
@@ -37,7 +37,7 @@
         </v-layout>
         <v-layout row>
             <v-flex xs6 offset-xs3>
-                <v-btn block color="primary" @click="dialogBox = true" :disabled="quiz.finish_time">
+                <v-btn block color="primary" @click="dialogBox = true" :disabled="!!quiz.finish_time">
                     Selesai
                 </v-btn>
             </v-flex>
