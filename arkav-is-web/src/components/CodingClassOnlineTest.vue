@@ -1,5 +1,6 @@
 <template>
     <div v-if="!loading">
+        <template v-if="page > 0">
         <v-layout row>
             <h2>Pertanyaan #{{page}}</h2>
         </v-layout>
@@ -24,7 +25,11 @@
 
             </v-layout>
         </template>
+
         <v-layout row justify-center>
+        <button class="v-pagination__item" :active="true" style="margin-left: -34px;" :class="{'v-pagination__item--active primary white--text': page==0}" @click="page = 1">
+            Tut
+        </button>
         <v-pagination
                 v-model="page"
                 :length="quiz.answers.length"
@@ -61,6 +66,23 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        </template>
+         <template v-else>
+            <h1>
+            PETUNJUK PENGERJAAN
+            </h1>
+            <v-flex xs8>
+            Test ini bertujuan untuk menilai kemampuan logika peserta dengan bahasa pemrograman python-like dan pengetahuan umum berkaitan HTML dan CSS. Untuk test akan terdiri dari pilihan ganda. Peserta diharapkan memilih jawaban yang benar diantara pilihan jawaban yang disediakan. Berikut tutorial singkat pengerjaan soal dengan bahasa yang akan digunakan:
+            </v-flex>
+            <v-flex class="xs12">
+                <a href="../assets/onlinetesttut.jpg" target="_blank">
+                <img src="../assets/onlinetesttut.jpg" alt="" height="527" >
+                </a>
+            </v-flex>
+             <v-btn block color="primary" @click="page = 1">
+                 Mulai test
+             </v-btn>
+        </template>
     </div>
     <div v-else>
         <v-layout class="row justify-center">
@@ -79,7 +101,7 @@ import {mapState, mapActions} from 'vuex';
 export default {
     name: 'CodingClassOnlineTest',
     data: () => ({
-        page: 1,
+        page: 0,
         answers: {},
         dialogBox: false,
     }),
