@@ -38,6 +38,8 @@ class QuizQuickSaveView(views.APIView):
     def post(self, request, quiz_slug, format=None):
         quiz = Quiz.objects.filter(slug=quiz_slug).first()
         attempt = QuizAttempt.objects.filter(quiz=quiz, user=request.user).order_by('-start_time').first()
+        if attempt.finish_time:
+            return Response(status=403)
         serialized = QuickSaveRequestSerializer(data= request.data)
         if serialized.is_valid():
             attemptanswer = attempt.answers.filter(question__identifier=serialized.validated_data['identifier']).first()
