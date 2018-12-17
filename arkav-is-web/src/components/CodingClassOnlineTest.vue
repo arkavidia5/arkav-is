@@ -7,10 +7,10 @@
         <template v-for="(i,index) in quiz.answers" v-if="index === page-1">
             <pre row quiz-question v-html="i.question.description"></pre>
             <v-layout>
-                <v-radio-group v-model="answers[i.question.identifier]" v-on:change="intermediateSave" :disabled="!!quiz.finish_time">
+                <v-radio-group :key="i.question.identifier" v-model="answers[i.question.identifier]" v-on:change="intermediateSave" :disabled="!!quiz.finish_time">
                     <v-radio
                     v-for="item in i.question.selections"
-                    :key="item.key"
+                    :key="`${i.question.identifier}:${item.key}`"
                     :value="item.key"
                     style="display: flex !important; align-items: start;"
                     >
@@ -144,7 +144,11 @@ export default {
     watch: {
         quiz: function(val) {
             this.updateData()
-        }
+        },
+        page: function(val) {
+            console.log('hello world');
+            // this.answers.$forceUpdate();
+        },
     }
 }
 </script>
