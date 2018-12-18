@@ -136,7 +136,6 @@ import {mapState,mapActions} from 'vuex';
         register: 'codingclass/register',
       }),
         registerCodingClass: function(){
-          console.log('Register..')
             this.register({
                 birthday: this.birthday,
                 school: this.school,

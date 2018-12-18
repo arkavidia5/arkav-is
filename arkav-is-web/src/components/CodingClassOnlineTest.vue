@@ -144,11 +144,7 @@ export default {
     watch: {
         quiz: function(val) {
             this.updateData()
-        },
-        page: function(val) {
-            console.log('hello world');
-            // this.answers.$forceUpdate();
-        },
+        }
     }
 }
 </script>
