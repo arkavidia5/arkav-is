@@ -69,8 +69,8 @@
     },
     computed: {
       ...mapState({
-        loading: state => state.codinclass.loading,
-        errors: state => state.codinclass.errors,
+        loading: state => state.codingclass.loading,
+        errors: state => state.codingclass.errors,
         registrationData: state => state.codingclass.registrationData,
       }),
       shouldCollapseSidebar() {
@@ -79,7 +79,7 @@
     },
     methods: {
       ...mapActions({
-        getRegistrationOpen: 'codingclass/getRegistrationOpen',
+        getCodingClassRegistrationOpen: 'codingclass/getCodingClassRegistrationOpen',
         getRegistrationData: 'codingclass/getRegistrationData'
       }),
       activateTask: function (taskId) {
@@ -88,7 +88,7 @@
       },
     },
     beforeMount: function () {
-        this.getRegistrationOpen()
+        this.getCodingClassRegistrationOpen()
         this.getRegistrationData();
     }
 

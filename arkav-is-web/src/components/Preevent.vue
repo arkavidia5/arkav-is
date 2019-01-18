@@ -1,8 +1,18 @@
 <template>
   <div>
-    <h1 class="mb-3 shadowed-heading text-xs-center text-md-left">Pre-event</h1>
+    <h1 class="mb-3 shadowed-heading text-xs-center text-md-left">Events</h1>
       <v-card class="row elevation-2 pa-4">
         <v-layout row wrap>
+          <v-flex md2 sm4 xs12 pa-3 ma-1 elevation-1 v-if="seminarOpen">
+            <router-link class="no-decoration" to="event/arkavtalk">
+              <v-layout row justify-center>
+                <img src="s" height="60" alt="">
+              </v-layout>
+              <v-layout row justify-center class="mt-3" style="line-height: 1.2">
+                <h2 class="text-xs-center">ArkavTalk</h2>
+              </v-layout>
+            </router-link>
+          </v-flex>
           <v-flex md2 sm4 xs12 pa-3 ma-1 elevation-1 v-if="codingClassOpen">
             <router-link class="no-decoration" to="preevent/codingclass">
               <v-layout row justify-center>
@@ -13,7 +23,6 @@
               </v-layout>
             </router-link>
           </v-flex>
-
         </v-layout>
     </v-card>
   </div>
@@ -26,16 +35,19 @@
     name: "Preevent",
     computed: {
       ...mapState({
-        codingClassOpen: state => state.codingclass.isOpen
+        codingClassOpen: state => state.codingclass.isOpen,
+        seminarOpen: state => state.seminar.isOpen
       })
     },
     methods: {
       ...mapActions({
-        getRegistrationOpen: 'codingclass/getRegistrationOpen'
+        getCodingClassRegistrationOpen: 'codingclass/getCodingClassRegistrationOpen',
+        getSeminarRegistrationOpen: 'seminar/getRegistrationOpen',
       }),
     },
     beforeMount() {
-      this.getRegistrationOpen()
+      this.getCodingClassRegistrationOpen();
+      this.getSeminarRegistrationOpen();
     }
   }
 </script>

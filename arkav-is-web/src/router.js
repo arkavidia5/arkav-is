@@ -11,6 +11,7 @@ import Dashboard from './views/Dashboard.vue'
 import Register from './views/Register.vue'
 import CreateTeam from './views/CreateTeam'
 import CodingClass from './views/CodingClass'
+import ArkavTalk from './views/ArkavTalk'
 Vue.use(Router)
 
 const router = new Router({
@@ -36,6 +37,11 @@ const router = new Router({
           path: 'preevent/codingclass',
           name: 'codingclass',
           component: CodingClass,
+        },
+        {
+          path: 'event/arkavtalk',
+          name: 'ArkavTalk',
+          component: ArkavTalk
         },
         {
           path: 'create-team',

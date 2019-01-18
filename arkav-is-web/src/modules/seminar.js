@@ -7,6 +7,7 @@ export default {
     success: false,
     loading: false,
     isOpen: false,
+    configuration: {},
     registrationData: [],
     quiz: {},
   },
@@ -31,29 +32,48 @@ export default {
     },
     setQuiz(state, data){
       state.quiz = data
+    },
+    setSeminarConfiguration(state, data) {
+        state.configuration = data
     }
   },
   actions: {
-    async getCodingClassRegistrationOpen({commit}){
+    async getRegistrationOpen({commit}){
       try {
         commit('setLoading', true)
-        let response = await api.get('/preevent/ping')
+        let response = await api.get('/seminar/ping')
         console.log(response)
-        let open = response.data['coding_class_registration_open']
+        let open = response.data['is_registration_open']
         console.log(open)
-          commit('setRegistrationOpen', open)
+      commit('setRegistrationOpen', open)
       } catch (e) {
           commit('addError', e)
       } finally {
           commit('setLoading', false)
       }
     },
+    async getConfiguration({commit}){
+      try {
+        commit('setLoading', true)
+        let response = await api.get('/seminar/configuration')
+        console.log(response)
+        let data = response.data
+        console.log(data)
+      commit('setSeminarConfiguration', data)
+      } catch (e) {
+          commit('addError', e)
+      } finally {
+          commit('setLoading', false)
+      }
+    },
+
     async getRegistrationData({ commit }) {
       try {
         commit('setLoading', true)
         commit('clearError')
-        let response = await api.get('/preevent/codingclass')
+        let response = await api.get('/seminar/register')
         commit('setRegistrationData', response.data)
+          console.log(response.data)
       } catch (err) {
         commit('addError', err)
       } finally {
@@ -66,48 +86,41 @@ export default {
         commit('setLoading', true);
         commit('clearError');
 
-        await api.post('/preevent/codingclass',data);
-
+        await api.post('/seminar/register/',data);
         commit('setSuccess', true);
           location.reload();
       } catch(e) {
           console.log(e);
-          commit('addError', e);
+          if(e.response)
+          commit('addError', e.response.data);
+          else
+          commit('addError', e)
       } finally {
           commit('setLoading', false)
       }
 
     },
-    async  getQuiz({commit}) {
+     async uploadPaymentReceipt({commit}, data) {
       try {
+        commit('setSuccess', false);
         commit('setLoading', true);
         commit('clearError');
-        let response = await api.get('/quiz/coding-class/latest')
-        commit('setQuiz', response.data);
+
+        await api.post('/seminar/pay/',{payment_receipt: data});
+        commit('setSuccess', true);
+          location.reload();
       } catch(e) {
-        commit('addError', e);
+          console.log(e);
+          if(e.response)
+          commit('addError', e.response.data);
+          else
+          commit('addError', e)
       } finally {
-        commit('setLoading', false);
+          commit('setLoading', false)
       }
+
     },
-    async quickSave({commit}, data) {
-      try {
-        await api.post('/quiz/coding-class/latest/quicksave', data)
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async finish({commit}, data) {
-        try {
-            commit('setLoading', true);
-            commit('clearError');
-            await api.post('/quiz/coding-class/latest/finish', data)
-            location.reload()
-        } catch (e) {
-            commit('addError', e);
-        } finally {
-            commit('setLoading', false);
-        }
-    }
+
+
   }
 }
