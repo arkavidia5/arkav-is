@@ -77,7 +77,7 @@
                  Pembayaran dapat dilakukan dengan melakukan Bank Transfer ke xxxx (a/n Arkavidia)
                </div>
               <br>
-               <v-flex xs8 offset-xs2 v-if="registrationData.status < 1">
+               <v-flex xs8 offset-xs2 v-show="registrationData.status < 1">
                 <vue-dropzone
                   ref="dropzone"
                   id="dropzone"
@@ -88,7 +88,7 @@
                   @vdropzone-complete="uploadComplete"
                 />
                 </v-flex>
-                <v-flex v-else>
+                <v-flex v-show="registrationData.status >= 1">
                     <span>
                         Bukti Pembayaran anda: <a :href="getDownloadURL()" target="_blank">Download</a>
                     </span>
@@ -179,7 +179,7 @@
       },
       uploadComplete: function (file) {
         // Reset the dropzone
-        // this.$refs.dropzone.removeAllFiles(true)
+        this.$refs.dropzone.removeAllFiles(true)
       },
         getDownloadURL: function() {
           return apiConfig.baseURL + '/upload/download/' + this.registrationData.payment_receipt + '/'

@@ -6,7 +6,7 @@
           <v-flex md2 sm4 xs12 pa-3 ma-1 elevation-1 v-if="seminarOpen">
             <router-link class="no-decoration" to="event/arkavtalk">
               <v-layout row justify-center>
-                <img src="s" height="60" alt="">
+                <img src="https://static.arkavidia.id/5/images/icons/seminar.svg" height="60" alt="">
               </v-layout>
               <v-layout row justify-center class="mt-3" style="line-height: 1.2">
                 <h2 class="text-xs-center">ArkavTalk</h2>
