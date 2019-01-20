@@ -37,7 +37,7 @@
                   </v-list-tile-action>
 
                   <v-list-tile-content @click.prevent="is_register_session_one = !is_register_session_one">
-                    <v-list-tile-title>Sesi 1</v-list-tile-title>
+                    <v-list-tile-title>Sesi 1 (08.30 - 11.25 WIB)</v-list-tile-title>
                     <v-list-tile-sub-title>{{format(configuration.session_one_normal_price)}} <br> Tersisa {{configuration.session_one_current_capacity}} tiket</v-list-tile-sub-title>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -54,7 +54,7 @@
                   </v-list-tile-action>
 
                   <v-list-tile-content @click.prevent="is_register_session_two = !is_register_session_two">
-                  <v-list-tile-title>Sesi 2</v-list-tile-title>
+                  <v-list-tile-title>Sesi 2 (12.15 - 16.45 WIB)</v-list-tile-title>
                     <v-list-tile-sub-title>{{format(configuration.session_two_price)}} <br> Tersisa {{configuration.session_two_current_capacity}} tiket</v-list-tile-sub-title>
                   </v-list-tile-content>
                 </v-list-tile>
