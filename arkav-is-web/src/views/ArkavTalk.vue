@@ -16,7 +16,7 @@
     <div class="task-container">
         <section class="task-content px-4 py-3" v-show="!shouldCollapseSidebar || !sidebarActive">
           <div class="ticket-purchase">
-          <h1 class="title primary--color">Pemesanan Tiket</h1>
+          <h1 class="title primary--color">Pemesanan Tiket </h1>
                 <v-alert v-for="error in errors" :key="error" :value="true" type="error" outline>
                 {{ error }}
               </v-alert>
@@ -74,7 +74,7 @@
             <div class="payment-receipt" v-if="registrationData">
               <h1 class="title primary--color">Bukti Pembayaran</h1>
                <div>
-                 Pembayaran dapat dilakukan dengan melakukan Bank Transfer ke xxxx (a/n Arkavidia)
+                 Pembayaran dapat dilakukan dengan melakukan Bank Transfer ke 90012355185 (BTPN a/n Rinda Nur Hafizha) atau Cashtag $rindanrh
                </div>
               <br>
                <v-flex xs8 offset-xs2 v-show="registrationData.status < 1">
