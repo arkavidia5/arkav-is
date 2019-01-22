@@ -19,7 +19,7 @@ class ConfigurationAdmin(admin.ModelAdmin):
 
 @admin.register(Registrant)
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ['user', 'status', 'is_register_session_one', 'is_register_session_two', 'payment_receipt', 'created_at', 'updated_at']
+    list_display = ['user', 'status', 'is_register_session_one', 'is_register_session_two', 'is_valid','payment_receipt', 'created_at', 'updated_at']
     readonly_fields = ['payment_receipt_file', 'created_at', 'updated_at']
 
     def payment_receipt_file(self, instance):

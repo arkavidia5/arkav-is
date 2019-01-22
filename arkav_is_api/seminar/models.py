@@ -47,6 +47,7 @@ class Registrant(models.Model):
     is_register_session_one = models.BooleanField()
     is_register_session_two = models.BooleanField()
     payment_receipt = models.CharField(null=True, max_length=128, blank=True)
+    is_valid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
 
