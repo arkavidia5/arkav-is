@@ -26,7 +26,7 @@
               >
                 <v-list-tile @click="">
                   <v-list-tile-action>
-                    <v-checkbox v-if="!registrationData"
+                    <v-checkbox v-if="!registrationData || editOrder"
                       v-model="is_register_session_one"
                     ></v-checkbox>
                     <v-checkbox v-else
@@ -44,7 +44,7 @@
 
                 <v-list-tile @click="">
                   <v-list-tile-action>
-                      <v-checkbox v-if="!registrationData"
+                      <v-checkbox v-if="!registrationData || editOrder"
                       v-model="is_register_session_two"
                     ></v-checkbox>
                     <v-checkbox v-else
@@ -60,7 +60,7 @@
                 </v-list-tile>
               </v-list>
             <v-layout class="row justify-end">
-                <h3 v-if="!registrationData">
+                <h3 v-if="!registrationData || editOrder">
                   {{format(is_register_session_one*configuration.session_one_normal_price + is_register_session_two*configuration.session_two_price)}}
                 </h3>
                 <h3 v-else>
@@ -68,7 +68,8 @@
                 </h3>
             </v-layout>
             <v-layout class="row justify-end">
-              <v-btn color="primary" class="" @click="register({is_register_session_one: is_register_session_one, is_register_session_two: is_register_session_two})" :disabled="!!registrationData" :loading="loading">Pesan</v-btn>
+          <v-btn color="primary" class="" @click="submitForm" v-if="!registrationData || editOrder" :loading="loading">Pesan</v-btn>
+              <v-btn color="primary" class="" @click="editOrder = !editOrder" v-if="registrationData && !editOrder" :loading="loading">Ubah Pesanan</v-btn>
             </v-layout>
             </div>
             <div class="payment-receipt" v-if="registrationData">
@@ -77,7 +78,7 @@
                  Pembayaran dapat dilakukan dengan melakukan Bank Transfer ke 90012355185 (BTPN a/n Rinda Nur Hafizha) atau Cashtag $rindanrh
                </div>
               <br>
-               <v-flex xs8 offset-xs2 v-show="registrationData.status < 1">
+               <v-flex xs8 offset-xs2 v-show="registrationData.status < 1 || editPayment">
                 <vue-dropzone
                   ref="dropzone"
                   id="dropzone"
@@ -88,15 +89,17 @@
                   @vdropzone-complete="uploadComplete"
                 />
                 </v-flex>
-                <v-flex v-show="registrationData.status >= 1">
+                <v-flex v-if="registrationData.status >= 1 && !editPayment">
                     <span>
                         Bukti Pembayaran anda: <a :href="getDownloadURL()" target="_blank">Download</a>
                     </span>
+                    <v-layout class="row">
+                        <v-btn color="primary" @click="editPayment = !editPayment">Ubah Bukti Pembayaran</v-btn>
+                    </v-layout>
                     <v-alert :value="true"  type="info" outline>
                         Menunggu validasi dari panitia
                     </v-alert>
                 </v-flex>
-
             </div>
         </section>
     </div>
@@ -124,12 +127,12 @@
     components: {
         FileUploadWidget,
         vueDropzone,
-
     },
     data() {
       return {
         is_register_session_one: false,
         is_register_session_two: false,
+        editPayment: false,
         dropOptions: {
           url: apiConfig.baseURL + '/upload/',
           maxFiles: 1,
@@ -138,6 +141,7 @@
           maxFilesize: 10, // MB
           addRemoveLinks: true,
         },
+        editOrder: false,
         dropzoneError: null,
       }
     },
@@ -184,11 +188,21 @@
         getDownloadURL: function() {
           return apiConfig.baseURL + '/upload/download/' + this.registrationData.payment_receipt + '/'
         },
-
+        submitForm: function() {
+          // console.log(this.is_register_session_one);
+          // console.log(this.is_register_session_two)
+          this.register({is_register_session_one: this.is_register_session_one, is_register_session_two: this.is_register_session_two})
+        }
     },
     beforeMount: function () {
         this.getSeminarConfiguration()
         this.getRegistrationData();
+    },
+    watch: {
+        registrationData: function(val) {
+            this.is_register_session_one = val.is_register_session_one;
+            this.is_register_session_two = val.is_register_session_two;
+        }
     },
     mounted: function(){
       this.$refs.dropzone.setOption(

@@ -53,18 +53,34 @@ class RegisterView(views.APIView):
     def post(self, request, format=None):
         serialized = SeminarRegistrationRequestSerializer(data= request.data)
         config = Configuration.objects.first()
+        instance = Registrant.objects.filter(user=request.user)
         if serialized.is_valid():
             try:
                 with transaction.atomic():
-                    if(serialized.validated_data['is_register_session_one']):
-                        config.reserve_session_one()
-                    if(serialized.validated_data['is_register_session_two']):
-                        config.reserve_session_two()
-                    Registrant.objects.create(
-                        user= request.user,
-                        is_register_session_one= serialized.validated_data['is_register_session_one'],
-                        is_register_session_two= serialized.validated_data['is_register_session_two']
-                    )
+
+                    if(instance.count() == 0):
+                        if (serialized.validated_data['is_register_session_one']):
+                            config.reserve_session_one()
+                        if (serialized.validated_data['is_register_session_two']):
+                            config.reserve_session_two()
+                        Registrant.objects.create_or_update(
+                            user= request.user,
+                            is_register_session_one= serialized.validated_data['is_register_session_one'],
+                            is_register_session_two= serialized.validated_data['is_register_session_two']
+                        )
+                    else:
+                        instance = instance.first()
+                        if(instance.is_register_session_one):
+                            config.unreserve_session_one()
+                        if(instance.is_register_session_two):
+                            config.unreserve_session_two()
+                        if (serialized.validated_data['is_register_session_one']):
+                            config.reserve_session_one()
+                        if (serialized.validated_data['is_register_session_two']):
+                            config.reserve_session_two()
+                        instance.is_register_session_one = serialized.validated_data['is_register_session_one']
+                        instance.is_register_session_two = serialized.validated_data['is_register_session_two']
+                        instance.save()
                     return Response(status=200)
             except Exception as err:
                 return Response(status=400, data=err.args[0])

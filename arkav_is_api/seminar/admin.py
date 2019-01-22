@@ -19,8 +19,8 @@ class ConfigurationAdmin(admin.ModelAdmin):
 
 @admin.register(Registrant)
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ['user', 'status', 'is_register_session_one', 'is_register_session_two', 'payment_receipt']
-    readonly_fields = ['payment_receipt_file']
+    list_display = ['user', 'status', 'is_register_session_one', 'is_register_session_two', 'payment_receipt', 'created_at', 'updated_at']
+    readonly_fields = ['payment_receipt_file', 'created_at', 'updated_at']
 
     def payment_receipt_file(self, instance):
         uuidv4_regex = r'[0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}'

@@ -28,6 +28,10 @@ class Configuration(models.Model):
         else:
             self.session_two_current_capacity  = self.session_two_current_capacity - 1
             self.save()
+    def unreserve_session_one(self):
+        self.session_one_current_capacity = self.session_one_current_capacity + 1
+    def unreserve_session_two(self):
+        self.session_two_current_capacity = self.session_two_current_capacity + 1
 
 
 STATUS_SELECTION = (
