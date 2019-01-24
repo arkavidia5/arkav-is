@@ -17,6 +17,9 @@ pymysql = "*"
 dj-database-url = "*"
 gunicorn = "*"
 django-nested-admin = "*"
+django-qr-code = "*"
+pillow = "*"
+qrcode = "*"
 
 [requires]
 python_version = "3.6"

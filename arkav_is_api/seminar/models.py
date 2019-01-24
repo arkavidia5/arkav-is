@@ -1,6 +1,13 @@
+import datetime
+import random
+import string
+
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
 
 # Create your models here.
+from django.template.loader import get_template
+
 from arkav_is_api.arkavauth.models import User
 
 
@@ -41,6 +48,9 @@ STATUS_SELECTION = (
     (3, 'Dibatalkan'),
 )
 
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 class Registrant(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.PROTECT)
     status = models.IntegerField(choices=STATUS_SELECTION, default=0)
@@ -50,7 +60,38 @@ class Registrant(models.Model):
     is_valid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
+    def issue_ticket(self):
+        self.status = 2
+        if(self.is_valid):
+            ticket = Ticket.objects.create(
+                registrant= self,
+                booking_number=id_generator()
+            )
+            ticket.send_mail()
+        self.save()
+
 
 class Ticket(models.Model):
     registrant = models.ForeignKey(to=Registrant, on_delete=models.PROTECT)
-    booking_number = models.CharField(max_length=8)
+    booking_number = models.CharField(max_length=6, unique=True)
+    mail_sent = models.DateTimeField(null=True, blank=True)
+
+    def send_mail(self):
+        context = {
+            'registrant': self.registrant,
+            'booking_number': self.booking_number,
+        }
+        text_template = get_template('ticket_issued.txt')
+        html_template = get_template('ticket_issued.html')
+        mail_text_message = text_template.render(context)
+        mail_html_message = html_template.render(context)
+        # print(mail_html_message)
+        mail = EmailMultiAlternatives(
+            subject='Tiket ArkavTalk Arkavidia 5.0',
+            body=mail_text_message,
+            to=[self.registrant.user.email]
+        )
+        mail.attach_alternative(mail_html_message, "text/html")
+        self.mail_sent = datetime.datetime.now()
+        mail.send()
+        self.save()

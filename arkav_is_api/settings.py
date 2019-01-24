@@ -34,9 +34,7 @@ INSTALLED_APPS = [
     'arkav_is_api.competition',
     'arkav_is_api.preevent',
     'arkav_is_api.quiz',
-    'arkav_is_api.seminar'
-
-
+    'arkav_is_api.seminar',
 ]
 AUTH_USER_MODEL = 'arkavauth.User'
 
