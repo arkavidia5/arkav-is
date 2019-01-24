@@ -1,13 +1,20 @@
 from rest_framework import serializers
 
-from arkav_is_api.seminar.models import Configuration, Registrant
+from arkav_is_api.seminar.models import Configuration, Registrant, Ticket
 
 
 class ConfigurationSerializer(serializers.ModelSerializer):
     class Meta:
         model= Configuration
         fields = '__all__'
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Ticket
+        fields= '__all__'
+
 class RegistrantSerializer(serializers.ModelSerializer):
+    ticket= TicketSerializer(many=False)
     class Meta:
         model= Registrant
         fields= '__all__'

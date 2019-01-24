@@ -63,16 +63,19 @@ class Registrant(models.Model):
     def issue_ticket(self):
         self.status = 2
         if(self.is_valid):
-            ticket = Ticket.objects.create(
-                registrant= self,
-                booking_number=id_generator()
-            )
-            ticket.send_mail()
+            try:
+                ticket = Ticket.objects.create(
+                    registrant= self,
+                    booking_number=id_generator()
+                )
+                ticket.send_mail()
+            except Exception as err:
+                pass
         self.save()
 
 
 class Ticket(models.Model):
-    registrant = models.ForeignKey(to=Registrant, on_delete=models.PROTECT)
+    registrant = models.OneToOneField(to=Registrant, on_delete=models.PROTECT)
     booking_number = models.CharField(max_length=6, unique=True)
     mail_sent = models.DateTimeField(null=True, blank=True)
 

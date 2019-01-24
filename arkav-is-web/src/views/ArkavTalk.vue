@@ -69,7 +69,7 @@
             </v-layout>
             <v-layout class="row justify-end">
           <v-btn color="primary" class="" @click="submitForm" v-if="!registrationData || editOrder" :loading="loading">Pesan</v-btn>
-              <v-btn color="primary" class="" @click="editOrder = !editOrder" v-if="registrationData && !editOrder" :loading="loading">Ubah Pesanan</v-btn>
+              <v-btn color="primary" class="" @click="editOrder = !editOrder" v-if="registrationData && !editOrder && registrationData.status != 2" :loading="loading">Ubah Pesanan</v-btn>
             </v-layout>
             </div>
             <div class="payment-receipt" v-if="registrationData">
@@ -94,14 +94,32 @@
                         Bukti Pembayaran anda: <a :href="getDownloadURL()" target="_blank">Download</a>
                     </span>
                     <v-layout class="row">
-                        <v-btn color="primary" @click="editPayment = !editPayment">Ubah Bukti Pembayaran</v-btn>
+                        <v-btn color="primary" v-if="registrationData.status != 2" @click="editPayment = !editPayment">Ubah Bukti Pembayaran</v-btn>
                     </v-layout>
-                    <v-alert :value="true"  type="info" outline>
+                    <v-alert :value="true"  type="info" outline v-if="registrationData.status < 2">
                         Menunggu validasi dari panitia
                     </v-alert>
                 </v-flex>
             </div>
+            <br>
+            <div v-if="registrationData.status == 2">
+                <h1 class="title primary--color">Tiket ArkavTalk:</h1>
+                <v-layout class="row">
+                    <v-flex>
+                        Silahkan tunjukkan nomor ini kepada panitia registrasi acara.
+                    </v-flex>
+                </v-layout>
+                <v-layout class="row justify-center">
+                    <h1 align="center">{{registrationData.ticket.booking_number}}</h1>
+                </v-layout>
+            </div>
+            <div v-if="registrationData.status == 3">
+                <v-alert :value="true"  type="error" outline v-if="registrationData.status != 2">
+                    Mohon Maaf pesanan anda telah dibatalkan oleh panitia
+                </v-alert>
+            </div>
         </section>
+
     </div>
 
   </v-card>
