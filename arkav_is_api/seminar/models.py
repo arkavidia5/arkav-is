@@ -58,6 +58,7 @@ class Registrant(models.Model):
     is_register_session_two = models.BooleanField()
     payment_receipt = models.CharField(null=True, max_length=128, blank=True)
     is_valid = models.BooleanField(default=False)
+    reminder_sent = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
     def issue_ticket(self):
@@ -73,6 +74,25 @@ class Registrant(models.Model):
                 pass
         self.save()
 
+    def send_reminder(self):
+        context = {
+            'registrant': self,
+            'expired': (datetime.datetime.now() + datetime.timedelta(days=3)).strftime("%d %b %Y")
+        }
+        text_template = get_template('payment_reminder.txt')
+        html_template = get_template('payment_reminder.html')
+        mail_text_message = text_template.render(context)
+        mail_html_message = html_template.render(context)
+        # print(mail_html_message)
+        mail = EmailMultiAlternatives(
+            subject='Reminder Pembayaran ArkavTalk Arkavidia 5.0',
+            body=mail_text_message,
+            to=[self.user.email]
+        )
+        mail.attach_alternative(mail_html_message, "text/html")
+        self.reminder_sent = datetime.datetime.now()
+        mail.send()
+        self.save()
 
 class Ticket(models.Model):
     registrant = models.OneToOneField(to=Registrant, on_delete=models.PROTECT)

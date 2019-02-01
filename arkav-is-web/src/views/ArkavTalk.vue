@@ -37,7 +37,7 @@
                   </v-list-tile-action>
 
                   <v-list-tile-content @click.prevent="is_register_session_one = !is_register_session_one">
-                    <v-list-tile-title>Sesi 1 (08.30 - 11.25 WIB)</v-list-tile-title>
+                    <v-list-tile-title>Sesi 1 (08.30 - 11.25 WIB): </v-list-tile-title>
                     <v-list-tile-sub-title>{{format(configuration.session_one_normal_price)}} <br> Tersisa {{configuration.session_one_current_capacity}} tiket</v-list-tile-sub-title>
                   </v-list-tile-content>
                 </v-list-tile>
