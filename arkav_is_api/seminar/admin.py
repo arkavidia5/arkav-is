@@ -12,7 +12,7 @@ from arkav_is_api.seminar.models import Configuration, Registrant, Ticket
 
 def issue_ticket(model, request, queryset):
     for item in queryset:
-        if(item.is_valid):
+        if item.is_valid:
             print(item.user)
             item.issue_ticket()
         else:
@@ -20,6 +20,13 @@ def issue_ticket(model, request, queryset):
 
 
 issue_ticket.short_description = "Issue Ticket for all Registrant"
+
+def send_reminder(model, request, queryset):
+    for item in queryset:
+        if item.status == 0 and not item.is_valid:
+            # print(item.user)
+            item.send_reminder()
+
 
 
 
@@ -33,7 +40,7 @@ class ConfigurationAdmin(admin.ModelAdmin):
 
 @admin.register(Registrant)
 class RegistrationAdmin(admin.ModelAdmin):
-    actions = [issue_ticket]
+    actions = [issue_ticket, send_reminder]
     list_display = ['user', 'status', 'is_register_session_one', 'is_register_session_two',
                     'is_valid','payment_receipt', 'created_at', 'updated_at']
     readonly_fields = ['user_name', 'payment_receipt_link','payment_receipt_file', 'created_at', 'updated_at']
