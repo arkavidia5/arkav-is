@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+</head>
+<body style="font-family: Roboto,sans-serif; line-height: 2;">
+    <table style="width: 100%; background-color: #FFFFF2 !important; background-image: url(https://dashboard.arkavidia.id/img/bg_pattern.feb36b04.png) !important; background-size: 50% !important; padding: 10px;">
+        <tr><td style="text-align: center"><img src="https://static.arkavidia.id/5/images/logo-long.png" height="50"></td></tr>
+        <tr><td>Halo, {{ registrant.user.full_name }}! </td></tr>
+        <tr><td>Anda tercatat telah mendaftar ArkavTalk untuk:</td></tr>
+        {% if registrant.is_register_session_one %}
+            <tr><td><b>Sesi 1</b> (08.30 - 11.25 WIB): Educational Technology </td></tr>
+        {% endif %}
+        {% if registrant.is_register_session_two %}
+            <tr><td><b>Sesi 2</b>  (12.15 - 16.45 WIB): Artificial Intelligence, Big Data, Cloud Computing, dan UI/UX </td></tr>
+        {% endif %}
+
+        <tr><td>Namun, batas waktu pembayaran yang kami sediakan sudah berakhir dan kami masih belum menerima bukti untuk pembayaran tersebut. Jadi, dengan ini pemesanan Anda kami <b>batalkan</b>.</td></tr>
+        <tr><td>Jika ada yang ingin ditanyakan, silakan hubungi e-mail <a href="mailto:talk@arkavidia.id">talk@arkavidia.id </a> atau melalui line:</td></tr>
+        <tr><td>- ramadhan.riandi (Riandi)</td></tr>
+        <tr><td>- sekarlarras (Sekar)</td></tr>
+        <tr><td>Arkavidia 5.0 Informatics & IT Festival adalah serangkaian acara IT berskala nasional yang diselenggarakan oleh Himpunan Mahasiswa Teknik Informatika Institut Teknologi Bandung,
+            berkolaborasi dengan Teknik Informatika ITB.</td></tr>
+    </table>
+</body>
+</html>

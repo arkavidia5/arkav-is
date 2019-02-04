@@ -63,7 +63,7 @@ class RegisterView(views.APIView):
                             config.reserve_session_one()
                         if (serialized.validated_data['is_register_session_two']):
                             config.reserve_session_two()
-                        Registrant.objects.create_or_update(
+                        Registrant.objects.create(
                             user= request.user,
                             is_register_session_one= serialized.validated_data['is_register_session_one'],
                             is_register_session_two= serialized.validated_data['is_register_session_two']
