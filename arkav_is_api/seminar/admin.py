@@ -1,3 +1,4 @@
+import datetime
 import re
 
 from django.contrib import admin
@@ -23,12 +24,27 @@ issue_ticket.short_description = "Issue Ticket for all Registrant"
 
 def send_reminder(model, request, queryset):
     for item in queryset:
-        if item.status == 0 and not item.is_valid:
+        if item.status == 0 and not item.is_valid and not item.reminder_sent:
             # print(item.user)
             item.send_reminder()
 
 
+def force_cancel(model,request,queryset):
+    for item in queryset:
+        item.cancel()
+force_cancel.short_description = "Force Cancel all checked Registrant"
 
+def cancel(model,request,queryset):
+
+    for item in queryset:
+        if item.reminder_sent:
+            reminded = datetime.datetime.combine(item.reminder_sent.date(), datetime.time(0,0))
+            now = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time(0,0))
+            cancel = now - datetime.timedelta(days=3) >= reminded
+            if item.status == 0 and not item.is_valid and cancel:
+                item.cancel()
+
+cancel.short_description = "Cancel Registrant if reminded 3 days ago"
 
 @admin.register(Configuration)
 class ConfigurationAdmin(admin.ModelAdmin):
@@ -40,9 +56,9 @@ class ConfigurationAdmin(admin.ModelAdmin):
 
 @admin.register(Registrant)
 class RegistrationAdmin(admin.ModelAdmin):
-    actions = [issue_ticket, send_reminder]
+    actions = [issue_ticket, send_reminder, cancel, force_cancel]
     list_display = ['user', 'status', 'is_register_session_one', 'is_register_session_two',
-                    'is_valid','payment_receipt', 'created_at', 'updated_at']
+                    'is_valid','payment_receipt', 'created_at', 'updated_at', 'reminder_sent', 'canceled_at']
     readonly_fields = ['user_name', 'payment_receipt_link','payment_receipt_file', 'created_at', 'updated_at']
     def user_name(self,instance):
         return instance.user.full_name

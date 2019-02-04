@@ -59,6 +59,7 @@ class Registrant(models.Model):
     payment_receipt = models.CharField(null=True, max_length=128, blank=True)
     is_valid = models.BooleanField(default=False)
     reminder_sent = models.DateTimeField(null=True, blank=True)
+    canceled_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
     def issue_ticket(self):
@@ -72,6 +73,32 @@ class Registrant(models.Model):
                 ticket.send_mail()
             except Exception as err:
                 pass
+        self.save()
+    def cancel(self):
+        self.status = 3
+        self.canceled_at = datetime.datetime.now()
+        context = {
+            'registrant': self,
+        }
+        text_template = get_template('cancelation_mail.txt')
+        html_template = get_template('cancelation_mail.html')
+        mail_text_message = text_template.render(context)
+        mail_html_message = html_template.render(context)
+        # print(mail_html_message)
+        mail = EmailMultiAlternatives(
+            subject='Pembatalan Pesanan ArkavTalk Arkavidia 5.0',
+            body=mail_text_message,
+            to=[self.user.email]
+        )
+        mail.attach_alternative(mail_html_message, "text/html")
+        if self.is_register_session_one:
+            self.is_register_session_one = False
+            Configuration.objects.first().unreserve_session_one()
+        if self.is_register_session_two:
+            self.is_register_session_two = False
+            Configuration.objects.first().unreserve_session_two()
+
+        mail.send()
         self.save()
 
     def send_reminder(self):
