@@ -5,6 +5,7 @@ import competition from './modules/competition'
 import codingclass from './modules/codingclass'
 import team from './modules/team'
 import seminar from './modules/seminar'
+import arkavtalk from './modules/arkavtalk'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     competition,
     team,
     codingclass,
-    seminar
+    seminar,
+      arkavtalk
   }
 })

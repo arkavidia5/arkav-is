@@ -12,6 +12,7 @@ import Register from './views/Register.vue'
 import CreateTeam from './views/CreateTeam'
 import CodingClass from './views/CodingClass'
 import ArkavTalk from './views/ArkavTalk'
+import Gate from './views/Gate'
 Vue.use(Router)
 
 const router = new Router({
@@ -94,6 +95,11 @@ const router = new Router({
       meta: {
         title: 'Konfirmasi Email Arkavidia 5.0'
       },
+    },
+    {
+      path: '/arkavtalk/gate',
+      name: 'ArkavTalk Gate',
+      component: Gate,
     }
   ],
 })

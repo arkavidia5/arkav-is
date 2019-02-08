@@ -19,6 +19,7 @@ class Configuration(models.Model):
     session_one_current_capacity = models.IntegerField()
     session_two_max_capacity = models.IntegerField()
     session_two_current_capacity = models.IntegerField()
+    authorized_user = models.ForeignKey(to=User, on_delete=models.PROTECT, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.pk = 1
@@ -125,7 +126,8 @@ class Ticket(models.Model):
     registrant = models.OneToOneField(to=Registrant, on_delete=models.PROTECT)
     booking_number = models.CharField(max_length=6, unique=True)
     mail_sent = models.DateTimeField(null=True, blank=True)
-
+    check_in_session_one = models.DateTimeField(null=True, blank=True)
+    check_in_session_two = models.DateTimeField(null=True, blank=True)
     def send_mail(self):
         context = {
             'registrant': self.registrant,

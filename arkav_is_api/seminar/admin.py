@@ -80,6 +80,6 @@ class RegistrationAdmin(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ['registrant_name', 'booking_number']
+    list_display = ['registrant_name', 'booking_number', 'check_in_session_one', 'check_in_session_two']
     def registrant_name(self, instance):
         return instance.registrant.user
